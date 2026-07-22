@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="archify 2.11.0">
-  <title>Namastex FDE - Agente de cotacao (lead -&gt; qualifica -&gt; cota -&gt; decide) Diagram</title>
+  <title>desafio-Khal — Agente de cotacao (reuso dos microsservicos, estado do zero) Diagram</title>
   <script>
     // Resolve the theme before first paint so light-preference users don't
     // see a dark flash. The toolbar script below re-applies with UI state.
@@ -3810,9 +3810,9 @@
     <div class="header">
       <div class="header-row">
         <div class="pulse-dot"></div>
-        <h1>Namastex FDE - Agente de cotacao (lead -&gt; qualifica -&gt; cota -&gt; decide)</h1>
+        <h1>desafio-Khal — Agente de cotacao (reuso dos microsservicos, estado do zero)</h1>
       </div>
-      <p class="subtitle">Padrao AI-Orchestrator: LangGraph + tool-calling deterministico + erro-como-observacao + HITL + rastreabilidade + guardrails PII</p>
+      <p class="subtitle">svc-orchestrator (LangGraph) orquestra svc-* reusados + quote-service externo + RAG do dataset. Isolamento de dados.</p>
     </div>
 
     <script id="archify-guided-views-data" type="application/json">[]</script>
@@ -3857,9 +3857,9 @@
 
     <!-- Main Diagram -->
     <div class="diagram-container" data-detail-level="map">
-      <svg viewBox="0 0 1300 550" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="classic" data-quality-profile="standard" data-quality-gates="advisory">
-        <title id="archify-diagram-title">Namastex FDE - Agente de cotacao (lead -&gt; qualifica -&gt; cota -&gt; decide)</title>
-        <desc id="archify-diagram-description">Padrao AI-Orchestrator: LangGraph + tool-calling deterministico + erro-como-observacao + HITL + rastreabilidade + guardrails PII</desc>
+      <svg viewBox="0 0 1155 691" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="classic" data-quality-profile="standard" data-quality-gates="advisory">
+        <title id="archify-diagram-title">desafio-Khal — Agente de cotacao (reuso dos microsservicos, estado do zero)</title>
+        <desc id="archify-diagram-description">svc-orchestrator (LangGraph) orquestra svc-* reusados + quote-service externo + RAG do dataset. Isolamento de dados.</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -3883,124 +3883,141 @@
         <rect width="100%" height="100%" fill="url(#grid)" />
 
         <!-- Boundaries (behind everything) -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" x="220" y="220" width="1040" height="116" rx="12" class="c-region" stroke-width="1"/>
-        <text x="228" y="238" class="t-cloud" font-size="9" font-weight="600">Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide</text>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" x="560" y="60" width="290" height="488" rx="12" class="c-region" stroke-width="1"/>
+        <text x="568" y="78" class="t-cloud" font-size="9" font-weight="600">Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key</text>
 
         <!-- Connection paths (before components for correct z-order) -->
-        <path data-edge-from="lead" data-edge-to="sanitize" data-edge-key="0" data-composition-points="200,283;250,283" d="M 200 283 L 250 283" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="sanitize" data-edge-to="qualify" data-edge-key="1" data-composition-points="450,283;480,283;480,276;510,276" d="M 450 283 L 476.5 283 Q 480 283 480 279.5 L 480 279.5 Q 480 276 483.5 276 L 510 276" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="qualify" data-edge-to="cota" data-edge-key="2" data-composition-points="720,283;750,283;750,276;780,276" d="M 720 283 L 746.5 283 Q 750 283 750 279.5 L 750 279.5 Q 750 276 753.5 276 L 780 276" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="cota" data-edge-to="decide" data-edge-key="3" data-composition-points="980,283;1040,283" d="M 980 283 L 1040 283" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="cota" data-edge-to="quote_service" data-edge-key="4" data-composition-points="880,250;880,152" d="M 880 250 L 880 152" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="decide" data-edge-to="hitl" data-edge-key="5" data-composition-points="1135,250;1135,152" d="M 1135 250 L 1135 152" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="qualify" data-edge-to="llm" data-edge-key="6" data-composition-points="510,290;480,290;480,451;450,451" d="M 510 290 L 488 290 Q 480 290 480 298 L 480 443 Q 480 451 472 451 L 450 451" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="cota" data-edge-to="store" data-edge-key="7" data-composition-points="780,290;835,290;835,451;890,451" d="M 780 290 L 827 290 Q 835 290 835 298 L 835 443 Q 835 451 843 451 L 890 451" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="lead" data-edge-to="orchestrator" data-edge-key="0" data-composition-points="195,390;232.5,390;232.5,352;270,352" d="M 195 390 L 224.5 390 Q 232.5 390 232.5 382 L 232.5 360 Q 232.5 352 240.5 352 L 270 352" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="orchestrator" data-edge-to="hitl" data-edge-key="1" data-composition-points="270,338;232.5,338;232.5,240;195,240" d="M 270 338 L 240.5 338 Q 232.5 338 232.5 330 L 232.5 248 Q 232.5 240 224.5 240 L 195 240" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="orchestrator" data-edge-to="inference" data-edge-key="2" data-composition-points="485,310;537.5,310;537.5,119;590,119" d="M 485 310 L 529.5 310 Q 537.5 310 537.5 302 L 537.5 127 Q 537.5 119 545.5 119 L 590 119" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="orchestrator" data-edge-to="rag" data-edge-key="3" data-composition-points="485,324;537.5,324;537.5,214;590,214" d="M 485 324 L 529.5 324 Q 537.5 324 537.5 316 L 537.5 222 Q 537.5 214 545.5 214 L 590 214" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="orchestrator" data-edge-to="router" data-edge-key="4" data-composition-points="485,338;537.5,338;537.5,309;590,309" d="M 485 338 L 529.5 338 Q 537.5 338 537.5 330 L 537.5 317 Q 537.5 309 545.5 309 L 590 309" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="orchestrator" data-edge-to="guardrails" data-edge-key="5" data-composition-points="485,352;537.5,352;537.5,404;590,404" d="M 485 352 L 529.5 352 Q 537.5 352 537.5 360 L 537.5 396 Q 537.5 404 545.5 404 L 590 404" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="orchestrator" data-edge-to="observability" data-edge-key="6" data-composition-points="485,366;537.5,366;537.5,499;590,499" d="M 485 366 L 529.5 366 Q 537.5 366 537.5 374 L 537.5 491 Q 537.5 499 545.5 499 L 590 499" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="orchestrator" data-edge-to="quote_service" data-edge-key="7" data-composition-points="485,380;537.5,380;537.5,594;590,594" d="M 485 380 L 529.5 380 Q 537.5 380 537.5 388 L 537.5 586 Q 537.5 594 545.5 594 L 590 594" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="rag" data-edge-to="dataset" data-edge-key="8" data-composition-points="805,214;900,214" d="M 805 214 L 900 214" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
 
         <!-- Components -->
-        <g id="node-lead" data-node-id="lead" data-node-label="Lead (WhatsApp)" tabindex="0" role="button" aria-label="Focus Lead (WhatsApp), mensagens nao-estruturadas + midia, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="mensagens nao-estruturadas + midia" data-node-context="Architecture component">
-          <title>Lead (WhatsApp) · mensagens nao-estruturadas + midia · Architecture component</title>
-          <rect x="40" y="250" width="160" height="66" rx="6" class="c-mask"/>
-          <rect x="40" y="250" width="160" height="66" rx="6" class="c-external" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(46 256) scale(0.6875)">
+        <g id="node-lead" data-node-id="lead" data-node-label="Lead (WhatsApp)" tabindex="0" role="button" aria-label="Focus Lead (WhatsApp), nao-estruturado + midia, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="nao-estruturado + midia" data-node-context="Architecture component">
+          <title>Lead (WhatsApp) · nao-estruturado + midia · Architecture component</title>
+          <rect x="40" y="360" width="155" height="60" rx="6" class="c-mask"/>
+          <rect x="40" y="360" width="155" height="60" rx="6" class="c-external" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(46 366) scale(0.6875)">
             <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
             <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
           </g>
-          <text data-detail-anchor x="120" y="281" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Lead (WhatsApp)</text>
-        <text data-detail="context" x="120" y="297" class="t-muted" font-size="9" text-anchor="middle">mensagens nao-estruturadas + midia</text>
+          <text data-detail-anchor x="117.5" y="388" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Lead (WhatsApp)</text>
+        <text data-detail="context" x="117.5" y="404" class="t-muted" font-size="9" text-anchor="middle">nao-estruturado + midia</text>
         </g>
 
-        <g id="node-sanitize" data-node-id="sanitize" data-node-label="1. Sanitize + Guardrails" tabindex="0" role="button" aria-label="Focus 1. Sanitize + Guardrails, mascara PII (CPF/placa/email) . injection, Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide" aria-pressed="false" data-node-kind="security" data-node-sublabel="mascara PII (CPF/placa/email) . injection" data-node-context="Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide">
-          <title>1. Sanitize + Guardrails · mascara PII (CPF/placa/email) . injection · Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide</title>
-          <rect x="250" y="250" width="200" height="66" rx="6" class="c-mask"/>
-          <rect x="250" y="250" width="200" height="66" rx="6" class="c-security" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(256 256) scale(0.6875)">
+        <g id="node-hitl" data-node-id="hitl" data-node-label="Humano (HITL)" tabindex="0" role="button" aria-label="Focus Humano (HITL), criterio explicito, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="criterio explicito" data-node-context="Architecture component">
+          <title>Humano (HITL) · criterio explicito · Architecture component</title>
+          <rect x="40" y="210" width="155" height="60" rx="6" class="c-mask"/>
+          <rect x="40" y="210" width="155" height="60" rx="6" class="c-external" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(46 216) scale(0.6875)">
+            <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
+            <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
+          </g>
+          <text data-detail-anchor x="117.5" y="238" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Humano (HITL)</text>
+        <text data-detail="context" x="117.5" y="254" class="t-muted" font-size="9" text-anchor="middle">criterio explicito</text>
+        </g>
+
+        <g id="node-orchestrator" data-node-id="orchestrator" data-node-label="svc-orchestrator (agente)" tabindex="0" role="button" aria-label="Focus svc-orchestrator (agente), LangGraph: qualifica -&gt; cota -&gt; decide + cliente /quote resiliente, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="LangGraph: qualifica -&gt; cota -&gt; decide + cliente /quote resiliente" data-node-tag="codigo novo: cotacao" data-node-context="Architecture component">
+          <title>svc-orchestrator (agente) · LangGraph: qualifica -&gt; cota -&gt; decide + cliente /quote resiliente · Architecture component · codigo novo: cotacao</title>
+          <rect x="270" y="280" width="215" height="130" rx="6" class="c-mask"/>
+          <rect x="270" y="280" width="215" height="130" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(276 286) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="377.5" y="343" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">svc-orchestrator (agente)</text>
+        <text data-detail="context" x="377.5" y="359" class="t-muted" font-size="9" text-anchor="middle">LangGraph: qualifica -&gt; cota -&gt; decide + cliente /quote resiliente</text>
+        <text data-detail="fine" x="377.5" y="402" class="t-backend" font-size="7" text-anchor="middle">codigo novo: cotacao</text>
+        </g>
+
+        <g id="node-inference" data-node-id="inference" data-node-label="svc-inference" tabindex="0" role="button" aria-label="Focus svc-inference, LLM (provider plugavel), Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="LLM (provider plugavel)" data-node-context="Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key">
+          <title>svc-inference · LLM (provider plugavel) · Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key</title>
+          <rect x="590" y="90" width="215" height="58" rx="6" class="c-mask"/>
+          <rect x="590" y="90" width="215" height="58" rx="6" class="c-cloud" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(596 96) scale(0.6875)">
+            <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
+          </g>
+          <text data-detail-anchor x="697.5" y="117" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">svc-inference</text>
+        <text data-detail="context" x="697.5" y="133" class="t-muted" font-size="9" text-anchor="middle">LLM (provider plugavel)</text>
+        </g>
+
+        <g id="node-rag" data-node-id="rag" data-node-label="svc-rag" tabindex="0" role="button" aria-label="Focus svc-rag, conversas similares/ganhas (few-shot dinamico), Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key" aria-pressed="false" data-node-kind="backend" data-node-sublabel="conversas similares/ganhas (few-shot dinamico)" data-node-tag="coleccao namastex (zero)" data-node-context="Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key">
+          <title>svc-rag · conversas similares/ganhas (few-shot dinamico) · Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key · coleccao namastex (zero)</title>
+          <rect x="590" y="185" width="215" height="58" rx="6" class="c-mask"/>
+          <rect x="590" y="185" width="215" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(596 191) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="697.5" y="212" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">svc-rag</text>
+        <text data-detail="context" x="697.5" y="228" class="t-muted" font-size="9" text-anchor="middle">conversas similares/ganhas (few-shot dinamico)</text>
+        <text data-detail="fine" x="697.5" y="235" class="t-backend" font-size="7" text-anchor="middle">coleccao namastex (zero)</text>
+        </g>
+
+        <g id="node-router" data-node-id="router" data-node-label="svc-router" tabindex="0" role="button" aria-label="Focus svc-router, classifica etapa/intencao do lead, Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key" aria-pressed="false" data-node-kind="backend" data-node-sublabel="classifica etapa/intencao do lead" data-node-context="Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key">
+          <title>svc-router · classifica etapa/intencao do lead · Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key</title>
+          <rect x="590" y="280" width="215" height="58" rx="6" class="c-mask"/>
+          <rect x="590" y="280" width="215" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(596 286) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="697.5" y="307" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">svc-router</text>
+        <text data-detail="context" x="697.5" y="323" class="t-muted" font-size="9" text-anchor="middle">classifica etapa/intencao do lead</text>
+        </g>
+
+        <g id="node-guardrails" data-node-id="guardrails" data-node-label="svc-guardrails" tabindex="0" role="button" aria-label="Focus svc-guardrails, mascara PII (CPF/placa/CNH) + injection, Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key" aria-pressed="false" data-node-kind="security" data-node-sublabel="mascara PII (CPF/placa/CNH) + injection" data-node-context="Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key">
+          <title>svc-guardrails · mascara PII (CPF/placa/CNH) + injection · Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key</title>
+          <rect x="590" y="375" width="215" height="58" rx="6" class="c-mask"/>
+          <rect x="590" y="375" width="215" height="58" rx="6" class="c-security" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(596 381) scale(0.6875)">
             <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
             <path d="m5.8 8 1.5 1.5 3-3"/>
           </g>
-          <text data-detail-anchor x="350" y="281" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">1. Sanitize + Guardrails</text>
-        <text data-detail="context" x="350" y="297" class="t-muted" font-size="9" text-anchor="middle">mascara PII (CPF/placa/email) . injection</text>
+          <text data-detail-anchor x="697.5" y="402" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">svc-guardrails</text>
+        <text data-detail="context" x="697.5" y="418" class="t-muted" font-size="9" text-anchor="middle">mascara PII (CPF/placa/CNH) + injection</text>
         </g>
 
-        <g id="node-qualify" data-node-id="qualify" data-node-label="2. Qualifica" tabindex="0" role="button" aria-label="Focus 2. Qualifica, NER + normaliza veiculo/idade/CNH . detecta midia, Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide" aria-pressed="false" data-node-kind="backend" data-node-sublabel="NER + normaliza veiculo/idade/CNH . detecta midia" data-node-context="Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide">
-          <title>2. Qualifica · NER + normaliza veiculo/idade/CNH . detecta midia · Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide</title>
-          <rect x="510" y="250" width="210" height="66" rx="6" class="c-mask"/>
-          <rect x="510" y="250" width="210" height="66" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(516 256) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-detail-anchor x="615" y="281" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">2. Qualifica</text>
-        <text data-detail="context" x="615" y="297" class="t-muted" font-size="9" text-anchor="middle">NER + normaliza veiculo/idade/CNH . detecta midia</text>
-        </g>
-
-        <g id="node-cota" data-node-id="cota" data-node-label="3. Cota" tabindex="0" role="button" aria-label="Focus 3. Cota, tool /quote com retry+circuit+timeout, Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide" aria-pressed="false" data-node-kind="backend" data-node-sublabel="tool /quote com retry+circuit+timeout" data-node-context="Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide">
-          <title>3. Cota · tool /quote com retry+circuit+timeout · Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide</title>
-          <rect x="780" y="250" width="200" height="66" rx="6" class="c-mask"/>
-          <rect x="780" y="250" width="200" height="66" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(786 256) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-detail-anchor x="880" y="281" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">3. Cota</text>
-        <text data-detail="context" x="880" y="297" class="t-muted" font-size="9" text-anchor="middle">tool /quote com retry+circuit+timeout</text>
-        </g>
-
-        <g id="node-decide" data-node-id="decide" data-node-label="4. Decide" tabindex="0" role="button" aria-label="Focus 4. Decide, resolve (apresenta plano) ou escala, Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide" aria-pressed="false" data-node-kind="backend" data-node-sublabel="resolve (apresenta plano) ou escala" data-node-context="Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide">
-          <title>4. Decide · resolve (apresenta plano) ou escala · Agente (FastAPI + LangGraph): conversa -&gt; qualifica -&gt; cota -&gt; decide</title>
-          <rect x="1040" y="250" width="190" height="66" rx="6" class="c-mask"/>
-          <rect x="1040" y="250" width="190" height="66" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1046 256) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-detail-anchor x="1135" y="281" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">4. Decide</text>
-        <text data-detail="context" x="1135" y="297" class="t-muted" font-size="9" text-anchor="middle">resolve (apresenta plano) ou escala</text>
-        </g>
-
-        <g id="node-hitl" data-node-id="hitl" data-node-label="Humano (HITL)" tabindex="0" role="button" aria-label="Focus Humano (HITL), criterio explicito de escalonamento, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="criterio explicito de escalonamento" data-node-context="Architecture component">
-          <title>Humano (HITL) · criterio explicito de escalonamento · Architecture component</title>
-          <rect x="1040" y="90" width="190" height="62" rx="6" class="c-mask"/>
-          <rect x="1040" y="90" width="190" height="62" rx="6" class="c-external" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(1046 96) scale(0.6875)">
-            <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
-            <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
-          </g>
-          <text data-detail-anchor x="1135" y="119" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Humano (HITL)</text>
-        <text data-detail="context" x="1135" y="135" class="t-muted" font-size="9" text-anchor="middle">criterio explicito de escalonamento</text>
-        </g>
-
-        <g id="node-quote_service" data-node-id="quote_service" data-node-label="quote-service /quote" tabindex="0" role="button" aria-label="Focus quote-service /quote, FastAPI . FALHA 20% (500/502/503) + lento 8s, Architecture component" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="FastAPI . FALHA 20% (500/502/503) + lento 8s" data-node-tag="sistema que nao colabora" data-node-context="Architecture component">
-          <title>quote-service /quote · FastAPI . FALHA 20% (500/502/503) + lento 8s · Architecture component · sistema que nao colabora</title>
-          <rect x="770" y="90" width="220" height="62" rx="6" class="c-mask"/>
-          <rect x="770" y="90" width="220" height="62" rx="6" class="c-cloud" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(776 96) scale(0.6875)">
-            <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
-          </g>
-          <text data-detail-anchor x="880" y="119" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">quote-service /quote</text>
-        <text data-detail="context" x="880" y="135" class="t-muted" font-size="9" text-anchor="middle">FastAPI . FALHA 20% (500/502/503) + lento 8s</text>
-        <text data-detail="fine" x="880" y="144" class="t-cloud" font-size="7" text-anchor="middle">sistema que nao colabora</text>
-        </g>
-
-        <g id="node-llm" data-node-id="llm" data-node-label="LLM (Claude / Qwen local)" tabindex="0" role="button" aria-label="Focus LLM (Claude / Qwen local), few-shot do dataset de conversas, Architecture component" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="few-shot do dataset de conversas" data-node-context="Architecture component">
-          <title>LLM (Claude / Qwen local) · few-shot do dataset de conversas · Architecture component</title>
-          <rect x="230" y="420" width="220" height="62" rx="6" class="c-mask"/>
-          <rect x="230" y="420" width="220" height="62" rx="6" class="c-cloud" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(236 426) scale(0.6875)">
-            <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
-          </g>
-          <text data-detail-anchor x="340" y="449" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">LLM (Claude / Qwen local)</text>
-        <text data-detail="context" x="340" y="465" class="t-muted" font-size="9" text-anchor="middle">few-shot do dataset de conversas</text>
-        </g>
-
-        <g id="node-store" data-node-id="store" data-node-label="Store + Trilha de auditoria" tabindex="0" role="button" aria-label="Focus Store + Trilha de auditoria, conversas + cotacoes (id . status . PII mascarado), Architecture component" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="conversas + cotacoes (id . status . PII mascarado)" data-node-context="Architecture component">
-          <title>Store + Trilha de auditoria · conversas + cotacoes (id . status . PII mascarado) · Architecture component</title>
-          <rect x="640" y="420" width="250" height="62" rx="6" class="c-mask"/>
-          <rect x="640" y="420" width="250" height="62" rx="6" class="c-messagebus" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(646 426) scale(0.6875)">
+        <g id="node-observability" data-node-id="observability" data-node-label="svc-observability" tabindex="0" role="button" aria-label="Focus svc-observability, id . status . trilha (OTel), Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="id . status . trilha (OTel)" data-node-context="Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key">
+          <title>svc-observability · id . status . trilha (OTel) · Microsservicos REUSADOS (vendoring limpo, estado do zero) - contract-first /v1/ . X-Internal-Key</title>
+          <rect x="590" y="470" width="230" height="58" rx="6" class="c-mask"/>
+          <rect x="590" y="470" width="230" height="58" rx="6" class="c-messagebus" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(596 476) scale(0.6875)">
             <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
             <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
             <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
             <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
           </g>
-          <text data-detail-anchor x="765" y="449" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Store + Trilha de auditoria</text>
-        <text data-detail="context" x="765" y="465" class="t-muted" font-size="9" text-anchor="middle">conversas + cotacoes (id . status . PII mascarado)</text>
+          <text data-detail-anchor x="705" y="497" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">svc-observability</text>
+        <text data-detail="context" x="705" y="513" class="t-muted" font-size="9" text-anchor="middle">id . status . trilha (OTel)</text>
+        </g>
+
+        <g id="node-quote_service" data-node-id="quote_service" data-node-label="quote-service /quote" tabindex="0" role="button" aria-label="Focus quote-service /quote, EXTERNO . falha 20% (500/502/503) + lento 8s, Architecture component" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="EXTERNO . falha 20% (500/502/503) + lento 8s" data-node-tag="sistema que nao colabora" data-node-context="Architecture component">
+          <title>quote-service /quote · EXTERNO . falha 20% (500/502/503) + lento 8s · Architecture component · sistema que nao colabora</title>
+          <rect x="590" y="565" width="230" height="58" rx="6" class="c-mask"/>
+          <rect x="590" y="565" width="230" height="58" rx="6" class="c-cloud" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(596 571) scale(0.6875)">
+            <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
+          </g>
+          <text data-detail-anchor x="705" y="592" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">quote-service /quote</text>
+        <text data-detail="context" x="705" y="608" class="t-muted" font-size="9" text-anchor="middle">EXTERNO . falha 20% (500/502/503) + lento 8s</text>
+        <text data-detail="fine" x="705" y="615" class="t-cloud" font-size="7" text-anchor="middle">sistema que nao colabora</text>
+        </g>
+
+        <g id="node-dataset" data-node-id="dataset" data-node-label="Dataset 2500 conversas" tabindex="0" role="button" aria-label="Focus Dataset 2500 conversas, ganho/perdido . fora do git (PII), Architecture component" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="ganho/perdido . fora do git (PII)" data-node-context="Architecture component">
+          <title>Dataset 2500 conversas · ganho/perdido . fora do git (PII) · Architecture component</title>
+          <rect x="900" y="185" width="215" height="58" rx="6" class="c-mask"/>
+          <rect x="900" y="185" width="215" height="58" rx="6" class="c-messagebus" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(906 191) scale(0.6875)">
+            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
+            <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
+            <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
+            <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
+          </g>
+          <text data-detail-anchor x="1007.5" y="212" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Dataset 2500 conversas</text>
+        <text data-detail="context" x="1007.5" y="228" class="t-muted" font-size="9" text-anchor="middle">ganho/perdido . fora do git (PII)</text>
         </g>
 
         <!-- Connection labels -->
@@ -4013,28 +4030,29 @@
 
 
 
+
         <!-- Legend -->
         <g data-legend-bridge>
-          <text x="40" y="521" class="t-primary" font-size="9" font-weight="600">Legend</text>
+          <text x="40" y="662" class="t-primary" font-size="9" font-weight="600">Legend</text>
           <g data-legend-kind="external">
-            <rect x="40" y="526" width="14" height="9" rx="2" class="c-external" stroke-width="1"/>
-            <text x="60" y="534" class="t-muted" font-size="8">External</text>
-          </g>
-          <g data-legend-kind="security">
-            <rect x="144" y="526" width="14" height="9" rx="2" class="c-security" stroke-width="1"/>
-            <text x="164" y="534" class="t-muted" font-size="8">Security</text>
+            <rect x="40" y="667" width="14" height="9" rx="2" class="c-external" stroke-width="1"/>
+            <text x="60" y="675" class="t-muted" font-size="8">External</text>
           </g>
           <g data-legend-kind="backend">
-            <rect x="248" y="526" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
-            <text x="268" y="534" class="t-muted" font-size="8">Backend</text>
+            <rect x="144" y="667" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
+            <text x="164" y="675" class="t-muted" font-size="8">Backend</text>
           </g>
           <g data-legend-kind="cloud">
-            <rect x="347" y="526" width="14" height="9" rx="2" class="c-cloud" stroke-width="1"/>
-            <text x="367" y="534" class="t-muted" font-size="8">Cloud</text>
+            <rect x="243" y="667" width="14" height="9" rx="2" class="c-cloud" stroke-width="1"/>
+            <text x="263" y="675" class="t-muted" font-size="8">Cloud</text>
+          </g>
+          <g data-legend-kind="security">
+            <rect x="332" y="667" width="14" height="9" rx="2" class="c-security" stroke-width="1"/>
+            <text x="352" y="675" class="t-muted" font-size="8">Security</text>
           </g>
           <g data-legend-kind="messagebus">
-            <rect x="436" y="526" width="14" height="9" rx="2" class="c-messagebus" stroke-width="1"/>
-            <text x="456" y="534" class="t-muted" font-size="8">Message bus</text>
+            <rect x="436" y="667" width="14" height="9" rx="2" class="c-messagebus" stroke-width="1"/>
+            <text x="456" y="675" class="t-muted" font-size="8">Message bus</text>
           </g>
         </g>
       </svg>
@@ -4204,36 +4222,36 @@
       <div class="card">
         <div class="card-header">
           <div class="card-dot rose"></div>
-          <h3>Resiliencia /quote (o ponto que separa)</h3>
+          <h3>Resiliencia /quote (o que separa)</h3>
         </div>
         <ul>
-          <li>&bull; retry + backoff + timeout + circuit breaker</li>
+          <li>&bull; retry + backoff + timeout + circuit breaker no cliente</li>
           <li>&bull; 500/502/503 = OBSERVACAO ao loop, nao excecao</li>
-          <li>&bull; falha persistente -&gt; escala humano (nao inventa cotacao)</li>
+          <li>&bull; falha persistente -&gt; escala humano (nao inventa)</li>
         </ul>
       </div>
 
       <div class="card">
         <div class="card-header">
-          <div class="card-dot amber"></div>
-          <h3>Criterio HITL explicito</h3>
+          <div class="card-dot violet"></div>
+          <h3>Isolamento de dados</h3>
         </div>
         <ul>
-          <li>&bull; dados insuficientes ou midia sem transcricao</li>
-          <li>&bull; /quote falhou N vezes . idade/veiculo fora de faixa</li>
-          <li>&bull; objecao complexa . pedido fora de escopo</li>
+          <li>&bull; Cada svc reusado sobe com ESTADO DO ZERO</li>
+          <li>&bull; svc-rag: coleccao namastex, so o dataset do desafio</li>
+          <li>&bull; Nada de outros projetos vaza pro repo publico</li>
         </ul>
       </div>
 
       <div class="card">
         <div class="card-header">
           <div class="card-dot cyan"></div>
-          <h3>Aderente aos projetos</h3>
+          <h3>Reuso, nao copia</h3>
         </div>
         <ul>
-          <li>&bull; AI-Orchestrator: LangGraph + tool determinismo + erro-observacao</li>
-          <li>&bull; svc-guardrails: PII/injection . Laudifier: dado sensivel</li>
-          <li>&bull; Rastreabilidade id+status por mensagem/cotacao</li>
+          <li>&bull; Reuso os svc-* (ja desacoplados), NAO o monolito AI-Orchestrator</li>
+          <li>&bull; Vendoring do codigo, sem dados/segredos</li>
+          <li>&bull; Codigo novo = logica de cotacao + HITL + cliente /quote</li>
         </ul>
       </div>
     </div>

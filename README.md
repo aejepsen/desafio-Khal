@@ -4,30 +4,64 @@ Solução do **Desafio Técnico FDE / AI Engineer (Namastex)** — um agente que
 um lead de seguro auto de ponta a ponta: **conversa → qualifica → cota → decide**
 (resolve ou escala pro humano, com critério explícito).
 
-> 🚧 Em desenvolvimento.
+> 🚧 Em desenvolvimento. Ver [`STATE.md`](./STATE.md) para o estado atual e próximos passos.
 
 ## Arquitetura
 
-O desenho da solução está em [`arquitetura.html`](./arquitetura.html) — diagrama
-interativo (abrir no navegador). Resumo:
+Diagrama interativo em [`arquitetura.html`](./arquitetura.html). Resumo:
 
-Agente **FastAPI + LangGraph** com pipeline de 4 estágios:
+Um **agente orquestrador (svc-orchestrator, LangGraph)** conduz o fluxo e integra
+**microsserviços plugáveis reusados** do ecossistema `microservicos-ai-orchestrator`
+(contract-first, OpenAPI `/v1/`, `X-Internal-Key`, `/health`, `/metrics`, OTel):
 
-1. **Sanitize + Guardrails** — mascara PII (CPF/placa/e-mail), injection.
-2. **Qualifica** — extrai e normaliza veículo/idade/CNH; trata mídia sem transcrição.
-3. **Cota** — chama `/quote` com **retry + backoff + timeout + circuit breaker**.
-4. **Decide** — resolve (apresenta plano) ou escala pro humano.
+| Serviço | Papel no agente |
+|---|---|
+| **svc-guardrails** | sanitiza + mascara PII (CPF/placa/CNH) + injection |
+| **svc-router** | classifica a etapa/intenção do lead |
+| **svc-rag** | recupera conversas similares/ganhas (few-shot dinâmico) |
+| **svc-inference** | serving do LLM (provider plugável) |
+| **svc-observability** | rastreabilidade: id + status + trilha (OTel) |
+| **svc-orchestrator** | o agente (fluxo de cotação) |
 
-**Princípios de engenharia (o que o desafio avalia):**
+Fora do ecossistema: **quote-service** (fornecido pelo desafio) como tool externa;
+**dataset** de 2500 conversas alimenta o svc-rag; **humano (HITL)** recebe a escalada.
 
-- **Resiliência ao `/quote` falhar** (20% 500/502/503 + lentidão): erro é
-  **observação ao loop**, não exceção — falha persistente escala pro humano, nunca
-  inventa cotação.
-- **Critério HITL explícito**: dados insuficientes, mídia sem transcrição, `/quote`
-  falhou N vezes, idade/veículo fora de faixa, objeção complexa.
-- **PII / dados sensíveis**: mascarados em log e store.
-- **Rastreabilidade**: cada mensagem/cotação com `id` e `status`.
+### Por que reuso e não construção do zero
+Os microsserviços **já existem** (código, contratos, testes). Reusar demonstra
+**visão de plataforma** (desacoplamento/escala) e **velocidade com qualidade** —
+exatamente o que o desafio pede. Fragmentar do zero em 3 dias seria over-engineering;
+reusar plataforma pronta é senioridade. Detalhe: **não** copio o monólito
+AI-Orchestrator — reuso os `svc-*` já desacoplados dele, por vendoring limpo.
+
+## Princípios de engenharia (o que o desafio avalia)
+
+- **Resiliência ao `/quote` falhar** (20% 500/502/503 + lentidão 8s): erro é
+  **observação ao loop**, não exceção — `retry + backoff + timeout + circuit breaker`;
+  falha persistente **escala pro humano**, nunca inventa cotação.
+- **Critério HITL explícito**: dados insuficientes · mídia sem transcrição ·
+  `/quote` falhou N vezes · idade/veículo fora de faixa · objeção complexa.
+- **Isolamento de dados** — cada serviço reusado sobe com estado **do zero**; o RAG é
+  populado só do dataset do desafio; nada de outros projetos vaza pro repo público.
+  Ver [`docs/isolamento-dados.md`](./docs/isolamento-dados.md).
+- **Rastreabilidade** — cada mensagem/cotação com `id` e `status` (svc-observability).
+- **PII / dados sensíveis** — mascarados em log e store; dataset fora do git.
 
 ## Como rodar
 
-_(a documentar conforme a implementação evolui)_
+```bash
+docker compose up            # sobe quote-service + serviços do agente + infra (volumes limpos)
+# ... pipeline de ingestão do dataset no svc-rag (a documentar)
+```
+
+_(instruções completas conforme a implementação evolui — ver STATE.md)_
+
+## Estrutura
+
+```
+desafio-Khal/
+  arquitetura.html          # diagrama archify da solução
+  STATE.md                  # handoff / estado / decisões
+  docs/isolamento-dados.md  # política de reuso limpo
+  docker-compose.yml        # orquestração (volumes novos, coleção namastex_conversas)
+  services/                 # svc-* vendorizados (limpos) + código novo do agente
+```

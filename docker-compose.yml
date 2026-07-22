@@ -1,0 +1,68 @@
+# docker-compose do desafio-Khal — ESQUELETO
+# Princípio (docs/isolamento-dados.md): cada serviço sobe com estado DO ZERO.
+# Volumes NOVOS (nomeados com prefixo do desafio); nada montado de outros projetos.
+
+x-internal-auth: &internal-auth
+  X_INTERNAL_KEY: ${X_INTERNAL_KEY:-dev-namastex-key}
+
+services:
+  # --- sistema externo fornecido pelo desafio (falha 20% + lento de propósito) ---
+  quote-api:
+    build: ./quote-service          # copiado do enunciado (namastex-fde-challenge)
+    environment:
+      QUOTE_FAILURE_RATE: "0.20"
+      QUOTE_SLOW_SECONDS: "8"
+    ports: ["8080:8080"]
+
+  # --- infra (instâncias DEDICADAS, volumes limpos) ---
+  qdrant:
+    image: qdrant/qdrant:latest
+    volumes: [namastex_qdrant:/qdrant/storage]   # volume NOVO — sem coleções de outros projetos
+    ports: ["6333:6333"]
+
+  # --- microsserviços reusados (vendoring limpo em services/, estado do zero) ---
+  svc-guardrails:
+    build: ./services/svc-guardrails
+    environment: { <<: *internal-auth, PII_LOCALE: "pt-BR" }   # regex CPF/placa/CNH/CEP
+
+  svc-rag:
+    build: ./services/svc-rag
+    environment:
+      <<: *internal-auth
+      QDRANT_URL: "http://qdrant:6333"
+      RAG_COLLECTION: "namastex_conversas"      # coleção NOVA, populada só do dataset
+    depends_on: [qdrant]
+
+  svc-router:
+    build: ./services/svc-router
+    environment: { <<: *internal-auth }         # golden do domínio do desafio (não herdar)
+
+  svc-inference:
+    build: ./services/svc-inference
+    environment:
+      <<: *internal-auth
+      LLM_PROVIDER: ${LLM_PROVIDER:-claude}      # plugável: claude | qwen-ollama | ...
+      LLM_MODEL: ${LLM_MODEL:-claude-sonnet-4-6}
+
+  svc-observability:
+    build: ./services/svc-observability
+    environment: { <<: *internal-auth }         # traces começam vazios
+
+  svc-orchestrator:
+    build: ./services/svc-orchestrator          # o agente (fluxo cotação) + cliente resiliente /quote
+    environment:
+      <<: *internal-auth
+      QUOTE_URL: "http://quote-api:8080"
+      GUARDRAILS_URL: "http://svc-guardrails:8000"
+      ROUTER_URL: "http://svc-router:8000"
+      RAG_URL: "http://svc-rag:8000"
+      INFERENCE_URL: "http://svc-inference:8000"
+      OBSERVABILITY_URL: "http://svc-observability:8000"
+      QUOTE_MAX_RETRIES: "3"
+      QUOTE_TIMEOUT_S: "10"
+      QUOTE_CIRCUIT_THRESHOLD: "5"
+    depends_on: [quote-api, svc-guardrails, svc-router, svc-rag, svc-inference, svc-observability]
+    ports: ["8100:8100"]
+
+volumes:
+  namastex_qdrant:            # volumes DEDICADOS do desafio — não reaproveitar de outros projetos
