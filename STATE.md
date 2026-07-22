@@ -69,3 +69,19 @@ prompts/config do svc-orchestrator (era financas/rh/estoque/vendas → agora seg
 qualifica veículo/idade/CNH → cota → decide); golden do svc-router (etapas do lead);
 config PII-br do svc-guardrails. **PRÓXIMO:** docker-compose funcional + ingestão do
 dataset no svc-rag (coleção namastex_conversas) + lógica de cotação + cliente /quote resiliente.
+
+## CONTRATO /quote + REAVALIAÇÃO de serviços (2026-07-22)
+**quote-service copiado** (`./quote-service`, fornecido). Contrato:
+- `POST /quote` QuoteRequest{plano_id(essencial|completo|premium), idade, ano_veiculo, cep}
+  → 200 cotação · **422 cotacao_recusada** (regra: idade/veículo fora de faixa) ·
+  400 payload_invalido · **500/502/503** instabilidade 20% (+ lento 8s).
+- `GET /planos` tabela de regras · `GET /health`.
+- Regras (quote_logic): faixa_etaria, idade_veiculo, regiao(cep alto risco), pro_rata 1º mês.
+**Extração do lead (svc-orchestrator, código novo):** idade · ano_veiculo (de veiculo_texto
+livre) · cep · plano. 422 e 400 = observação ao loop (pede dado faltante / recusa clara);
+500/502/503 = retry+circuit → escala humano.
+**REAVALIAÇÃO (reuso judicioso, D1):** svc-router tem 9 refs do domínio antigo
+(multi-domínio financas/rh/estoque/vendas). O fluxo do desafio é LINEAR (qualifica→cota→
+decide), não multi-domínio → **svc-router provavelmente DISPENSÁVEL** ou re-proposto p/
+classificar INTENÇÃO (qualificar/objeção/pedir-humano). Decisão: avaliar na implementação.
+Núcleo confirmado: orchestrator + guardrails + rag + inference + observability.
