@@ -1,0 +1,18 @@
+{
+  "0": "FakeScraper",
+  "1": "Metric",
+  "2": "State",
+  "3": "app.py",
+  "4": "SPEC — svc-observability v1.0",
+  "5": "MetricsExport",
+  "6": "DECISIONS — svc-observability",
+  "7": "test_otel_metrics.py",
+  "8": "svc-observability",
+  "9": "test_app.py",
+  "10": "init_tracing",
+  "11": "conftest.py",
+  "12": "test_contract.py",
+  "13": "BACKLOG.md",
+  "14": "svc-observability",
+  "15": "__init__.py"
+}

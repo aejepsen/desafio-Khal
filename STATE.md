@@ -60,3 +60,12 @@ fora de faixa cotável · objeção complexa · pedido fora de escopo.
 ## Handoff / troca de LLM
 Este STATE + README + docs/isolamento-dados.md + arquitetura.html = fonte de verdade.
 Ao trocar de LLM: ler este STATE, seguir do "PRÓXIMO". Provider atrás de interface (D5).
+
+## VENDORING EXECUTADO (2026-07-22) — 6 svc-* limpos
+`services/`: svc-guardrails/rag/router/inference/observability/orchestrator (5.3G→2.6M;
+sem .venv/dados/segredos). Higiene: 0 .env reais, 0 segredos, 0 dados. Removidos
+`svc-orchestrator/evals` (domínio antigo financas). **A ADAPTAR ao domínio cotação:**
+prompts/config do svc-orchestrator (era financas/rh/estoque/vendas → agora seguro auto:
+qualifica veículo/idade/CNH → cota → decide); golden do svc-router (etapas do lead);
+config PII-br do svc-guardrails. **PRÓXIMO:** docker-compose funcional + ingestão do
+dataset no svc-rag (coleção namastex_conversas) + lógica de cotação + cliente /quote resiliente.
