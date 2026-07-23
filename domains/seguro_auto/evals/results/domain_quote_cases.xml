@@ -1,0 +1,545 @@
+<?xml version='1.0' encoding='utf-8'?>
+<domain_quote_results generated_at="2026-07-22T22:12:54.280385+00:00" today="2026-07-22" source_plans="quote-service/data/plans.json">
+  <columns>
+    <col name="case_id" role="input_planos_slots" />
+    <col name="plano_id_in" role="input_planos_slots" />
+    <col name="plano_nome" role="input_planos_slots" />
+    <col name="base_mensal" role="input_planos_slots" />
+    <col name="franquia" role="input_planos_slots" />
+    <col name="idade" role="input_planos_slots" />
+    <col name="faixa_etaria" role="input_planos_slots" />
+    <col name="veiculo_ano" role="input_planos_slots" />
+    <col name="idade_veiculo_anos" role="input_planos_slots" />
+    <col name="faixa_idade_veiculo" role="input_planos_slots" />
+    <col name="cep" role="input_planos_slots" />
+    <col name="cep_prefixo" role="input_planos_slots" />
+    <col name="cep_alto_risco" role="input_planos_slots" />
+    <col name="data_inicio" role="input_planos_slots" />
+    <col name="veiculo_texto" role="input_planos_slots" />
+    <col name="verified" role="input_planos_slots" />
+    <col name="ok" role="output_quote_json" />
+    <col name="out_plano_id" role="output_quote_json" />
+    <col name="out_idade" role="output_quote_json" />
+    <col name="out_veiculo_ano" role="output_quote_json" />
+    <col name="out_cep" role="output_quote_json" />
+    <col name="out_data_inicio" role="output_quote_json" />
+    <col name="missing" role="output_quote_json" />
+    <col name="errors" role="output_quote_json" />
+    <col name="refusals" role="output_quote_json" />
+  </columns>
+  <rows>
+    <row>
+      <case_id>plano_essencial_ok</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>35</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2020</veiculo_ano>
+      <idade_veiculo_anos>6</idade_veiculo_anos>
+      <faixa_idade_veiculo>6-10(x1.15)</faixa_idade_veiculo>
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio>2026-07-22</data_inicio>
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>essencial</out_plano_id>
+      <out_idade>35</out_idade>
+      <out_veiculo_ano>2020</out_veiculo_ano>
+      <out_cep>01310-100</out_cep>
+      <out_data_inicio>2026-07-22</out_data_inicio>
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>plano_completo_ok</case_id>
+      <plano_id_in>completo</plano_id_in>
+      <plano_nome>Completo</plano_nome>
+      <base_mensal>209.9</base_mensal>
+      <franquia>3000</franquia>
+      <idade>28</idade>
+      <faixa_etaria>25-29(x1.25)</faixa_etaria>
+      <veiculo_ano>2024</veiculo_ano>
+      <idade_veiculo_anos>2</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>completo</out_plano_id>
+      <out_idade>28</out_idade>
+      <out_veiculo_ano>2024</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>plano_premium_ok</case_id>
+      <plano_id_in>premium</plano_id_in>
+      <plano_nome>Premium</plano_nome>
+      <base_mensal>339.9</base_mensal>
+      <franquia>1500</franquia>
+      <idade>65</idade>
+      <faixa_etaria>60-75(x1.4)</faixa_etaria>
+      <veiculo_ano>2018</veiculo_ano>
+      <idade_veiculo_anos>8</idade_veiculo_anos>
+      <faixa_idade_veiculo>6-10(x1.15)</faixa_idade_veiculo>
+      <cep>22041080</cep>
+      <cep_prefixo>22</cep_prefixo>
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>premium</out_plano_id>
+      <out_idade>65</out_idade>
+      <out_veiculo_ano>2018</out_veiculo_ano>
+      <out_cep>22041-080</out_cep>
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>faixa_18_24</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>22</idade>
+      <faixa_etaria>18-24(x1.6)</faixa_etaria>
+      <veiculo_ano>2022</veiculo_ano>
+      <idade_veiculo_anos>4</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>essencial</out_plano_id>
+      <out_idade>22</out_idade>
+      <out_veiculo_ano>2022</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>faixa_25_29</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>27</idade>
+      <faixa_etaria>25-29(x1.25)</faixa_etaria>
+      <veiculo_ano>2022</veiculo_ano>
+      <idade_veiculo_anos>4</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>essencial</out_plano_id>
+      <out_idade>27</out_idade>
+      <out_veiculo_ano>2022</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>faixa_30_59</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>45</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2022</veiculo_ano>
+      <idade_veiculo_anos>4</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>essencial</out_plano_id>
+      <out_idade>45</out_idade>
+      <out_veiculo_ano>2022</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>faixa_60_75</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>70</idade>
+      <faixa_etaria>60-75(x1.4)</faixa_etaria>
+      <veiculo_ano>2022</veiculo_ano>
+      <idade_veiculo_anos>4</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>essencial</out_plano_id>
+      <out_idade>70</out_idade>
+      <out_veiculo_ano>2022</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>faixa_76_recusa</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>76</idade>
+      <faixa_etaria>76-200(recusar)</faixa_etaria>
+      <veiculo_ano>2022</veiculo_ano>
+      <idade_veiculo_anos>4</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>false</ok>
+      <out_plano_id />
+      <out_idade />
+      <out_veiculo_ano />
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals>Idade acima do limite de aceitacao (75 anos).</refusals>
+    </row>
+    <row>
+      <case_id>idade_16_fora</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>16</idade>
+      <faixa_etaria>fora</faixa_etaria>
+      <veiculo_ano>2022</veiculo_ano>
+      <idade_veiculo_anos>4</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>false</ok>
+      <out_plano_id />
+      <out_idade />
+      <out_veiculo_ano />
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals>Idade fora das faixas aceitas.</refusals>
+    </row>
+    <row>
+      <case_id>veiculo_0_5</case_id>
+      <plano_id_in>completo</plano_id_in>
+      <plano_nome>Completo</plano_nome>
+      <base_mensal>209.9</base_mensal>
+      <franquia>3000</franquia>
+      <idade>40</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2023</veiculo_ano>
+      <idade_veiculo_anos>3</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>completo</out_plano_id>
+      <out_idade>40</out_idade>
+      <out_veiculo_ano>2023</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>veiculo_6_10</case_id>
+      <plano_id_in>completo</plano_id_in>
+      <plano_nome>Completo</plano_nome>
+      <base_mensal>209.9</base_mensal>
+      <franquia>3000</franquia>
+      <idade>40</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2018</veiculo_ano>
+      <idade_veiculo_anos>8</idade_veiculo_anos>
+      <faixa_idade_veiculo>6-10(x1.15)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>completo</out_plano_id>
+      <out_idade>40</out_idade>
+      <out_veiculo_ano>2018</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>veiculo_11_20</case_id>
+      <plano_id_in>completo</plano_id_in>
+      <plano_nome>Completo</plano_nome>
+      <base_mensal>209.9</base_mensal>
+      <franquia>3000</franquia>
+      <idade>40</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2010</veiculo_ano>
+      <idade_veiculo_anos>16</idade_veiculo_anos>
+      <faixa_idade_veiculo>11-20(x1.45)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>completo</out_plano_id>
+      <out_idade>40</out_idade>
+      <out_veiculo_ano>2010</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>veiculo_21_recusa</case_id>
+      <plano_id_in>completo</plano_id_in>
+      <plano_nome>Completo</plano_nome>
+      <base_mensal>209.9</base_mensal>
+      <franquia>3000</franquia>
+      <idade>40</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2004</veiculo_ano>
+      <idade_veiculo_anos>22</idade_veiculo_anos>
+      <faixa_idade_veiculo>21-200(recusar)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>false</ok>
+      <out_plano_id />
+      <out_idade />
+      <out_veiculo_ano />
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals>Veiculo com mais de 20 anos nao e aceito.</refusals>
+    </row>
+    <row>
+      <case_id>cep_alto_risco_08</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>33</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2021</veiculo_ano>
+      <idade_veiculo_anos>5</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep>08000-000</cep>
+      <cep_prefixo>08</cep_prefixo>
+      <cep_alto_risco>true</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>essencial</out_plano_id>
+      <out_idade>33</out_idade>
+      <out_veiculo_ano>2021</out_veiculo_ano>
+      <out_cep>08000-000</out_cep>
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>cep_invalido</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>33</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2021</veiculo_ano>
+      <idade_veiculo_anos>5</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep>123</cep>
+      <cep_prefixo>12</cep_prefixo>
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>false</ok>
+      <out_plano_id />
+      <out_idade />
+      <out_veiculo_ano />
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors>cep_invalido</errors>
+      <refusals />
+    </row>
+    <row>
+      <case_id>veiculo_texto_e_alias_plano</case_id>
+      <plano_id_in>Básico</plano_id_in>
+      <plano_nome />
+      <base_mensal />
+      <franquia />
+      <idade>42 anos</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano />
+      <idade_veiculo_anos>7</idade_veiculo_anos>
+      <faixa_idade_veiculo>6-10(x1.15)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto>Gol 1.0 2019</veiculo_texto>
+      <verified>true</verified>
+      <ok>true</ok>
+      <out_plano_id>essencial</out_plano_id>
+      <out_idade>42</out_idade>
+      <out_veiculo_ano>2019</out_veiculo_ano>
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>nao_verificado</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>35</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2020</veiculo_ano>
+      <idade_veiculo_anos>6</idade_veiculo_anos>
+      <faixa_idade_veiculo>6-10(x1.15)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>false</verified>
+      <ok>false</ok>
+      <out_plano_id />
+      <out_idade />
+      <out_veiculo_ano />
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors>dados_nao_verificados</errors>
+      <refusals />
+    </row>
+    <row>
+      <case_id>faltando_obrigatorios</case_id>
+      <plano_id_in>premium</plano_id_in>
+      <plano_nome>Premium</plano_nome>
+      <base_mensal>339.9</base_mensal>
+      <franquia>1500</franquia>
+      <idade />
+      <faixa_etaria />
+      <veiculo_ano />
+      <idade_veiculo_anos />
+      <faixa_idade_veiculo />
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>false</ok>
+      <out_plano_id />
+      <out_idade />
+      <out_veiculo_ano />
+      <out_cep />
+      <out_data_inicio />
+      <missing>idade|veiculo_ano</missing>
+      <errors />
+      <refusals />
+    </row>
+    <row>
+      <case_id>plano_inexistente</case_id>
+      <plano_id_in>ouro</plano_id_in>
+      <plano_nome />
+      <base_mensal />
+      <franquia />
+      <idade>30</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2020</veiculo_ano>
+      <idade_veiculo_anos>6</idade_veiculo_anos>
+      <faixa_idade_veiculo>6-10(x1.15)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>false</ok>
+      <out_plano_id />
+      <out_idade />
+      <out_veiculo_ano />
+      <out_cep />
+      <out_data_inicio />
+      <missing />
+      <errors>Plano 'ouro' inexistente. Opcoes: completo, essencial, premium.</errors>
+      <refusals />
+    </row>
+  </rows>
+</domain_quote_results>

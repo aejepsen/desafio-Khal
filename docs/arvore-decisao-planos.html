@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Árvore de decisão — planos.json · desafio-Khal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      securityLevel: "loose",
+      flowchart: { curve: "basis", padding: 16, nodeSpacing: 36, rankSpacing: 48 },
+      themeVariables: {
+        primaryColor: "#d8e8df",
+        primaryTextColor: "#1a2420",
+        primaryBorderColor: "#2f6f4e",
+        lineColor: "#3d5348",
+        secondaryColor: "#f3efe6",
+        tertiaryColor: "#e8f0ea",
+        background: "#f7f4ee",
+        mainBkg: "#e8f0ea",
+        nodeBorder: "#2f6f4e",
+        clusterBkg: "#f3efe6",
+        titleColor: "#1a2420",
+        edgeLabelBackground: "#f7f4ee",
+        fontFamily: "DM Sans, sans-serif",
+      },
+    });
+  </script>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --ink: #1a2420;
+      --muted: #5c6b63;
+      --line: #d5d0c4;
+      --panel: #fffdf8;
+      --accent: #2f6f4e;
+      --refuse: #8b3a2f;
+      --ok: #1f6b45;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 10% 0%, #e4efe8 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 20%, #efe6d8 0%, transparent 50%),
+        var(--bg);
+      line-height: 1.45;
+    }
+    header {
+      padding: 2rem 1.5rem 1rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header h1 {
+      margin: 0 0 0.35rem;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      letter-spacing: -0.02em;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 52rem;
+    }
+    header code {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.9em;
+      background: #ebe6db;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+      display: grid;
+      gap: 1.25rem;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem 1.1rem 1.25rem;
+      box-shadow: 0 1px 0 rgba(26, 36, 32, 0.04);
+    }
+    .panel h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .diagram {
+      overflow: auto;
+      min-height: 420px;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.55rem 0.65rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .dot {
+      display: inline-block;
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 50%;
+      margin-right: 0.35rem;
+      vertical-align: middle;
+    }
+    .dot.ok { background: var(--ok); }
+    .dot.refuse { background: var(--refuse); }
+    .dot.calc { background: var(--accent); }
+    footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    @media (max-width: 640px) {
+      table { font-size: 0.82rem; }
+      th, td { padding: 0.45rem 0.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Árvore de decisão — cotação auto</h1>
+    <p>
+      Regras de negócio de <code>quote-service/data/plans.json</code>
+      (mesma lógica de <code>quote_logic.cotar</code>).
+      Fluxo: plano → idade → idade do veículo → CEP → prêmio → carência → pro-rata.
+    </p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Legenda</h2>
+      <div class="legend">
+        <span><i class="dot ok"></i>200 OK — cotação emitida</span>
+        <span><i class="dot refuse"></i>422 — cotação recusada</span>
+        <span><i class="dot calc"></i>multiplicadores / cálculo</span>
+      </div>
+    </section>
+
+    <section class="panel diagram">
+      <h2>Fluxo</h2>
+      <pre class="mermaid">
+flowchart TD
+  Start(["POST /quote<br/>plano_id, idade, veiculo_ano, cep?, data_inicio?"]) --> P{"plano_id existe<br/>em planos?"}
+
+  P -->|não| R1["RECUSAR<br/>Plano inexistente"]
+  P -->|"essencial<br/>base 119.90 / franquia 4500"| A
+  P -->|"completo<br/>base 209.90 / franquia 3000"| A
+  P -->|"premium<br/>base 339.90 / franquia 1500"| A
+
+  A{idade} -->|"&lt; 18 ou sem faixa"| R2["RECUSAR<br/>Idade fora das faixas"]
+  A -->|18–24| M1["m_idade = 1.60"]
+  A -->|25–29| M2["m_idade = 1.25"]
+  A -->|30–59| M3["m_idade = 1.00"]
+  A -->|60–75| M4["m_idade = 1.40"]
+  A -->|"≥ 76"| R3["RECUSAR<br/>acima do limite 75 anos"]
+
+  M1 --> V
+  M2 --> V
+  M3 --> V
+  M4 --> V
+
+  V{"anos = hoje.year − veiculo_ano<br/>&gt; 20?"}
+  V -->|sim| R4["RECUSAR<br/>veículo &gt; 20 anos"]
+  V -->|não · 0–5| V1["m_veic = 1.00"]
+  V -->|não · 6–10| V2["m_veic = 1.15"]
+  V -->|não · 11–20| V3["m_veic = 1.45"]
+
+  V1 --> C
+  V2 --> C
+  V3 --> C
+
+  C{"CEP informado e prefixo<br/>∈ 07, 08, 21, 26, 59?"}
+  C -->|sim| CR["m_regiao = 1.30"]
+  C -->|não / sem CEP| CN["m_regiao = 1.00"]
+
+  CR --> Calc
+  CN --> Calc
+
+  Calc["premio_mensal =<br/>base × m_idade × m_veic × m_regiao"] --> Car
+
+  Car{"cobertura inclui<br/>roubo ou furto?<br/>carência 30 dias"}
+  Car -->|sim| CarYes["aplicar carência 30 dias<br/>a partir de data_inicio"]
+  Car -->|não| Mid
+  CarYes --> Mid
+
+  Mid{"data_inicio informada<br/>e dia ≠ 1?"}
+  Mid -->|sim| Pro["primeiro_pagamento_pro_rata"]
+  Mid -->|não| Ok
+  Pro --> Ok(["200 OK — cotação"])
+
+  R1 --> End(["422 cotacao_recusada"])
+  R2 --> End
+  R3 --> End
+  R4 --> End
+
+  classDef refuse fill:#f3ddd8,stroke:#8b3a2f,color:#3a1814;
+  classDef ok fill:#d9efe3,stroke:#1f6b45,color:#123526;
+  classDef calc fill:#d8e8df,stroke:#2f6f4e,color:#1a2420;
+  class R1,R2,R3,R4,End refuse;
+  class Ok ok;
+  class M1,M2,M3,M4,V1,V2,V3,CR,CN,Calc,CarYes calc;
+      </pre>
+    </section>
+
+    <section class="panel">
+      <h2>Planos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>nome</th>
+            <th>base_mensal</th>
+            <th>franquia</th>
+            <th>coberturas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>essencial</td>
+            <td>Essencial</td>
+            <td>119.90</td>
+            <td>4500</td>
+            <td>colisao, roubo, furto</td>
+          </tr>
+          <tr>
+            <td>completo</td>
+            <td>Completo</td>
+            <td>209.90</td>
+            <td>3000</td>
+            <td>+ terceiros, vidros</td>
+          </tr>
+          <tr>
+            <td>premium</td>
+            <td>Premium</td>
+            <td>339.90</td>
+            <td>1500</td>
+            <td>+ carro_reserva, assistencia_24h</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Multiplicadores</h2>
+      <table>
+        <thead>
+          <tr><th>regra</th><th>faixas</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>faixa_etaria</td>
+            <td>18–24 ×1.60 · 25–29 ×1.25 · 30–59 ×1.00 · 60–75 ×1.40 · ≥76 recusa</td>
+          </tr>
+          <tr>
+            <td>idade_veiculo</td>
+            <td>0–5 ×1.00 · 6–10 ×1.15 · 11–20 ×1.45 · ≥21 recusa</td>
+          </tr>
+          <tr>
+            <td>regiao_cep</td>
+            <td>prefixos 07/08/21/26/59 → ×1.30 · senão ×1.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    desafio-Khal · fonte: <code>docs/arvore-decisao-planos.md</code> ·
+    abrir este arquivo no browser (precisa de rede para o CDN do Mermaid).
+  </footer>
+</body>
+</html>

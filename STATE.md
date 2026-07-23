@@ -49,16 +49,20 @@ Escala pro humano quando: dados insuficientes p/ cotar · mídia sem transcriç�
 (image/audio/document) · /quote falhou N vezes (circuit aberto) · idade/veículo
 fora de faixa cotável · objeção complexa · pedido fora de escopo.
 
-## Estado atual
-- Repo criado (privado), branch master. README + arquitetura.html + .gitignore.
-- Arquitetura desenhada (archify). Política de isolamento documentada.
-- **PRÓXIMO:** (a) vendoring limpo dos svc-* aderentes; (b) docker-compose do desafio
-  (volumes novos, coleção namastex_conversas); (c) pipeline de ingestão do dataset
-  no svc-rag; (d) lógica de cotação + cliente resiliente do /quote; (e) critério HITL
-  em código; (f) log de execução completa (entregável).
+## Estado atual (2026-07-22 noite)
+- Vendoring dos 6 `svc-*` + `quote-service` + compose esqueleto: feitos.
+- **Domínio determinístico** `domains/seguro_auto/`: feito (monta body `/quote`, não calcula prêmio).
+- **quote-api** testado local (`docker compose up --build quote-api`, porta **8000:8000**).
+- Docs de regras + Archify do fluxo `/quote`: feitos.
+- **RAG:** qdrant + svc-rag no ar; coleção `namastex_conversas` populada (712 conversas `ganho`,
+  771 chunks). Script `scripts/ingest_namastex_conversas.py`.
+- **PRÓXIMO:** (a) cliente HTTP resiliente do `/quote` no orchestrator;
+  (b) wire domínio → agente; (c) wire orchestrator → `POST /v1/search`;
+  (d) HITL em código; (e) adaptar prompts; (f) log de execução completa.
 
 ## Handoff / troca de LLM
-Este STATE + README + docs/isolamento-dados.md + arquitetura.html = fonte de verdade.
+Este STATE + README + docs/isolamento-dados.md + arquitetura.html
++ docs/fluxo-quote.sequence.html + docs/arvore-decisao-planos.html = fonte de verdade.
 Ao trocar de LLM: ler este STATE, seguir do "PRÓXIMO". Provider atrás de interface (D5).
 
 ## VENDORING EXECUTADO (2026-07-22) — 6 svc-* limpos
@@ -72,16 +76,95 @@ dataset no svc-rag (coleção namastex_conversas) + lógica de cotação + clien
 
 ## CONTRATO /quote + REAVALIAÇÃO de serviços (2026-07-22)
 **quote-service copiado** (`./quote-service`, fornecido). Contrato:
-- `POST /quote` QuoteRequest{plano_id(essencial|completo|premium), idade, ano_veiculo, cep}
+- `POST /quote` QuoteRequest{plano_id(essencial|completo|premium), idade, veiculo_ano, cep?, data_inicio?}
   → 200 cotação · **422 cotacao_recusada** (regra: idade/veículo fora de faixa) ·
   400 payload_invalido · **500/502/503** instabilidade 20% (+ lento 8s).
 - `GET /planos` tabela de regras · `GET /health`.
 - Regras (quote_logic): faixa_etaria, idade_veiculo, regiao(cep alto risco), pro_rata 1º mês.
-**Extração do lead (svc-orchestrator, código novo):** idade · ano_veiculo (de veiculo_texto
-livre) · cep · plano. 422 e 400 = observação ao loop (pede dado faltante / recusa clara);
-500/502/503 = retry+circuit → escala humano.
+**Domínio determinístico (2026-07-22):** `domains/seguro_auto/` — após o agente marcar
+dados como verificados, `build_quote_request(...)` normaliza/valida slots contra
+`quote-service/data/plans.json` e devolve o JSON de `/quote` (ou missing/errors/refusals).
+LLM não calcula nem monta o body. Prêmio só no quote-service.
+**Extração do lead:** idade · veiculo_ano (ou de veiculo_texto) · cep · plano · data_inicio.
+422/400 = observação ao loop; 500/502/503 = retry+circuit → escala humano.
 **REAVALIAÇÃO (reuso judicioso, D1):** svc-router tem 9 refs do domínio antigo
 (multi-domínio financas/rh/estoque/vendas). O fluxo do desafio é LINEAR (qualifica→cota→
 decide), não multi-domínio → **svc-router provavelmente DISPENSÁVEL** ou re-proposto p/
 classificar INTENÇÃO (qualificar/objeção/pedir-humano). Decisão: avaliar na implementação.
 Núcleo confirmado: orchestrator + guardrails + rag + inference + observability.
+
+## SESSÃO 2026-07-22 (noite) — o que foi feito
+
+### quote-api / compose
+- Corrigido mapeamento de porta no `docker-compose.yml`: container escuta **8000**
+  (`Dockerfile`/`uvicorn --port 8000`); era `8080:8080` (quebrado) → agora `8000:8000`.
+- Subido `quote-api` com `docker compose up --build -d quote-api`.
+- Testados endpoints: `GET /health`, `GET /planos`, `POST /quote`.
+- Snapshots salvos em `data/quote-api-snapshots/`
+  (`health.json`, `planos.json`, `openapi.json`, `quote_example_200.json`).
+  Nota: pasta `data/` está no `.gitignore` (PII/dataset) — snapshots locais.
+
+### Contrato POST /quote (confirmado no código + OpenAPI)
+**Request body** (domínio monta isto):
+`{plano_id?, idade, veiculo_ano, cep?, data_inicio?}` —
+obrigatórios: `idade`, `veiculo_ano`; default `plano_id=essencial`.
+**Response 200:** `plano_id`, `plano_nome`, `premio_mensal`, `franquia`, `coberturas`,
+`multiplicadores`, `carencia`, `moeda`, opcional `primeiro_pagamento_pro_rata`.
+**422** `cotacao_recusada` · **400** `payload_invalido` · **5xx** instabilidade.
+Campo correto: `veiculo_ano` (não `ano_veiculo`).
+`plano_id = (payload.get("plano_id") or "essencial").lower()` no `quote_logic` é
+**default**, não hardcode — `completo`/`premium` seguem dinâmicos via `plans.json`.
+
+### Domínio determinístico `domains/seguro_auto/`
+- Papel: **porteiro** — após `verified=True`, normaliza/valida slots contra
+  `quote-service/data/plans.json` e devolve body do POST (ou missing/errors/refusals).
+- **Não** chama `quote_logic.py`; **não** calcula prêmio/carência/pro-rata.
+- Cálculo fica no servidor: `main.py` → `cotar(req.model_dump())` → `quote_logic`.
+- Testes: `domains/seguro_auto/tests/` (30 passed).
+- Matriz mock + XML: `domains/seguro_auto/evals/results/domain_quote_cases.xml`
+  (colunas input de planos/slots + output do JSON `/quote`).
+- Cruzamento domain ↔ quote_logic (recusa/aceitação) alinhado nos casos mockados.
+
+### Documentação visual
+- `docs/arvore-decisao-planos.md` + `.html` — árvore de regras de `plans.json`
+  (1 box recusa veículo >20; carência 30d roubo/furto como condição sim/não).
+- Archify sequence do fluxo: `docs/fluxo-quote.sequence.json` →
+  `docs/fluxo-quote.sequence.html` (Archify 2.12) —
+  agente → domínio → POST `/quote` → main → cotar → plans.json → resposta.
+
+## SESSÃO 2026-07-22 (noite+) — ingestão svc-rag
+
+### Chaves (portfolio `microservicos-ai-orchestrator`)
+- svc-rag usa **`INTERNAL_KEY`** (header `X-Internal-Key`) — fail-closed.
+  `.env.example` do portfolio: placeholder `troque-me`. No desafio: `dev-namastex-key`
+  (`.env.example` local; `.env` gitignored).
+- **`QDRANT_API_KEY`**: opcional; Qdrant local (imagem docker) **sem key**.
+  Portfolio tem a variável no `.env` raiz — não necessária aqui.
+- **`VOYAGE_API_KEY`**: existe no portfolio; **não** usada pelo svc-rag (SBERT local).
+- Compose corrigido: `INTERNAL_KEY` (antes `X_INTERNAL_KEY` errado),
+  `ALLOW_LOCAL_STORE=1` (Qdrant em rede docker = IP privado; anti-SSRF),
+  porta `8204:8204`, `VECTOR_STORE=qdrant`.
+
+### Ingestão executada
+```bash
+docker compose up --build -d qdrant svc-rag
+INTERNAL_KEY=dev-namastex-key python3 scripts/ingest_namastex_conversas.py --outcome ganho
+```
+- Health: embedder ok, vector_store ok, graphrag absent.
+- Resultado: **712 docs / 771 chunks** na coleção `namastex_conversas`.
+- Smoke search OK (`seguro auto corolla idade`, etc.).
+- Plano: `docs/plano-ingestao-rag.md`.
+
+## SESSÃO 2026-07-22 (noite++) — cliente resiliente /quote (item PRÓXIMO-a FEITO)
+`services/svc-orchestrator/src/orch_svc/quote_client.py`: `ResilientQuoteClient`
+(reusa `circuit.py`). 4 desfechos + escalonamento:
+- 200 → QUOTED · 422 → REFUSED (observação, NÃO reintenta) · 400 → INVALID (falta dado)
+- 5xx/timeout → retry + backoff (2^n) + circuit (3 falhas → OPEN) · esgota/OPEN → UNAVAILABLE + escalate=True (nunca inventa cotação).
+- 4xx não conta no breaker (semântica do circuit.py). Sleep injetável p/ teste.
+`tests/test_quote_client.py`: **7 passed** (quoted/refused-sem-retry/invalid/retry-sucesso/
+timeout/esgota-escala/circuito-aberto-escala).
+**PRÓXIMO:** (b) wire domínio seguro_auto → agente (body → quote_client); (c) wire
+orchestrator → svc-rag POST /v1/search; (d) critério HITL completo em código
+(escalate já cobre /quote; falta: dados insuficientes, mídia sem transcrição, idade/veículo
+fora de faixa via REFUSED); (e) adaptar prompts + DISPENSAR svc-router (fluxo linear);
+(f) log de execução completa (entregável).

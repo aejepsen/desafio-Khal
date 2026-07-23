@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "desafio-Khal — Fluxo POST /quote",
+    "subtitle": "Domínio monta o body → FastAPI main.py chama cotar() → quote_logic calcula → resposta",
+    "output": "docs/fluxo-quote.sequence.html",
+    "animation": "trace",
+    "visual_preset": "classic",
+    "quality_profile": "standard",
+    "viewBox": [980, 780],
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "Caminho feliz 200",
+        "focus": ["agent", "domain", "quote_api", "quote_logic", "plans"],
+        "note": "Slots verificados viram QuoteRequest; o servidor chama cotar() e devolve a cotação."
+      },
+      {
+        "id": "server-calc",
+        "label": "Cálculo no servidor",
+        "focus": ["quote_api", "quote_logic", "plans"],
+        "note": "quote_logic só roda depois do POST — nunca no domínio, antes do request."
+      },
+      {
+        "id": "failure-path",
+        "label": "Falhas e recusas",
+        "focus": ["agent", "quote_api", "quote_logic"],
+        "note": "5xx/lento antes de cotar; 422 CotacaoRecusada; 400 payload inválido."
+      }
+    ]
+  },
+  "participants": [
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agente",
+      "sublabel": "svc-orchestrator"
+    },
+    {
+      "id": "domain",
+      "type": "security",
+      "label": "Domínio",
+      "sublabel": "domains/seguro_auto"
+    },
+    {
+      "id": "quote_api",
+      "type": "cloud",
+      "label": "quote-api",
+      "sublabel": "main.py · :8000"
+    },
+    {
+      "id": "quote_logic",
+      "type": "backend",
+      "label": "quote_logic",
+      "sublabel": "cotar()"
+    },
+    {
+      "id": "plans",
+      "type": "database",
+      "label": "plans.json",
+      "sublabel": "regras + planos"
+    }
+  ],
+  "segments": [
+    { "from": 145, "to": 265, "label": "1 · Montar body" },
+    { "from": 285, "to": 400, "label": "2 · POST /quote" },
+    { "from": 420, "to": 610, "label": "3 · Cálculo" },
+    { "from": 630, "to": 720, "label": "4 · Resposta" }
+  ],
+  "messages": [
+    {
+      "id": "verify-to-domain",
+      "from": "agent",
+      "to": "domain",
+      "y": 175,
+      "label": "build_quote_request(slots, verified)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "domain-payload",
+      "from": "domain",
+      "to": "agent",
+      "y": 225,
+      "label": "body QuoteRequest {plano_id, idade, veiculo_ano...}",
+      "variant": "return"
+    },
+    {
+      "id": "post-quote",
+      "from": "agent",
+      "to": "quote_api",
+      "y": 320,
+      "label": "POST /quote + JSON body",
+      "variant": "emphasis",
+      "note": "Antes: roll ~20% 5xx / ~10% lento 8s — sem cotar()"
+    },
+    {
+      "id": "call-cotar",
+      "from": "quote_api",
+      "to": "quote_logic",
+      "y": 450,
+      "label": "cotar(req.model_dump())",
+      "variant": "emphasis"
+    },
+    {
+      "id": "load-plans",
+      "from": "quote_logic",
+      "to": "plans",
+      "y": 500,
+      "label": "load_plans() + regras",
+      "variant": "default"
+    },
+    {
+      "id": "plans-return",
+      "from": "plans",
+      "to": "quote_logic",
+      "y": 545,
+      "label": "planos · faixas · CEP · carência",
+      "variant": "return"
+    },
+    {
+      "id": "cotar-return",
+      "from": "quote_logic",
+      "to": "quote_api",
+      "y": 590,
+      "label": "premio/carência  |  CotacaoRecusada",
+      "variant": "return",
+      "note": "Calcula multiplicadores, premio_mensal, carência, pro-rata"
+    },
+    {
+      "id": "http-response",
+      "from": "quote_api",
+      "to": "agent",
+      "y": 670,
+      "label": "200 · 422 · 400 · 5xx",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Domínio (antes do POST)",
+      "items": [
+        "Só monta/valida o body de entrada",
+        "Não importa quote_logic.py",
+        "Não calcula prêmio"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Servidor (depois do POST)",
+      "items": [
+        "main.py → cotar(payload)",
+        "quote_logic lê plans.json",
+        "Retorno: prêmio, coberturas, carência, pro-rata"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Resiliência",
+      "items": [
+        "~20% 500/502/503 antes do cálculo",
+        "~10% lento 8s",
+        "Agente: retry + circuit → HITL"
+      ]
+    }
+  ]
+}

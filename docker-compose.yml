@@ -2,8 +2,9 @@
 # Princípio (docs/isolamento-dados.md): cada serviço sobe com estado DO ZERO.
 # Volumes NOVOS (nomeados com prefixo do desafio); nada montado de outros projetos.
 
+# Auth interna dos svc-* (portfolio: INTERNAL_KEY). Dev default local — trocar em prod.
 x-internal-auth: &internal-auth
-  X_INTERNAL_KEY: ${X_INTERNAL_KEY:-dev-namastex-key}
+  INTERNAL_KEY: ${INTERNAL_KEY:-dev-namastex-key}
 
 services:
   # --- sistema externo fornecido pelo desafio (falha 20% + lento de propósito) ---
@@ -12,7 +13,7 @@ services:
     environment:
       QUOTE_FAILURE_RATE: "0.20"
       QUOTE_SLOW_SECONDS: "8"
-    ports: ["8080:8080"]
+    ports: ["8000:8000"]
 
   # --- infra (instâncias DEDICADAS, volumes limpos) ---
   qdrant:
@@ -27,10 +28,17 @@ services:
 
   svc-rag:
     build: ./services/svc-rag
+    ports: ["8204:8204"]
     environment:
       <<: *internal-auth
+      VECTOR_STORE: qdrant
       QDRANT_URL: "http://qdrant:6333"
-      RAG_COLLECTION: "namastex_conversas"      # coleção NOVA, populada só do dataset
+      # Local/docker: Qdrant sem API key (portfolio usa QDRANT_API_KEY só se o cluster exigir)
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      # Necessário: QDRANT_URL em rede docker é IP privado (anti-SSRF do svc-rag)
+      ALLOW_LOCAL_STORE: "1"
+      GRAPHRAG_ENABLED: "0"
+      EMBED_MODEL: ${EMBED_MODEL:-paraphrase-multilingual-MiniLM-L12-v2}
     depends_on: [qdrant]
 
   svc-router:
