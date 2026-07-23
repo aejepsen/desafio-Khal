@@ -61,6 +61,15 @@ docker compose up --build
 # 1ª vez: pull qwen2.5:7b (~4.7 GB) + build das imagens (pode demorar)
 ```
 
+O clone já traz `dataset/conversations.parquet` (**sintético** — ver
+[`dataset/DICIONARIO.md`](./dataset/DICIONARIO.md)). Após o compose, ingira no RAG:
+
+```bash
+python scripts/ingest_namastex_conversas.py
+# Neo4j: seed automático no boot do agente (NEO4J_SEED_ON_BOOT=1) ou
+#   curl -X POST http://localhost:8100/graph/neo4j/seed-dataset
+```
+
 ```bash
 curl -s http://localhost:8100/health
 curl -s -X POST http://localhost:8100/chat -H 'content-type: application/json' \

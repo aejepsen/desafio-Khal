@@ -32,7 +32,8 @@
 - [ ] **.env próprio** — chaves e configs do desafio; nunca herdar.
 - [ ] **Pipeline de ingestão dedicado** — script que popula svc-rag só do dataset.
 - [ ] **Verificação pré-subida** — confirmar volumes vazios / coleções ausentes.
-- [ ] **`.gitignore`** — `*.parquet`, `dataset/`, `data/`, `.env` fora do repo.
+- [ ] **`.gitignore`** — `.env` e `data/` (runtime) fora do repo. O
+  `dataset/conversations.parquet` **entra no repo** (sintético; ver `DICIONARIO.md`).
 
 ## Fronteira
 Reuso = **código + contratos + lógica**. Isolamento = **dados + estado + segredos**.
