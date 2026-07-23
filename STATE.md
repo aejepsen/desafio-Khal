@@ -295,3 +295,13 @@ objeção persiste tentativas entre turnos, limite MAX_TURNOS=8 = HITL temporal.
 Demonstrado: T1 só idade→pede veículo; T2 completa→cota R$137.88 (lembrou da idade).
 Tests: test_thread 5 (32 total). **PRÓXIMO:** extração LLM (capta plano/veículo livre);
 wire resposta redigida (svc-inference com persona+tática); README final (decisões).
+
+## SESSÃO 2026-07-23 — COLETA ATIVA (completude da cotação)
+Gap fechado: agente agora capta plano_id do texto (_PLANO: premium/completo/essencial por
+keyword, ordem específica) e COLETA ATIVAMENTE os campos que mudam o preço, não usa default
+silencioso. thread: OBRIGATORIOS=[idade,veiculo_ano,plano_id] (sempre pergunta) ·
+OPCIONAIS_ATIVOS=[cep] (pede 1x, cota sem se lead não der) · data_inicio=hoje (default explícito).
+ThreadState.pedidos evita re-perguntar. Demonstrado: lead completo mas sem plano → pergunta o
+plano → "premium" → cota Premium R$390.88 (antes cotava Essencial R$137.88 silencioso). 33 testes.
+**PRÓXIMO:** extração LLM (plano/veículo de texto livre mais rico); resposta redigida
+(svc-inference persona+tática); README final (decisões).

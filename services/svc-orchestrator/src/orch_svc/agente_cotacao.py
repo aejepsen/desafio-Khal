@@ -24,6 +24,12 @@ _CEP = re.compile(r"\b\d{5}-?\d{3}\b")
 _EMAIL = re.compile(r"[\w.\-]+@[\w.\-]+")
 _IDADE = re.compile(r"\b(\d{1,2})\s*anos\b", re.I)
 _ANO = re.compile(r"\b(19\d{2}|20\d{2})\b")
+# plano por keyword (ordem importa: "mais completo" = premium antes de "completo")
+_PLANO = [
+    ("premium", r"premium|top|melhor plano|mais completo|cobertura total"),
+    ("completo", r"\bcompleto\b|intermedi"),
+    ("essencial", r"essencial|b[áa]sico|mais barato|simples|em conta|s[óo] o b[áa]sico"),
+]
 
 
 def mascarar_pii(t: str) -> str:
@@ -46,6 +52,11 @@ def extrair_slots_heuristica(texto: str) -> dict[str, Any]:
     c = _CEP.search(texto)
     if c:
         slots["cep"] = c.group(0)
+    low = texto.lower()
+    for plano, pat in _PLANO:
+        if re.search(pat, low):
+            slots["plano_id"] = plano
+            break
     return slots
 
 

@@ -9,6 +9,7 @@ critério HITL temporal (conversa que não avança escala).
 """
 from __future__ import annotations
 
+import datetime as _dt
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
@@ -25,6 +26,9 @@ LABELS = {
     "plano_id": "o plano desejado (essencial, completo ou premium)",
 }
 MAX_TURNOS = 8
+# coleta ATIVA — campos que mudam o preço/a escolha, não deixar como default silencioso
+OBRIGATORIOS = ["idade", "veiculo_ano", "plano_id"]   # sempre perguntados
+OPCIONAIS_ATIVOS = ["cep"]                            # pede 1x; cota sem se o lead não der
 
 
 @dataclass
@@ -32,6 +36,7 @@ class ThreadState:
     conversation_id: str
     slots: dict[str, Any] = field(default_factory=dict)
     tentativas_objecao: dict[str, int] = field(default_factory=dict)
+    pedidos: set[str] = field(default_factory=set)     # campos já solicitados (não repetir)
     turnos: int = 0
     estagio: str = "qualificando"      # qualificando | objecao | cotado | escalado
     encerrado: bool = False
@@ -102,7 +107,20 @@ def run_turno(mensagem: str, state: ThreadState, build_fn: Callable[..., Any],
         ev.append(Evento("decide", dec.acao, {"escalate": True}))
         return Execucao(state.conversation_id, ev, dec), state
 
-    # porteiro (sobre os slots ACUMULADOS) + decisão
+    # coleta ATIVA — pede plano/cep/data antes de cotar (não usa default silencioso)
+    state.slots.setdefault("data_inicio", _dt.date.today().isoformat())
+    faltam = [c for c in OBRIGATORIOS if not state.slots.get(c)]
+    for c in OPCIONAIS_ATIVOS:                # pede 1x; se o lead não der, cota sem
+        if not state.slots.get(c) and c not in state.pedidos:
+            faltam.append(c)
+    if faltam:
+        state.pedidos.update(faltam)
+        state.estagio = "qualificando"
+        dec = DecisaoCotacao("pedir_dado", faltam=faltam, motivos=[pedir_faltantes(faltam)])
+        ev.append(Evento("decide", dec.acao, {"faltam": faltam}))
+        return Execucao(state.conversation_id, ev, dec), state
+
+    # tudo coletado → porteiro + decisão
     br = build_fn(state.slots)
     dec = decidir_cotacao(br, quote_client, query=mensagem, rag=rag, trace=state.conversation_id)
     if dec.acao == "pedir_dado":

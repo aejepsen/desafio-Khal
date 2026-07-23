@@ -19,12 +19,22 @@ class FakeQuote:
 def test_acumula_slots_entre_turnos():
     st = ThreadState("c1")
     ex, st = run_turno("tenho 30 anos", st, _build, FakeQuote())
-    assert ex.decisao.acao == "pedir_dado" and "veiculo_ano" in ex.decisao.faltam
-    assert st.slots == {"idade": 30} and st.turnos == 1
-    # 2º turno: manda o veículo -> agora completo -> cota (lembrou da idade)
-    ex, st = run_turno("é um Corolla 2020", st, _build, FakeQuote())
-    assert ex.decisao.acao == "apresentar_cotacao" and st.slots["veiculo_ano"] == 2020
-    assert st.encerrado and st.estagio == "cotado"
+    # coleta ativa: pede veículo E plano (não usa default silencioso)
+    assert ex.decisao.acao == "pedir_dado"
+    assert "veiculo_ano" in ex.decisao.faltam and "plano_id" in ex.decisao.faltam
+    assert st.slots["idade"] == 30 and st.turnos == 1
+    # 2º turno: veículo + plano -> completo -> cota (lembrou da idade; cep já foi pedido)
+    ex, st = run_turno("é um Corolla 2020, quero o completo", st, _build, FakeQuote())
+    assert ex.decisao.acao == "apresentar_cotacao"
+    assert st.slots["veiculo_ano"] == 2020 and st.slots["plano_id"] == "completo"
+    assert st.slots.get("data_inicio") and st.encerrado
+
+
+def test_coleta_ativa_plano_nao_cota_sem_plano():
+    # tem idade+veículo mas NÃO plano -> não cota, pergunta o plano (não assume essencial)
+    st = ThreadState("cp", slots={"idade": 30, "veiculo_ano": 2020})
+    ex, st = run_turno("qual o valor?", st, _build, FakeQuote())
+    assert ex.decisao.acao == "pedir_dado" and "plano_id" in ex.decisao.faltam
 
 
 def test_objecao_persistida_entre_turnos():
