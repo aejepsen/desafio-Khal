@@ -6,7 +6,8 @@ um lead de seguro auto de ponta a ponta: **conversa → qualifica → cota → d
 
 > Handoff longo / diário de engenharia: [`STATE.md`](./STATE.md).  
 > Log de execução completa (com cotação): [`docs/log-execucao-real.md`](./docs/log-execucao-real.md)  
-> · audit SQLite: `GET /audit/{conversation_id}` (ex.: `docs/audit-audit-7b-1784829171.json`).
+> · audit SQLite: `GET /audit/{conversation_id}` (ex.: `docs/audit-audit-7b-1784829171.json`).  
+> · métricas modelo/agente: [`docs/metricas-modelo.md`](./docs/metricas-modelo.md).
 
 ## Arquitetura
 
@@ -18,12 +19,12 @@ Um **agente de cotação** (`app/main.py` + `orch_svc`) integra microsserviços
 
 | Serviço | Porta | Papel |
 |---------|-------|--------|
-| **agente** | 8100 | `POST /chat` multi-turno |
+| **agente** | 8100 | `POST /chat` · `GET /metrics` (KPIs audit) · `GET /audit/{id}` |
 | **quote-api** | 8000 | cotação (20% 5xx + lentidão) |
 | **svc-guardrails** | 8200 | sanitize + PII + injection |
-| **svc-inference** | 8202 | extract/redação via LLM |
+| **svc-inference** | 8202 | extract/redação via LLM · tokens/latência em `/metrics` |
 | **svc-rag** | 8204 | few-shot `namastex_conversas` |
-| **svc-observability** | 8205 | agrega métricas LLM + KPIs do agente |
+| **svc-observability** | 8205 | scrape + `GET /v1/overview` · `GET /v1/prometheus` |
 | **svc-media-asr** | 8210 | Whisper `small` (áudio → texto) |
 | **svc-media-ocr** | 8211 | Tesseract (imagem/PDF → texto) |
 | **ollama** | 11434 | `qwen2.5:7b` (Q4) |
@@ -90,7 +91,16 @@ python scripts/e2e_escalar_humano.py  # HITL (objeção / mídia / faixa)
 python scripts/e2e_ocr_dados.py       # imagem → OCR → cotação
 ```
 
-Métricas de desempenho (LLM + KPIs do agente via observability):
+Métricas de desempenho (LLM + KPIs do agente):
+
+```bash
+KEY="${INTERNAL_KEY:-dev-namastex-key}"
+curl -s http://localhost:8100/metrics -H "X-Internal-Key: $KEY"
+curl -s -X POST http://localhost:8205/v1/refresh -H "X-Internal-Key: $KEY"
+curl -s http://localhost:8205/v1/overview -H "X-Internal-Key: $KEY"
+```
+
+Detalhe das taxas (HITL, redação LLM, fechamento) e eval offline:
 [`docs/metricas-modelo.md`](./docs/metricas-modelo.md).
 
 Neo4j Browser: http://localhost:7474 (`neo4j` / senha no `.env`).
@@ -114,6 +124,7 @@ Falha persistente de `/quote` → retry/circuit → `escalar_humano` (sem invent
 | **Ollama `qwen2.5:7b` Q4** | Cabe na 3060 12 GB com Whisper small; redação mais estável que 3B. |
 | **OCR `media_base64`** | Lê dados enviados sem depender de URL pública. |
 | **Audit SQLite por `conversation_id`** | Rastreabilidade exigida: cada passo com id + status. |
+| **Observability raspando agente + inference** | Avaliar modelo (latência/tokens) e funil (HITL/cotação/fechamento) sem dashboard extra. |
 
 Detalhe fino / histórico de sessões: [`STATE.md`](./STATE.md).  
 Isolamento de dados: [`docs/isolamento-dados.md`](./docs/isolamento-dados.md).
@@ -126,6 +137,7 @@ Isolamento de dados: [`docs/isolamento-dados.md`](./docs/isolamento-dados.md).
 | `/quote` falha | cliente resiliente · HITL grau A · eval R2 |
 | HITL explícito | `scripts/e2e_escalar_humano.py` · `docs/hitl-dataset-validacao.md` |
 | Rastreabilidade | `GET /audit/{conversation_id}` · eventos `step`/`status` |
+| Desempenho do modelo | `GET /metrics` · `:8205/v1/overview` · [`docs/metricas-modelo.md`](./docs/metricas-modelo.md) |
 | PII | guardrails + mask no audit |
 | Dataset | RAG `namastex_conversas` · Neo4j ganho · evals |
 
@@ -141,7 +153,7 @@ desafio-Khal/
   services/                # svc-* + media-asr/ocr
   domains/seguro_auto/     # porteiro do body /quote
   scripts/                 # e2e ciclo / HITL / OCR
-  docs/                    # logs, evals, fixtures
+  docs/                    # logs, evals, fixtures, metricas-modelo.md
 ```
 
 Desfechos: `apresentar_cotacao` · `emitir_apolice` · `reverter_objecao` · `pedir_dado` · `recusar` · `escalar_humano`.

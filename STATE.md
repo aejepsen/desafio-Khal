@@ -72,11 +72,18 @@ fora de faixa cotável · objeção complexa · pedido fora de escopo.
   Tesseract lê idade/ano/plano/CEP → fluxo normal. Smoke: `scripts/e2e_ocr_dados.py`.
 - **Bootstrap corpus no compose:** `rag-ingest` (712 ganho → 771 chunks) + boot Neo4j
   (`NEO4J_INGEST_DATASET_ON_BOOT`) → clone sobe com o mesmo corpus da demo.
+- **Observability ligado ao desempenho do modelo:** `GET /metrics` no agente (KPIs do
+  audit: HITL, redação LLM, funil cotação/fechamento) + scrape de `svc-inference`
+  (tokens/latência). Compose: `ALLOW_LOCAL_UPSTREAM`, `UPSTREAM_KEY`, `OBS_UPSTREAMS`
+  (agente + inference + rag + guardrails). Overview: `POST :8205/v1/refresh` →
+  `GET :8205/v1/overview`. Doc: `docs/metricas-modelo.md`. Validado 4/4 upstreams OK
+  e KPIs = SQLite audit.
 - **PRÓXIMO:** tornar repo público na entrega formal.
 
 ## Handoff / troca de LLM
-Este STATE + README + docs/isolamento-dados.md + arquitetura.html
-+ docs/fluxo-quote.sequence.html + docs/arvore-decisao-planos.html = fonte de verdade.
+Este STATE + README + docs/isolamento-dados.md + docs/metricas-modelo.md
++ arquitetura.html + docs/fluxo-quote.sequence.html
++ docs/arvore-decisao-planos.html = fonte de verdade.
 Ao trocar de LLM: ler este STATE, seguir do "PRÓXIMO". Provider atrás de interface (D5).
 
 ## VENDORING EXECUTADO (2026-07-22) — 6 svc-* limpos
@@ -487,3 +494,17 @@ Ingest: `POST /graph/neo4j/seed-dataset` / `scripts/neo4j_seed_dataset.py`
 (400+ conversas `ganho` → nós Conversation, MENTIONS_PLAN, EXEMPLIFIES emitir_apolice).
 Agente: pós-`cotado`, aceite do lead (`fechado`/`pode emitir`/…) → `emitir_apolice`
 (mensagem boleto+apólice, espelho dataset). `estagio=contratado`. Tests `test_aceitacao`.
+
+## SESSÃO 2026-07-23 — Observability: métricas de desempenho do modelo
+Antes: `svc-observability` no compose mas scrape 0/6 (lista portfolio + sem
+`ALLOW_LOCAL_UPSTREAM`/`UPSTREAM_KEY`); trilha real = audit SQLite.
+Agora:
+- `AuditStore.model_performance_metrics()` + `GET /metrics` no agente (`X-Internal-Key`)
+  — contadores/taxas: turns, HITL, `llm_redacao_rate`, `fechamento_sobre_cotacao_rate`, …
+- `OBS_UPSTREAMS` no compose: agente · inference · rag · guardrails (override sem
+  quebrar gates default do svc via `registry()`).
+- Doc `docs/metricas-modelo.md` + link no README.
+- Validação ao vivo: refresh 4/4 OK; overview do agente idêntico ao `/metrics`;
+  contadores cruzados com SQL do audit (0 divergências). Caveat: p95 < p50 no
+  inference com N≈2 amostras (quirk do percentil, não do agregador).
+Commit: `55b9110`.
