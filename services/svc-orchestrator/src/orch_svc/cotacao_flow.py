@@ -50,6 +50,20 @@ class DecisaoCotacao:
     escalate: bool = False
 
 
+def _extrair_body(build_result: Any) -> dict[str, Any]:
+    """BuildResult.payload -> dict do POST /quote (tolera nomes de método)."""
+    payload = getattr(build_result, "payload", None) or getattr(build_result, "body", None)
+    if payload is None:
+        return {}
+    if isinstance(payload, dict):
+        return payload
+    for meth in ("to_body", "as_body", "as_dict", "model_dump", "dict"):
+        fn = getattr(payload, meth, None)
+        if callable(fn):
+            return fn()
+    return dict(getattr(payload, "__dict__", {}))
+
+
 def decidir_cotacao(build_result: _BuildResult, quote_client: _QuoteClient, *,
                     query: str | None = None, rag: _Rag | None = None,
                     trace: str = "-") -> DecisaoCotacao:
@@ -68,7 +82,7 @@ def decidir_cotacao(build_result: _BuildResult, quote_client: _QuoteClient, *,
         except Exception:
             exemplos = []                       # RAG é enriquecimento; não bloqueia
 
-    out = quote_client.quote(build_result.body or {}, trace)
+    out = quote_client.quote(_extrair_body(build_result), trace)
     if out.status is QuoteStatus.QUOTED:
         return DecisaoCotacao("apresentar_cotacao", quote=out.quote, exemplos=exemplos)
     if out.status is QuoteStatus.REFUSED:

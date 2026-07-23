@@ -178,3 +178,18 @@ Injeção de dependência (testável sem cross-import). `tests/test_cotacao_flow
 (+ 7 do quote_client = 13). **PRÓXIMO:** (e) wire no grafo orchestrator.py (nó de cotação
 real chamando cotacao_flow) + adaptar prompts + DISPENSAR svc-router (fluxo linear, remove ~40 refs);
 (f) log de execução completa (entregável); ligar rag/quote clients reais no app.
+
+## SESSÃO 2026-07-22 (noite++++) — (e) svc-router dispensado + (f) log de execução
+- **(e)** `svc-router` REMOVIDO (multi-domínio, fluxo é linear) — ~40 refs financas foram;
+  restam 9 arquivos menores (svc-orchestrator README/tests, svc-guardrails SPEC/test) a adaptar.
+  compose limpo (sem svc-router/ROUTER_URL).
+- **(f)** `orch_svc/agente_cotacao.py`: runner linear com LOG rastreável (Evento id+status/passo),
+  mascara PII, extração heurística de slots (idade/veiculo_ano/cep). `scripts/demo_execucao.py`
+  roda 3 cenários → **`docs/log-execucao.md`** (entregável): caminho_feliz (QUOTED) ·
+  quote_instavel (UNAVAILABLE→escala humano) · falta_dado (porteiro missing→pedir_dado).
+- Testes: 13 passed (quote_client 7 + cotacao_flow 6). cotacao_flow._extrair_body tolera
+  BuildResult.payload (o body real vem do porteiro).
+**PRÓXIMO:** adaptar 9 refs restantes (financas→seguro); wire clients REAIS no app.py
+(guardrails/rag/inference/quote via env URLs); extração de slots via LLM (svc-inference)
+substituindo heurística; rodar demo contra quote-api real (docker) p/ log com retry verdadeiro;
+adaptar prompts; README final com decisões (entregável #3).
