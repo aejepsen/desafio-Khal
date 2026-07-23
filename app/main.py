@@ -179,10 +179,13 @@ def graph_neo4j_seed():
 @app.post("/graph/neo4j/seed-dataset")
 def graph_neo4j_seed_dataset(
     outcome: str = "ganho",
-    limit: int = 500,
+    limit: int = 0,
     all_outcomes: bool = False,
 ):
-    """Popula Neo4j a partir de dataset/conversations.parquet (pesquisa semântica)."""
+    """Popula Neo4j a partir de dataset/conversations.parquet (pesquisa semântica).
+
+    limit=0 → todas as conversas do filtro (default ganho).
+    """
     from pathlib import Path
 
     from app.dataset_graph import build_conversation_nodes, load_parquet_rows
@@ -197,7 +200,8 @@ def graph_neo4j_seed_dataset(
         return {"status": "error", "detail": "parquet não encontrado"}
     rows = load_parquet_rows(path)
     outcomes = None if all_outcomes else {outcome}
-    convs = build_conversation_nodes(rows, outcomes=outcomes, limit=limit)
+    lim = None if limit <= 0 else limit
+    convs = build_conversation_nodes(rows, outcomes=outcomes, limit=lim)
     g.seed_fechamento_catalog()
     g.seed_dataset_anchors()
     n = g.ingest_conversations(convs)

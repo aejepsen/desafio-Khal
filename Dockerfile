@@ -1,4 +1,5 @@
 # Agente de cotação (desafio Namastex) — app/main.py
+# Também usado pelo one-shot rag-ingest no compose.
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -13,6 +14,8 @@ COPY app ./app
 COPY domains ./domains
 COPY services/svc-orchestrator/src ./services/svc-orchestrator/src
 COPY quote-service/data/plans.json ./quote-service/data/plans.json
+COPY scripts ./scripts
+COPY dataset ./dataset
 
 EXPOSE 8100
 RUN mkdir -p /data && useradd -r -u 10001 appuser && chown -R appuser:appuser /app /data

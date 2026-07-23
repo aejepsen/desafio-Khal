@@ -62,12 +62,18 @@ docker compose up --build
 ```
 
 O clone já traz `dataset/conversations.parquet` (**sintético** — ver
-[`dataset/DICIONARIO.md`](./dataset/DICIONARIO.md)). Após o compose, ingira no RAG:
+[`dataset/DICIONARIO.md`](./dataset/DICIONARIO.md)). No `docker compose up`, o corpus
+é populado **automaticamente** (paridade com o ambiente de demo):
+
+- **RAG** (`namastex_conversas`, outcome `ganho`) — serviço one-shot `rag-ingest`
+- **Neo4j** (catálogo + conversas `ganho`) — boot do agente
+  (`NEO4J_INGEST_DATASET_ON_BOOT=1`)
+
+Reingest manual (idempotente):
 
 ```bash
 python scripts/ingest_namastex_conversas.py
-# Neo4j: seed automático no boot do agente (NEO4J_SEED_ON_BOOT=1) ou
-#   curl -X POST http://localhost:8100/graph/neo4j/seed-dataset
+curl -X POST 'http://localhost:8100/graph/neo4j/seed-dataset?outcome=ganho&limit=0'
 ```
 
 ```bash

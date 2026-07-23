@@ -70,7 +70,9 @@ fora de faixa cotável · objeção complexa · pedido fora de escopo.
   `docs/log-execucao-real.md`. Extração LLM ancorada no texto (anti-alucinação).
 - **OCR dados enviados:** `/chat` aceita `media_base64` (+ `message_type=image|document`);
   Tesseract lê idade/ano/plano/CEP → fluxo normal. Smoke: `scripts/e2e_ocr_dados.py`.
-- **PRÓXIMO:** polir README final (decisões / mapa régua / entregável #3) se ainda faltar.
+- **Bootstrap corpus no compose:** `rag-ingest` (712 ganho → 771 chunks) + boot Neo4j
+  (`NEO4J_INGEST_DATASET_ON_BOOT`) → clone sobe com o mesmo corpus da demo.
+- **PRÓXIMO:** tornar repo público na entrega formal.
 
 ## Handoff / troca de LLM
 Este STATE + README + docs/isolamento-dados.md + arquitetura.html

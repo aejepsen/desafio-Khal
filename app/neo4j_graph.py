@@ -296,7 +296,7 @@ def get_neo4j() -> Neo4jGraph:
 
 
 def boot_neo4j() -> dict[str, Any]:
-    """Conecta + seed se NEO4J_SEED_ON_BOOT=1."""
+    """Conecta + seed + ingest dataset (paridade clone ↔ ambiente de demo)."""
     g = get_neo4j()
     if not g.enabled:
         return {"status": "disabled"}
@@ -309,4 +309,27 @@ def boot_neo4j() -> dict[str, Any]:
             out["anchors"] = g.seed_dataset_anchors()
         except Exception as exc:
             out["seed_error"] = str(exc)
+    # Ingest conversas ganho do parquet (idempotente MERGE) — mesmo corpus do RAG.
+    if os.environ.get("NEO4J_INGEST_DATASET_ON_BOOT", "1") in ("1", "true", "True"):
+        try:
+            from pathlib import Path
+
+            from app.dataset_graph import build_conversation_nodes, load_parquet_rows
+
+            path = Path("/app/dataset/conversations.parquet")
+            if not path.exists():
+                root = Path(__file__).resolve().parents[1]
+                path = root / "dataset" / "conversations.parquet"
+            if not path.exists():
+                out["ingest_error"] = "parquet não encontrado"
+            else:
+                limit = int(os.environ.get("NEO4J_INGEST_LIMIT", "0") or "0") or None
+                rows = load_parquet_rows(path)
+                convs = build_conversation_nodes(
+                    rows, outcomes={"ganho"}, limit=limit
+                )
+                out["ingest_conversations"] = g.ingest_conversations(convs)
+                out["ingest_limit"] = limit or "all_ganho"
+        except Exception as exc:
+            out["ingest_error"] = str(exc)
     return out

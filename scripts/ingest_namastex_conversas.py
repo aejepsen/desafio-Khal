@@ -190,6 +190,12 @@ def main() -> None:
     parser.add_argument("--all", action="store_true", help="Ingere todos os outcomes")
     parser.add_argument("--limit", type=int, default=None, help="Máx. conversas")
     parser.add_argument("--skip-smoke", action="store_true")
+    parser.add_argument(
+        "--wait-s",
+        type=int,
+        default=int(os.environ.get("RAG_INGEST_WAIT_S", "0") or "0"),
+        help="Espera svc-rag /health ficar ok (compose bootstrap).",
+    )
     args = parser.parse_args()
 
     if not args.parquet.is_file():
@@ -202,6 +208,22 @@ def main() -> None:
         outcomes = set(args.outcome)
     else:
         outcomes = {"ganho"}
+
+    if args.wait_s > 0:
+        import time
+
+        deadline = time.time() + args.wait_s
+        health_url = f"{args.base_url.rstrip('/')}/health"
+        while True:
+            try:
+                with urllib.request.urlopen(health_url, timeout=5) as resp:
+                    if resp.status == 200:
+                        print("svc-rag ready")
+                        break
+            except Exception as exc:
+                if time.time() >= deadline:
+                    raise SystemExit(f"timeout esperando svc-rag: {exc}") from exc
+                time.sleep(2)
 
     print(f"lendo {args.parquet} …")
     rows = _load_rows(args.parquet)

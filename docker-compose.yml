@@ -103,6 +103,30 @@ services:
       neo4j:
         condition: service_healthy
 
+  # Popula Qdrant (namastex_conversas / ganho) — paridade com o ambiente de demo.
+  rag-ingest:
+    build: .
+    environment:
+      <<: *internal-auth
+      RAG_URL: "http://svc-rag:8204"
+      RAG_INGEST_WAIT_S: "180"
+    command:
+      [
+        "python",
+        "scripts/ingest_namastex_conversas.py",
+        "--base-url",
+        "http://svc-rag:8204",
+        "--wait-s",
+        "180",
+        "--skip-smoke",
+      ]
+    volumes:
+      - ./dataset:/app/dataset:ro
+    depends_on:
+      svc-rag:
+        condition: service_started
+    restart: "on-failure"
+
   svc-inference:
     build: ./services/svc-inference
     ports: ["8202:8202"]
@@ -158,6 +182,8 @@ services:
       NEO4J_USER: ${NEO4J_USER:-neo4j}
       NEO4J_PASSWORD: ${NEO4J_PASSWORD:-namastex-graph}
       NEO4J_SEED_ON_BOOT: ${NEO4J_SEED_ON_BOOT:-1}
+      NEO4J_INGEST_DATASET_ON_BOOT: ${NEO4J_INGEST_DATASET_ON_BOOT:-1}
+      NEO4J_INGEST_LIMIT: ${NEO4J_INGEST_LIMIT:-0}
       QUOTE_MAX_RETRIES: "3"
       QUOTE_TIMEOUT_S: "15"
       QUOTE_CIRCUIT_THRESHOLD: "5"
@@ -171,6 +197,8 @@ services:
         condition: service_started
       svc-rag:
         condition: service_started
+      rag-ingest:
+        condition: service_completed_successfully
       svc-inference:
         condition: service_started
       svc-observability:
