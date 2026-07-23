@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from orch_svc.cotacao_flow import DecisaoCotacao, decidir_cotacao
+from orch_svc.objecoes import AcaoObjecao, detectar_objecao, proxima_acao
 
 _CPF = re.compile(r"\d{3}\.?\d{3}\.?\d{3}-?\d{2}")
 _PLACA = re.compile(r"[A-Z]{3}-?\d[A-Z0-9]\d{2}")
@@ -65,6 +66,7 @@ class Execucao:
 def run_conversa(mensagens_lead: list[str], build_fn: Callable[..., Any],
                  quote_client: Any, *, rag: Any = None,
                  extrair: Callable[[str], dict] = extrair_slots_heuristica,
+                 tentativas_objecao: int = 0,
                  conversation_id: str | None = None) -> Execucao:
     conv = conversation_id or f"conv_{uuid.uuid4().hex[:8]}"
     ev: list[Evento] = []
@@ -75,6 +77,22 @@ def run_conversa(mensagens_lead: list[str], build_fn: Callable[..., Any],
 
     slots = extrair(texto)
     ev.append(Evento("qualifica", "ok" if slots else "vazio", {"slots": slots}))
+
+    # tratamento de objeção — NÃO desistir no primeiro "não" (reverte antes de escalar)
+    objecao = detectar_objecao(texto)
+    if objecao:
+        resp = proxima_acao(objecao, tentativas_objecao)
+        ev.append(Evento("objecao", resp.acao,
+                         {"objecao": objecao, "tatica": resp.tatica, "tentativa": resp.tentativa}))
+        if resp.acao is AcaoObjecao.REVERTER:
+            dec = DecisaoCotacao("reverter_objecao", motivos=[resp.tatica or ""])
+            ev.append(Evento("decide", dec.acao,
+                             {"tatica": resp.tatica, "tentativa": resp.tentativa}))
+            return Execucao(conv, ev, dec)
+        dec = DecisaoCotacao("escalar_humano", motivos=[resp.motivo or "objeção persistente"],
+                             escalate=True)
+        ev.append(Evento("decide", dec.acao, {"escalate": True, "motivos": dec.motivos}))
+        return Execucao(conv, ev, dec)
 
     br = build_fn(slots)
     ev.append(Evento("porteiro", "ok",

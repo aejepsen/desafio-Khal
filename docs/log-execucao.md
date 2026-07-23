@@ -29,3 +29,13 @@
 | 2 | qualifica | vazio |  |
 | 3 | porteiro | ok | missing=['idade', 'veiculo_ano'] |
 | 4 | decide | pedir_dado | escalate=False, faltam=['idade', 'veiculo_ano'] |
+
+## `objecao_preco_reverte` → **reverter_objecao**
+
+| # | passo | status | detalhe |
+|---|---|---|---|
+| 0 | ingest | ok | n_mensagens=2 |
+| 1 | guardrails | ok | texto_mascarado=tenho 30 anos, Corolla 2020, cep [CEP] mas achei muito caro, tem desconto? |
+| 2 | qualifica | ok | slots={'idade': 30, 'veiculo_ano': 2020, 'cep': '01310-100'} |
+| 3 | objecao | reverter | objecao=preco, tatica=Reancorar em VALOR: cobertura e tranquilidade por dia, não o total mensal., tentativa=1 |
+| 4 | decide | reverter_objecao | tatica=Reancorar em VALOR: cobertura e tranquilidade por dia, não o total mensal., tentativa=1 |

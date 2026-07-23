@@ -42,6 +42,9 @@ CENARIOS = [
     ("falta_dado",
      ["boa tarde, queria cotar um seguro de carro"],
      QuoteSimulado(QuoteOutcome(QuoteStatus.QUOTED))),   # porteiro barra por dados faltantes
+    ("objecao_preco_reverte",
+     ["tenho 30 anos, Corolla 2020, cep 01310-100", "mas achei muito caro, tem desconto?"],
+     QuoteSimulado(QuoteOutcome(QuoteStatus.QUOTED))),   # objeção -> reverte (não desiste no 1º não)
 ]
 
 

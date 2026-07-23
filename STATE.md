@@ -214,3 +214,15 @@ os 712 ganhos vêm de qualificação limpa (0 ganhos com objeção detectada).
 (escalar cedo, sem tática vencedora histórica); few-shot dirigido = conversas de GANHO como
 molde do caminho feliz; grafo marca objeção→rota de escalada. svc-rag graphrag segue OFF
 (few-shot vetorial + grafo como sinal de escalada, não retrieval).
+
+## SESSÃO 2026-07-22 — tratamento de objeção: NÃO desistir no primeiro "não"
+Correção de viés (usuário): objeção não é fim — o dado (0% ganho) mostra que os
+VENDEDORES não trataram, não que é irrecuperável = oportunidade do agente.
+`orch_svc/objecoes.py`: detectar_objecao + proxima_acao(objecao, tentativas, max=3) →
+REVERTER (tática escalonada por tentativa) ou ESCALAR (só após esgotar). TATICAS por
+tipo (preco/concorrente/cobertura/indeciso). Simetria com /quote: retry antes de desistir.
+Integrado em `agente_cotacao.run_conversa` (intercepta antes de cotar). Demo tem cenário
+`objecao_preco_reverte` → reverter_objecao (tática: reancorar em valor). Tests: **25 passed**
+(+test_objecoes 6). Critério HITL revisado: escalar = objeção PERSISTENTE (não a 1ª).
+**PRÓXIMO:** wire app.py (endpoint→run_conversa); extração via LLM; few-shot de GANHO
+(qualificação limpa) do svc-rag; agente aprende com próprias reversões; README final.
