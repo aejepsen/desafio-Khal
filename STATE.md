@@ -226,3 +226,21 @@ Integrado em `agente_cotacao.run_conversa` (intercepta antes de cotar). Demo tem
 (+test_objecoes 6). Critério HITL revisado: escalar = objeção PERSISTENTE (não a 1ª).
 **PRÓXIMO:** wire app.py (endpoint→run_conversa); extração via LLM; few-shot de GANHO
 (qualificação limpa) do svc-rag; agente aprende com próprias reversões; README final.
+
+## BACKLOG AMANHÃ (2026-07-23) — táticas de objeção + estilo por idade
+**1. Táticas de objeção de conteúdo de treinamento de vendas de seguro (fonte externa).**
+- Buscar/indexar metodologias reais (SPIN, LAER=Listen-Acknowledge-Explore-Respond,
+  feel-felt-found, ancoragem de valor) → EXPANDIR `TATICAS` em `objecoes.py`.
+- Opção arquitetural: 2ª fonte de conhecimento (além do dataset de conversas) — indexar
+  o conteúdo de vendas num RAG/coleção própria (`namastex_vendas_kb`) para o agente
+  RECUPERAR táticas dinamicamente (svc-rag), não só as hardcoded. Grafo opcional:
+  objeção→tática→princípio (do material de treinamento).
+- Fonte via ctx_fetch_and_index / material que o usuário trouxer. Isolamento: coleção própria.
+
+**2. Estilo de abordagem conforme IDADE (lead_idade_informada).**
+- Faixas → modulador de TOM/canal/foco (não muda a lógica, muda a comunicação):
+  jovem (18-30): informal, ágil, praticidade/preço · meia-idade (30-50): equilíbrio,
+  cobertura/família/proteção · sênior (50+): formal, confiança, clareza, atendimento humano.
+- Implementar como `persona.py` (dado idade → estilo) que modula o prompt de resposta;
+  combinar com a tática de objeção (ex: sênior + objeção preço = tom formal + reancorar em segurança).
+- Validar faixas contra o dataset (idade × outcome) antes de fixar — anti-Goodhart.
