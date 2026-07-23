@@ -193,3 +193,11 @@ real chamando cotacao_flow) + adaptar prompts + DISPENSAR svc-router (fluxo line
 (guardrails/rag/inference/quote via env URLs); extração de slots via LLM (svc-inference)
 substituindo heurística; rodar demo contra quote-api real (docker) p/ log com retry verdadeiro;
 adaptar prompts; README final com decisões (entregável #3).
+
+## LIMPEZA DOMÍNIO ANTIGO (2026-07-22) — 0 refs financas
+Adaptadas refs (financas→seguro_auto/cotacao) em clients.py/docs; REMOVIDOS os tests do
+grafo multi-agente antigo (test_orchestrator/security/app/write_intent/conftest — testavam
+o Orchestrator multi-domínio, NÃO a solução de cotação). Tests da solução mantidos:
+test_quote_client (7) + test_cotacao_flow (6). **0 refs** de domínio antigo no repo.
+Nota: grafo antigo (orchestrator.py/app.py) ainda no código; será substituído no wire do
+app.py pelo fluxo de cotação (próximo). Núcleo da solução = quote_client + cotacao_flow + agente_cotacao.

@@ -57,7 +57,7 @@ SMOKE_BASE_URL=http://127.0.0.1:8206 SMOKE_INTERNAL_KEY=<key> make smoke
 curl -s localhost:8206/v1/chat -H 'X-Internal-Key: <key>' \
   -H 'content-type: application/json' \
   -d '{"query":"qual o saldo em caixa?"}'
-# -> {"thread_id":"th-...","decision":"answered","domains":["financas"],"agents":[...],"final":"..."}
+# -> {"thread_id":"th-...","decision":"answered","domains":["seguro_auto"],"agents":[...],"final":"..."}
 
 # chat multi-domínio streaming (SSE): eventos route -> agent (xN) -> final -> done
 curl -sN localhost:8206/v1/chat -H 'X-Internal-Key: <key>' \

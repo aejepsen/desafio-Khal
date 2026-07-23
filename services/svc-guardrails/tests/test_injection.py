@@ -38,4 +38,4 @@ def test_family_id_reported() -> None:
 
 
 def test_clean_not_flagged() -> None:
-    assert not detect_injection("Gere o relatório de vendas do mês.").flagged
+    assert not detect_injection("Gere o relatório de cotacao do mês.").flagged

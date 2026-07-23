@@ -121,7 +121,7 @@ class FakeGuardrails:
 
 @dataclass
 class FakeRouter:
-    domains: list[str] = field(default_factory=lambda: ["financas"])
+    domains: list[str] = field(default_factory=lambda: ["seguro_auto"])
     layer: str = "semantic"
     calls: list[str] = field(default_factory=list)
 

@@ -158,7 +158,7 @@ Gates G1–G7 rodam 100% offline (modelo SBERT baixado no build do Docker / cach
 **Goldens (o agente constrói em F3/F4, com critérios):**
 - *Injection adversarial (≥30):* expandir as 6 famílias canônicas do AIO (ignore-instruções, redefinição de persona, falsa autoridade + variantes) cobrindo as 12 famílias da §6; cada caso com `family_id` e justificativa de 1 linha.
 - *Benigno (≥60):* perguntas de negócio PT-BR legítimas, incluindo armadilhas ("ignore os pedidos cancelados no relatório" — uso legítimo de "ignore").
-- *OOD:* in-domain = corpus de negócio (finanças/RH/estoque/vendas, estilo golden AIO); out = temas alheios (receitas, esporte, código, filosofia). Goldens versionados em `evals/data/*.jsonl`.
+- *OOD:* in-domain = corpus de negócio (finanças/RH/cotacao/cotacao, estilo golden AIO); out = temas alheios (receitas, esporte, código, filosofia). Goldens versionados em `evals/data/*.jsonl`.
 
 ## 11. Plano de fases
 
