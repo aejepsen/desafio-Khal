@@ -100,6 +100,7 @@ def chave_padrao_fechamento(no: NoConclusao) -> str:
         "pedir_correcao",
         "recusar",
         "reverter_objecao",
+        "adiar_conversa",
         "escalar_humano",
         "emitir_apolice",
     ):
@@ -130,6 +131,7 @@ def export_grafo_catalogo() -> dict[str, Any]:
         "pedir_correcao",
         "recusar",
         "reverter_objecao",
+        "adiar_conversa",
         "escalar_humano",
         "emitir_apolice",
         "fallback",

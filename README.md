@@ -83,6 +83,8 @@ curl -s -X POST http://localhost:8100/chat -H 'content-type: application/json' \
   -d '{"conversation_id":"c1","mensagem":"tenho 35 anos, Gol 2020, plano essencial, cep 01310100"}'
 ```
 
+UI mínima no browser (caixa de texto + resposta): http://localhost:8100/ui
+
 Smokes úteis:
 
 ```bash
@@ -156,4 +158,4 @@ desafio-Khal/
   docs/                    # logs, evals, fixtures, metricas-modelo.md
 ```
 
-Desfechos: `apresentar_cotacao` · `emitir_apolice` · `reverter_objecao` · `pedir_dado` · `recusar` · `escalar_humano`.
+Desfechos: `apresentar_cotacao` · `emitir_apolice` · `adiar_conversa` · `reverter_objecao` · `pedir_dado` · `recusar` · `escalar_humano`.

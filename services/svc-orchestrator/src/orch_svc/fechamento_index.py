@@ -37,6 +37,7 @@ _CTA_PEDIR = "Pode me enviar esses dados pra eu cotar?"
 _CTA_RECUSAR = "Posso te conectar com um especialista pra avaliar o caso?"
 _CTA_HITL = "Um atendente humano vai continuar daqui."
 _CTA_OBJECAO = "Faz sentido olharmos isso juntos?"
+_CTA_PAUSA = "Quando quiser retomar, é só chamar."
 
 
 def cta_cotacao(*, plano_id: str | None = None, plano_nome: str | None = None) -> str:
@@ -92,8 +93,17 @@ def _spec_catalog() -> dict[str, FechamentoSpec]:
     )
     specs["reverter_objecao"] = FechamentoSpec(
         key="reverter_objecao",
-        template="Entendo sua dúvida{fw}. {motivos} " + _CTA_OBJECAO,
+        template="Entendo o ponto{fw}. {motivos} " + _CTA_OBJECAO,
         cta=_CTA_OBJECAO,
+    )
+    # "vou pensar / depois te falo" — pausa, não dúvida inventada.
+    specs["adiar_conversa"] = FechamentoSpec(
+        key="adiar_conversa",
+        template=(
+            "Sem problema — fica à vontade pra pensar com calma. "
+            "A cotação fica guardada por aqui. " + _CTA_PAUSA
+        ),
+        cta=_CTA_PAUSA,
     )
     specs["escalar_humano"] = FechamentoSpec(
         key="escalar_humano",
@@ -163,6 +173,8 @@ def resolver_fechamento(
             params["motivos"] = "fora da faixa de aceitação"
         elif no.acao == "reverter_objecao":
             params["motivos"] = "vamos olhar juntos o que te travou"
+        elif no.acao == "adiar_conversa":
+            params["motivos"] = ""
         elif no.acao == "fallback":
             params["motivos"] = "Como posso te ajudar na cotação?"
 

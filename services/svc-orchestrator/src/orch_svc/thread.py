@@ -178,10 +178,28 @@ def run_turno(mensagem: str, state: ThreadState, build_fn: Callable[..., Any],
         }))
         return Execucao(state.conversation_id, ev, dec), state
 
-    # objeção primeiro — não desistir no primeiro "não" (tentativas persistidas)
+    # objeção / pausa — preço etc. revertem; "vou pensar" respeita adiamento
     obj = detectar_objecao(mensagem)
     if obj:
         feitas = state.tentativas_objecao.get(obj, 0)
+        if obj == "indeciso":
+            # Não é dúvida a reverter: lead pediu tempo / saída amigável.
+            state.tentativas_objecao[obj] = feitas + 1
+            state.estagio = "pausado"
+            state.encerrado = False
+            dec = DecisaoCotacao(
+                "adiar_conversa",
+                quote=state.ultima_quote,
+                motivos=[
+                    "lead pediu tempo para avaliar (pausa) — sem tratar como dúvida específica"
+                ],
+            )
+            ev.append(Evento("objecao", "adiar", {
+                "objecao": obj, "framework": "pausa-respeitosa", "tentativa": feitas + 1,
+            }))
+            ev.append(Evento("decide", dec.acao, {"escalate": False}))
+            return Execucao(state.conversation_id, ev, dec), state
+
         resp = proxima_acao(obj, feitas)
         ev.append(Evento("objecao", resp.acao, {"objecao": obj, "framework": resp.framework,
                                                 "tatica": resp.tatica, "tentativa": resp.tentativa}))

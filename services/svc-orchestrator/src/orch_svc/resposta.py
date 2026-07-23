@@ -101,8 +101,8 @@ def redigir_resposta(
         conclusao_id=res.no.id,
         aresta=f"{res.aresta.src}-[{res.aresta.rel}]->{res.aresta.dst}",
     )
-    # HITL grau A: texto canônico ao lead (sem LLM) — evita jargão/pitch.
-    if dec.acao == "escalar_humano":
+    # HITL / pausa: texto canônico ao lead (sem LLM) — evita jargão ou "dúvida" inventada.
+    if dec.acao in ("escalar_humano", "adiar_conversa"):
         return RedacaoResult(texto=rascunho, rascunho=rascunho, fonte="template", **meta)
     if inference is None:
         return RedacaoResult(texto=rascunho, rascunho=rascunho, fonte="template", **meta)

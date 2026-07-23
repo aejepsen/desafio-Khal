@@ -52,7 +52,12 @@ def test_detectar_aceite():
     assert detectar_aceite_cotacao("fechado!")
     assert detectar_aceite_cotacao("pode emitir entao")
     assert detectar_aceite_cotacao("vamos nessa, gostei")
+    assert detectar_aceite_cotacao("vou contratar")  # caso UI real
+    assert detectar_aceite_cotacao("quero contratar")
+    assert detectar_aceite_cotacao("Aprovo a proposta")
+    assert detectar_aceite_cotacao("manda o boleto")
     assert not detectar_aceite_cotacao("quanto fica o premium?")
+    assert not detectar_aceite_cotacao("detalha as coberturas")
 
 
 def test_emitir_apolice_apos_cotacao():
@@ -77,6 +82,29 @@ def test_emitir_apolice_apos_cotacao():
     assert "apólice" in red.texto.lower() or "apolice" in red.texto.lower()
     assert "boleto" in red.texto.lower()
     assert "137.88" in red.texto
+
+
+def test_emitir_apolice_vou_contratar():
+    """Regressão: 'vou contratar' (sem 'quero') também fecha."""
+    st = ThreadState("t-vou-contratar")
+    st.estagio = "cotado"
+    st.ultima_quote = {
+        "plano_id": "essencial",
+        "plano_nome": "Essencial",
+        "premio_mensal": 137.88,
+        "franquia": 4500,
+        "coberturas": ["colisao"],
+    }
+    st.slots = {
+        "idade": 35,
+        "veiculo_ano": 2020,
+        "cep": "01310100",
+        "plano_id": "essencial",
+        "data_inicio": "2026-07-23",
+    }
+    ex, st = run_turno("vou contratar", st, _build, _FakeQuote())
+    assert ex.decisao.acao == "emitir_apolice"
+    assert st.estagio == "contratado"
 
 
 def test_ciclo_completo_apos_contratado_nao_reabre():

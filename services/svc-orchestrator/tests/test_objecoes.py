@@ -10,6 +10,13 @@ def test_detecta_concorrente():
     assert detectar_objecao("cotei na Porto e tá mais barato") == "concorrente"
 
 
+def test_detecta_indeciso_pausa():
+    assert detectar_objecao("vou pensar. depois te falo") == "indeciso"
+    assert detectar_objecao("depois te aviso") == "indeciso"
+    # "depois" solto / pergunta genérica não devem virar pausa
+    assert detectar_objecao("e depois do pagamento?") is None
+
+
 def test_sem_objecao():
     assert detectar_objecao("quero seguro pro meu corolla 2020") is None
 

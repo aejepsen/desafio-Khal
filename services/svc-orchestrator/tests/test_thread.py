@@ -29,10 +29,11 @@ def test_acumula_slots_entre_turnos():
     assert ex.decisao.acao == "pedir_dado"
     assert ex.decisao.faltam == ["cep"]
     assert st.slots["veiculo_ano"] == 2020 and st.slots["plano_id"] == "completo"
-    # 3º turno: CEP → cota
+    # 3º turno: CEP → cota (aguarda aceite; não encerra ainda)
     ex, st = run_turno("CEP 01310-100", st, _build, FakeQuote())
     assert ex.decisao.acao == "apresentar_cotacao"
-    assert st.slots.get("cep") and st.slots.get("data_inicio") and st.encerrado
+    assert st.slots.get("cep") and st.slots.get("data_inicio")
+    assert st.estagio == "cotado" and st.encerrado is False
 
 
 def test_coleta_ativa_plano_nao_cota_sem_plano():
@@ -58,6 +59,34 @@ def test_objecao_persistida_entre_turnos():
     ex, st = run_turno("caro demais", st, _build, FakeQuote())
     ex, st = run_turno("muito caro mesmo", st, _build, FakeQuote())
     assert ex.decisao.acao == "escalar_humano" and st.encerrado
+
+
+def test_vou_pensar_adia_sem_inventar_duvida():
+    st = ThreadState(
+        "pausa",
+        estagio="cotado",
+        slots={
+            "idade": 35,
+            "veiculo_ano": 2020,
+            "cep": "01310100",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-23",
+        },
+        ultima_quote={"plano_nome": "Essencial", "premio_mensal": 137.88},
+    )
+    ex, st = run_turno("vou pensar. depois te falo", st, _build, FakeQuote())
+    assert ex.decisao.acao == "adiar_conversa"
+    assert st.estagio == "pausado"
+    assert st.encerrado is False
+    from orch_svc.fechamento_index import resolver_fechamento
+    from orch_svc.resposta import redigir_resposta
+
+    red = redigir_resposta(ex.decisao, idade=35, mensagem_lead="vou pensar. depois te falo")
+    assert red.fonte == "template"
+    low = red.texto.lower()
+    assert "dúvida" not in low and "duvida" not in low
+    assert "pensar" in low or "quando quiser" in low
+    assert "cotação" in low or "cotacao" in low
 
 
 def test_pedir_faltantes_amigavel():

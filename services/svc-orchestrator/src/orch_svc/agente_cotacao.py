@@ -92,6 +92,14 @@ def run_conversa(mensagens_lead: list[str], build_fn: Callable[..., Any],
     # tratamento de objeção — NÃO desistir no primeiro "não" (reverte antes de escalar)
     objecao = detectar_objecao(texto)
     if objecao:
+        if objecao == "indeciso":
+            dec = DecisaoCotacao(
+                "adiar_conversa",
+                motivos=["lead pediu tempo para avaliar (pausa) — sem tratar como dúvida específica"],
+            )
+            ev.append(Evento("objecao", "adiar", {"objecao": objecao, "framework": "pausa-respeitosa"}))
+            ev.append(Evento("decide", dec.acao, {"escalate": False}))
+            return Execucao(conv, ev, dec)
         resp = proxima_acao(objecao, tentativas_objecao)
         ev.append(Evento("objecao", resp.acao,
                          {"objecao": objecao, "framework": resp.framework,

@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT / "domains"))
 sys.path.insert(0, str(ROOT / "services/svc-orchestrator/src"))
 
 from fastapi import FastAPI, Header, HTTPException  # noqa: E402
+from fastapi.responses import FileResponse  # noqa: E402
 from pydantic import BaseModel  # noqa: E402
 from contextlib import asynccontextmanager  # noqa: E402
 
@@ -59,6 +60,14 @@ async def _lifespan(app: FastAPI):
 
 
 app = FastAPI(title="agente-cotacao-namastex", version="1.0.0", lifespan=_lifespan)
+
+_UI_HTML = pathlib.Path(__file__).resolve().parent / "static" / "chat.html"
+
+
+@app.get("/ui")
+def ui_chat():
+    """Página mínima para testar /chat no browser (mesma origem)."""
+    return FileResponse(_UI_HTML, media_type="text/html; charset=utf-8")
 
 
 class ChatIn(BaseModel):

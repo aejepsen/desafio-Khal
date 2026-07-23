@@ -22,7 +22,14 @@ _OBJ = {
     "preco": r"\bcar[oa]\b|pre[çc]o|desconto|valor.*alto|muito alto|parcel|caro demais",
     "concorrente": r"outra|concorr|porto|azul|cotei|mais barato (em|na|no)|j[áa] tenho",
     "cobertura": r"cobertura|cobre|cobrir|franquia|o que inclui|s[óo] isso|terceiro",
-    "indeciso": r"vou pensar|depois|te aviso|falar com|n[ãa]o sei|talvez",
+    # Pausa / adiamento — NÃO é dúvida específica (evita "entendo sua dúvida").
+    "indeciso": (
+        r"vou pensar|preciso (pensar|avaliar|ver com calma)|"
+        r"depois te (falo|aviso|retorno|respondo)|te aviso|"
+        r"falar com (minha|meu|a |o )|"
+        r"n[ãa]o sei ainda|talvez depois|mais tarde|"
+        r"deixa eu (pensar|ver|avaliar)|vou analisar"
+    ),
 }
 
 
@@ -54,8 +61,11 @@ TATICAS: dict[str, list[Tatica]] = {
         Tatica("Oferecer upgrade pontual para a cobertura específica que o lead quer.", "ancoragem-valor"),
     ],
     "indeciso": [
-        Tatica("Isolar a hesitação: 'o que falta pra você decidir hoje?' e propor um "
-               "próximo passo simples (enviar a cotação formal, tirar 1 dúvida).", "isolamento"),
+        Tatica(
+            "Respeitar o tempo: não inventar 'dúvida'. Porta aberta, cotação guardada, "
+            "sem pressão — o lead pediu espaço pra avaliar ou encerrar com educação.",
+            "pausa-respeitosa",
+        ),
     ],
 }
 MAX_TENTATIVAS = 3
