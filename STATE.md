@@ -285,3 +285,13 @@ cotação real saindo (Essencial R$137.88, franquia 4500). Retry absorve os 20% 
 **MELHORIA NOTADA:** extração heurística NÃO capta plano_id (default essencial) nem tudo
 de veiculo_texto livre → **extração via LLM (svc-inference)** é o próximo salto de qualidade.
 **PRÓXIMO:** extração LLM; wire persona+tática no prompt (redigir resposta); README final (decisões).
+
+## SESSÃO 2026-07-23 — CONVERSA MULTI-TURNO com estado (thread)
+`orch_svc/thread.py`: ThreadState (slots acumulados · tentativas_objecao por tipo ·
+turnos · estagio · encerrado) + ThreadStore (in-memory; Redis/DB em prod) + run_turno.
+Agente CONDUZ: acumula slots entre turnos, pede só o que falta (pedir_faltantes amigável),
+objeção persiste tentativas entre turnos, limite MAX_TURNOS=8 = HITL temporal.
+`/chat` agora multi-turno: {conversation_id, mensagem, idade?} → estado por conversa.
+Demonstrado: T1 só idade→pede veículo; T2 completa→cota R$137.88 (lembrou da idade).
+Tests: test_thread 5 (32 total). **PRÓXIMO:** extração LLM (capta plano/veículo livre);
+wire resposta redigida (svc-inference com persona+tática); README final (decisões).
