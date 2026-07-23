@@ -168,3 +168,13 @@ orchestrator → svc-rag POST /v1/search; (d) critério HITL completo em código
 (escalate já cobre /quote; falta: dados insuficientes, mídia sem transcrição, idade/veículo
 fora de faixa via REFUSED); (e) adaptar prompts + DISPENSAR svc-router (fluxo linear);
 (f) log de execução completa (entregável).
+
+## SESSÃO 2026-07-22 (noite+++) — decisão de cotação: (b)+(c)+(d) integrados
+`orch_svc/cotacao_flow.py`: `decidir_cotacao(build_result, quote_client, query, rag)`.
+- (b) porteiro seguro_auto (BuildResult) → missing=pedir_dado · refusals=recusar · errors=pedir_correcao.
+- (c) RAG few-shot (coleção namastex_conversas) — enriquecimento; falha NÃO bloqueia (degrada gracioso).
+- (d) HITL: /quote QUOTED→apresentar · REFUSED→recusar · INVALID→pedir_correcao · UNAVAILABLE→escalar_humano(escalate).
+Injeção de dependência (testável sem cross-import). `tests/test_cotacao_flow.py`: 6 passed
+(+ 7 do quote_client = 13). **PRÓXIMO:** (e) wire no grafo orchestrator.py (nó de cotação
+real chamando cotacao_flow) + adaptar prompts + DISPENSAR svc-router (fluxo linear, remove ~40 refs);
+(f) log de execução completa (entregável); ligar rag/quote clients reais no app.
