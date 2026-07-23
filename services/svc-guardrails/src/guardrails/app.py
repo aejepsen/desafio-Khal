@@ -20,6 +20,7 @@ from guardrails import otel
 from guardrails.config import VERSION, Settings, load_settings
 from guardrails.injection import detect_injection
 from guardrails.ood import OodGuard, SbertEmbedder
+from guardrails.pii import mask_pii
 from guardrails.sanitize import sanitize
 from guardrails.schemas import (
     AnalyzeRequest,
@@ -31,6 +32,7 @@ from guardrails.schemas import (
     OodFitResponse,
     OodStatus,
     OodVerdictModel,
+    PiiVerdictModel,
     Verdicts,
 )
 from guardrails.security import RateLimiter, client_ip, verify_internal_key
@@ -91,6 +93,12 @@ def create_app(settings: Settings | None = None, state: State | None = None) -> 
 
         sanitized, _actions = sanitize(req.text) if "sanitize" in req.checks else (req.text, [])
 
+        pii_model: PiiVerdictModel | None = None
+        if "pii" in req.checks:
+            pii = mask_pii(sanitized, st.settings.pii_locale)
+            sanitized = pii.text
+            pii_model = PiiVerdictModel(flagged=bool(pii.types), types=list(pii.types))
+
         inj_model: InjectionVerdictModel | None = None
         if "injection" in req.checks:
             # Sobre o texto ORIGINAL: delimitadores neutralizados seguem sendo evidência.
@@ -124,20 +132,23 @@ def create_app(settings: Settings | None = None, state: State | None = None) -> 
         elif decision == "flag":
             st.flags_total += 1
 
-        preview = req.text[:80].replace("\n", "\\n") if st.settings.log_text_preview else ""
+        # preview nunca com PII crua quando o check pii rodou
+        preview_src = sanitized if pii_model else req.text
+        preview = preview_src[:80].replace("\n", "\\n") if st.settings.log_text_preview else ""
         logger.info(
             '{"event":"analyze","context":%r,"decision":%r,"patterns":%s,'
-            '"ood_residual":%s,"latency_ms":%.1f,"preview":%r}',
+            '"pii_types":%s,"ood_residual":%s,"latency_ms":%.1f,"preview":%r}',
             req.context or "",
             decision,
             inj_model.patterns if inj_model else [],
+            pii_model.types if pii_model else [],
             ood_model.residual if ood_model else None,
             latency_ms,
             preview,
         )
         return AnalyzeResponse(
             sanitized_text=sanitized,
-            verdicts=Verdicts(injection=inj_model, ood=ood_model),
+            verdicts=Verdicts(injection=inj_model, ood=ood_model, pii=pii_model),
             decision=decision,  # type: ignore[arg-type]
             latency_ms=round(latency_ms, 2),
         )

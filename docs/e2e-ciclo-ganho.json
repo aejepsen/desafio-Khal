@@ -1,0 +1,111 @@
+{
+  "cid": "e2e-ciclo-1784828321",
+  "rows": [
+    {
+      "turno": 1,
+      "lead": "Oi, quero cotar seguro do meu carro",
+      "acao": "pedir_dado",
+      "estagio": "qualificando",
+      "premio_mensal": null,
+      "exemplos_n": 0,
+      "slots": {
+        "idade": null,
+        "veiculo_ano": null,
+        "plano_id": null,
+        "cep": null
+      },
+      "mensagem": "Pode me enviar sua idade, o ano do veículo, o plano desejado e seu CEP para dar uma cotação?",
+      "faltam": [
+        "idade",
+        "veiculo_ano",
+        "plano_id",
+        "cep"
+      ],
+      "motivos": [
+        "Pra cotar seu seguro eu preciso de: sua idade, o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP."
+      ]
+    },
+    {
+      "turno": 2,
+      "lead": "Tenho 42 anos",
+      "acao": "pedir_dado",
+      "estagio": "qualificando",
+      "premio_mensal": null,
+      "exemplos_n": 0,
+      "slots": {
+        "idade": 42,
+        "veiculo_ano": null,
+        "plano_id": null,
+        "cep": null
+      },
+      "mensagem": "Pra cotar seu seguro, preciso do ano do veículo e o plano desejado (essencial, completo ou premium). Também precisa do seu CEP. Pode me enviar esses dados para eu detalhar as coberturas de acordo com suas necessidades familiares?",
+      "faltam": [
+        "veiculo_ano",
+        "plano_id",
+        "cep"
+      ],
+      "motivos": [
+        "Pra cotar seu seguro eu preciso de: o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP."
+      ]
+    },
+    {
+      "turno": 3,
+      "lead": "É um Corolla 2020",
+      "acao": "pedir_dado",
+      "estagio": "qualificando",
+      "premio_mensal": null,
+      "exemplos_n": 0,
+      "slots": {
+        "idade": 42,
+        "veiculo_ano": 2020,
+        "plano_id": null,
+        "cep": null
+      },
+      "mensagem": "Pensando na proteção da sua família e do seu patrimônio, este plano cobre danos a terceiros e furto. Compreendendo que você precisa de um seguro para seu carro Corolla 2020, esse pacote é ideal. Agora, para finalizar o processo, precisamos apenas dos dados: o plano desejado (esse",
+      "faltam": [
+        "plano_id",
+        "cep"
+      ],
+      "motivos": [
+        "Pra cotar seu seguro eu preciso de: o plano desejado (essencial, completo ou premium), seu CEP."
+      ]
+    },
+    {
+      "turno": 4,
+      "lead": "CEP 01310-100, quero o plano completo",
+      "acao": "apresentar_cotacao",
+      "estagio": "cotado",
+      "premio_mensal": 241.38,
+      "exemplos_n": 3,
+      "slots": {
+        "idade": 42,
+        "veiculo_ano": 2020,
+        "plano_id": "completo",
+        "cep": "01310-100"
+      },
+      "mensagem": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre: colisão, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+      "faltam": [],
+      "motivos": []
+    },
+    {
+      "turno": 5,
+      "lead": "fechado! pode emitir",
+      "acao": "emitir_apolice",
+      "estagio": "contratado",
+      "premio_mensal": 241.38,
+      "exemplos_n": 0,
+      "slots": {
+        "idade": 42,
+        "veiculo_ano": 2020,
+        "plano_id": "completo",
+        "cep": "01310-100"
+      },
+      "mensagem": "Maravilha! Vou gerar o boleto e te mando a apólice do plano Completo (R$ 241.38/mês), que cobre colisão, roubo, furto, terceiros e vidros. Compreender como estas coberturas protegem sua família é crucial para uma decisão informada. Bem-vindo!",
+      "faltam": [],
+      "motivos": [
+        "lead aprovou a cotação (padrão conversas ganho)"
+      ]
+    }
+  ],
+  "pass": true
+}

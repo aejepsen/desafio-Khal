@@ -1,0 +1,3 @@
+# Mini-serviço ASR — faster-whisper `small` (~2–3 GB VRAM).
+# Sobe só com: docker compose --profile media ...
+# Contrato: POST /v1/transcribe {"url"} -> {"text"}

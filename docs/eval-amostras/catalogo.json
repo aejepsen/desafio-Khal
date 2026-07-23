@@ -1,0 +1,124 @@
+[
+  {
+    "id": "R1_happy_path",
+    "rubrica": [
+      "1_e2e"
+    ],
+    "dataset_cid": "conv_00001",
+    "expect": {
+      "acao": "apresentar_cotacao",
+      "escalate": false
+    },
+    "notes": "ganho + idade/veículo cotáveis",
+    "turns_masked": [
+      "Oi, queria fazer um seguro pro meu carro Sandero, ano 2022 Cep [CEP], cpf [CPF], tenho 30 anos, quero o plano essencial"
+    ]
+  },
+  {
+    "id": "R5_pii",
+    "rubrica": [
+      "5_pii",
+      "1_e2e"
+    ],
+    "dataset_cid": "conv_00001",
+    "expect": {
+      "guardrails_pii": true,
+      "acao_in": [
+        "apresentar_cotacao",
+        "pedir_dado"
+      ]
+    },
+    "notes": "histórico com PII; log deve mascarar",
+    "turns_masked": [
+      "Oi, queria fazer um seguro pro meu carro Sandero, ano 2022 Cep [CEP], cpf [CPF], tenho 30 anos, quero o plano essencial"
+    ]
+  },
+  {
+    "id": "R3_objecao_hitl",
+    "rubrica": [
+      "3_hitl"
+    ],
+    "dataset_cid": "conv_00003",
+    "expect": {
+      "final_acao": "escalar_humano",
+      "escalate": true
+    },
+    "notes": "objeção de preço até esgotar táticas",
+    "turns_masked": [
+      "tenho 61 anos, Toyota Corolla 2010, plano essencial, cep [CEP]",
+      "achei caro",
+      "ainda tá caro",
+      "caro demais",
+      "muito caro mesmo"
+    ]
+  },
+  {
+    "id": "R3_media_sem_transcricao",
+    "rubrica": [
+      "3_hitl"
+    ],
+    "dataset_cid": "conv_00002",
+    "expect": {
+      "acao_in": [
+        "escalar_humano",
+        "pedir_dado"
+      ]
+    },
+    "message_type": "document",
+    "notes": "mídia sem texto útil — HITL ou pedir dado",
+    "turns_masked": [
+      "[documento] CNH_frente.pdf"
+    ]
+  },
+  {
+    "id": "R3_idade_fora_faixa",
+    "rubrica": [
+      "3_hitl"
+    ],
+    "dataset_cid": "conv_00008",
+    "expect": {
+      "acao_in": [
+        "recusar",
+        "escalar_humano"
+      ]
+    },
+    "notes": "idade fora da faixa de aceitação",
+    "turns_masked": [
+      "tenho 78 anos, Honda HR-V 2008, plano essencial, cep [CEP]"
+    ]
+  },
+  {
+    "id": "R2_quote_falha",
+    "rubrica": [
+      "2_resiliencia"
+    ],
+    "dataset_cid": null,
+    "expect": {
+      "acao": "escalar_humano",
+      "escalate": true
+    },
+    "force_quote_fail": true,
+    "notes": "QUOTE_FAILURE_RATE=1 — nunca inventar prêmio",
+    "turns_masked": [
+      "tenho 35 anos, Gol 2020, plano essencial, cep [CEP]"
+    ]
+  },
+  {
+    "id": "R4_rastreabilidade",
+    "rubrica": [
+      "4_trace"
+    ],
+    "dataset_cid": "conv_00001",
+    "expect": {
+      "eventos_min": 3,
+      "fields": [
+        "step",
+        "status"
+      ]
+    },
+    "notes": "cada passo com step+status",
+    "turns_masked": [
+      "Oi, queria fazer um seguro pro meu carro Sandero, ano 2022 Cep [CEP], cpf [CPF], tenho 30 anos, quero o plano essencial"
+    ]
+  }
+]

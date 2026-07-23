@@ -1,0 +1,107 @@
+{
+  "conversation_id": "audio-demo-1784816036",
+  "turno": 1,
+  "estagio": "cotado",
+  "persona": "meia_30_50",
+  "mensagem": "Pronto — cotação do plano Essencial: R$ 137.88/mês (franquia R$ 4500). Como você prefere, quero detalhar as coberturas ou ajustar o plano?",
+  "slots": {
+    "idade": 35,
+    "veiculo_ano": 2020,
+    "cep": "01310100",
+    "plano_id": "essencial",
+    "veiculo_texto": "Corolla",
+    "data_inicio": "2026-07-23"
+  },
+  "decisao": {
+    "acao": "apresentar_cotacao",
+    "escalate": false,
+    "motivos": [],
+    "faltam": [],
+    "quote": {
+      "plano_id": "essencial",
+      "plano_nome": "Essencial",
+      "premio_mensal": 137.88,
+      "franquia": 4500,
+      "coberturas": [
+        "colisao",
+        "roubo",
+        "furto"
+      ],
+      "multiplicadores": {
+        "faixa_etaria": 1.0,
+        "idade_veiculo": 1.15,
+        "regiao": 1.0
+      },
+      "carencia": {
+        "coberturas": [
+          "roubo",
+          "furto"
+        ],
+        "dias": 30,
+        "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+      },
+      "moeda": "BRL",
+      "primeiro_pagamento_pro_rata": {
+        "dias_no_mes": 31,
+        "dias_cobrados": 9,
+        "valor_primeiro_pagamento": 40.03
+      }
+    },
+    "exemplos": [
+      "- lead_idade_informada: 41\n- veiculo_texto: Toyota Corolla 2018\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Felipe, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Corolla, ano 2018\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cpf 905.287.195-72, cep 30499-782, tenho 41 anos\n[lead] meu email é felipe_ribeiro95@gmail.com e o whats é esse mesmo +55 21 99582-3806\n[lead] qualquer coisa me chama\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 159,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+      "- lead_idade_informada: 38\n- veiculo_texto: Toyota Corolla 2003\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Marina, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] e um Corolla 2003\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Tenho 38 anos, cep 88771-734, cpf 771.999.358-62\n[lead|image] [imagem] foto do veiculo na garagem\n[lead] a placa é UUK1Y92 se precisar\n[vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 129,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] pode emitir entao\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+      "- lead_idade_informada: 65 - veiculo_texto: Toyota Corolla 2010 [lead] Oi, queria fazer um seguro pro meu carro [vendedor] Ola Queila, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo? [lead] e um Corolla 2010 [vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme? [lead] Cpf 947.727.945-57, tenho 65 anos, cep 08890-935 [lead] meu email é queila.almeida@outlook.com e o whats é esse mesmo +55 81 91250-6342 [lead|image] [imagem] foto do veiculo na garagem [lead|audio] [audio] mensagem de voz (18s) [lead] qualquer coisa me chama [vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 259,90/mes. Cobre colisao, roubo e furto. Te interessa? [lead] pode emitir entao [vendedor] Maravilha! Vou gerar o"
+    ]
+  },
+  "eventos": [
+    {
+      "step": "turno",
+      "status": "1",
+      "detail": {
+        "estagio": "qualificando"
+      }
+    },
+    {
+      "step": "midia",
+      "status": "enriched",
+      "detail": {
+        "tipo": "audio",
+        "status": "ok",
+        "preview": "Oi, quero fazer uma cotação de seguro alto. Tenho 35 anos. Meu carro é um Coroll"
+      }
+    },
+    {
+      "step": "guardrails",
+      "status": "allow",
+      "detail": {
+        "texto_mascarado": "Oi, quero fazer uma cotação de seguro alto. Tenho 35 anos. Meu carro é um Corolla 2020. Quero o plano essencial. CEP [CE",
+        "pii_types": [
+          "cep"
+        ],
+        "patterns": []
+      }
+    },
+    {
+      "step": "qualifica",
+      "status": "ok",
+      "detail": {
+        "slots_acumulados": {
+          "idade": 35,
+          "veiculo_ano": 2020,
+          "cep": "01310100",
+          "plano_id": "essencial",
+          "veiculo_texto": "Corolla"
+        }
+      }
+    },
+    {
+      "step": "decide",
+      "status": "apresentar_cotacao",
+      "detail": {
+        "faltam": [],
+        "premio_mensal": 137.88,
+        "escalate": false
+      }
+    }
+  ]
+}

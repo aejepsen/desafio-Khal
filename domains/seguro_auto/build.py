@@ -54,8 +54,9 @@ def build_quote_request(
         missing.append("idade")
     if veiculo_ano is None:
         missing.append("veiculo_ano")
-
-    if cep_raw not in (None, "") and cep is None:
+    if cep_raw in (None, ""):
+        missing.append("cep")
+    elif cep is None:
         errors.append("cep_invalido")
     if slots.data_inicio not in (None, "") and data_inicio is None:
         errors.append("data_inicio_invalida")
@@ -90,7 +91,12 @@ def build_quote_request(
             refusals=refusals,
         )
 
-    assert idade is not None and veiculo_ano is not None and plano_id is not None
+    assert (
+        idade is not None
+        and veiculo_ano is not None
+        and plano_id is not None
+        and cep is not None
+    )
     payload = QuoteRequestPayload(
         idade=idade,
         veiculo_ano=veiculo_ano,

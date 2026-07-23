@@ -1,0 +1,203 @@
+{
+  "communities": {
+    "0": [
+      "fechamento_index",
+      "fechamento_index_contem_fato",
+      "fechamento_index_contem_premio",
+      "fechamento_index_fechamentospec",
+      "fechamento_index_rationale_1",
+      "fechamento_index_rationale_41",
+      "fechamento_index_spec_catalog",
+      "fechamento_index_validar_fechamento_llm"
+    ],
+    "1": [
+      "any",
+      "conclusao_graph_as_float",
+      "conclusao_graph_export_grafo_catalogo",
+      "conclusao_graph_no_conclusao_de",
+      "conclusao_graph_py_decisaocotacao",
+      "conclusao_graph_rationale_125",
+      "conclusao_graph_rationale_68"
+    ],
+    "2": [
+      "fechamento_index_corpo_cotacao",
+      "fechamento_index_fill",
+      "fechamento_index_lookup_fechamento",
+      "fechamento_index_py_decisaocotacao",
+      "fechamento_index_rationale_110",
+      "fechamento_index_rationale_121",
+      "fechamento_index_resolver_fechamento"
+    ],
+    "3": [
+      "conclusao_graph",
+      "conclusao_graph_aresta_fecha_com",
+      "conclusao_graph_arestafechamento",
+      "conclusao_graph_rationale_1",
+      "conclusao_graph_rationale_54"
+    ],
+    "4": [
+      "conclusao_graph_noconclusao",
+      "conclusao_graph_noconclusao_params",
+      "conclusao_graph_rationale_24",
+      "fechamento_index_resolucaofechamento"
+    ],
+    "5": [
+      "conclusao_graph_chave_padrao_fechamento",
+      "conclusao_graph_rationale_95"
+    ]
+  },
+  "cohesion": {
+    "0": 0.39285714285714285,
+    "1": 0.2857142857142857,
+    "2": 0.3333333333333333,
+    "3": 0.5,
+    "4": 0.5,
+    "5": 1.0
+  },
+  "gods": [
+    {
+      "id": "fechamento_index_resolver_fechamento",
+      "label": "resolver_fechamento()",
+      "degree": 11
+    },
+    {
+      "id": "conclusao_graph_noconclusao",
+      "label": "NoConclusao",
+      "degree": 8
+    },
+    {
+      "id": "fechamento_index_fechamentospec",
+      "label": "FechamentoSpec",
+      "degree": 7
+    },
+    {
+      "id": "conclusao_graph_no_conclusao_de",
+      "label": "no_conclusao_de()",
+      "degree": 6
+    },
+    {
+      "id": "conclusao_graph_arestafechamento",
+      "label": "ArestaFechamento",
+      "degree": 5
+    },
+    {
+      "id": "conclusao_graph_chave_padrao_fechamento",
+      "label": "chave_padrao_fechamento()",
+      "degree": 5
+    },
+    {
+      "id": "conclusao_graph_aresta_fecha_com",
+      "label": "aresta_fecha_com()",
+      "degree": 5
+    },
+    {
+      "id": "fechamento_index_lookup_fechamento",
+      "label": "lookup_fechamento()",
+      "degree": 5
+    },
+    {
+      "id": "fechamento_index_resolucaofechamento",
+      "label": "ResolucaoFechamento",
+      "degree": 4
+    },
+    {
+      "id": "fechamento_index_validar_fechamento_llm",
+      "label": "validar_fechamento_llm()",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "FechamentoSpec",
+      "target": "NoConclusao",
+      "source_files": [
+        "fechamento_index.py",
+        "conclusao_graph.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "FechamentoSpec",
+      "target": "ArestaFechamento",
+      "source_files": [
+        "fechamento_index.py",
+        "conclusao_graph.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "ResolucaoFechamento",
+      "target": "ArestaFechamento",
+      "source_files": [
+        "fechamento_index.py",
+        "conclusao_graph.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "resolver_fechamento()",
+      "target": "no_conclusao_de()",
+      "source_files": [
+        "fechamento_index.py",
+        "conclusao_graph.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "resolver_fechamento()",
+      "target": "chave_padrao_fechamento()",
+      "source_files": [
+        "fechamento_index.py",
+        "conclusao_graph.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `resolver_fechamento()` connect `resolver_fechamento` to `fechamento_index.py`, `no_conclusao_de`, `conclusao_graph.py`, `NoConclusao`, `chave_padrao_fechamento`?",
+      "why": "High betweenness centrality (0.348) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `no_conclusao_de()` connect `no_conclusao_de` to `resolver_fechamento`, `conclusao_graph.py`, `NoConclusao`?",
+      "why": "High betweenness centrality (0.208) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `NoConclusao` connect `NoConclusao` to `fechamento_index.py`, `no_conclusao_de`, `conclusao_graph.py`, `chave_padrao_fechamento`?",
+      "why": "High betweenness centrality (0.195) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 3 inferred relationships involving `resolver_fechamento()` (e.g. with `aresta_fecha_com()` and `chave_padrao_fechamento()`) actually correct?",
+      "why": "`resolver_fechamento()` has 3 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `NoConclusao` (e.g. with `FechamentoSpec` and `ResolucaoFechamento`) actually correct?",
+      "why": "`NoConclusao` has 2 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `FechamentoSpec` (e.g. with `ArestaFechamento` and `NoConclusao`) actually correct?",
+      "why": "`FechamentoSpec` has 2 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `ArestaFechamento` (e.g. with `FechamentoSpec` and `ResolucaoFechamento`) actually correct?",
+      "why": "`ArestaFechamento` has 2 INFERRED edges - model-reasoned connections that need verification."
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Mini-serviço OCR — Tesseract CPU (~0.5–1 GB RAM).
+# Sobe só com: docker compose --profile media ...
+# Contrato: POST /v1/ocr {"url"} -> {"text"}

@@ -1,0 +1,523 @@
+{
+  "conversation_id": "audit-7b-1784829171",
+  "turns": [
+    {
+      "id": 24,
+      "turno": 1,
+      "acao": "pedir_dado",
+      "escalate": false,
+      "premio_mensal": null,
+      "fonte_resposta": "llm",
+      "created_at": "2026-07-23T17:53:06.196904+00:00",
+      "audit": {
+        "type": "audit.chat",
+        "conversation_id": "audit-7b-1784829171",
+        "turno": 1,
+        "estagio": "qualificando",
+        "persona": "desconhecida",
+        "lead_mascarado": "Oi, quero cotar seguro do meu carro",
+        "acao": "pedir_dado",
+        "escalate": false,
+        "motivos": [
+          "Pra cotar seu seguro eu preciso de: sua idade, o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP."
+        ],
+        "slots": {
+          "data_inicio": "2026-07-23"
+        },
+        "premio_mensal": null,
+        "rascunho": "Pra cotar seu seguro eu preciso de: sua idade, o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "mensagem_agente": "Pra cotar seu seguro eu preciso de: sua idade, o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "fonte_resposta": "llm",
+        "index_key": "pedir_dado",
+        "cta": "Pode me enviar esses dados pra eu cotar?",
+        "conclusao_id": "conclusao:pedir_dado|desconhecida",
+        "aresta": "conclusao:pedir_dado|desconhecida-[FECHA_COM]->pedir_dado",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      }
+    },
+    {
+      "id": 25,
+      "turno": 2,
+      "acao": "pedir_dado",
+      "escalate": false,
+      "premio_mensal": null,
+      "fonte_resposta": "llm",
+      "created_at": "2026-07-23T17:53:20.749592+00:00",
+      "audit": {
+        "type": "audit.chat",
+        "conversation_id": "audit-7b-1784829171",
+        "turno": 2,
+        "estagio": "qualificando",
+        "persona": "meia_30_50",
+        "lead_mascarado": "Tenho 42 anos",
+        "acao": "pedir_dado",
+        "escalate": false,
+        "motivos": [
+          "Pra cotar seu seguro eu preciso de: o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP."
+        ],
+        "slots": {
+          "data_inicio": "2026-07-23",
+          "idade": 42
+        },
+        "premio_mensal": null,
+        "rascunho": "Pra cotar seu seguro eu preciso de: o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "mensagem_agente": "Pra cotar seu seguro eu preciso de: o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "fonte_resposta": "llm",
+        "index_key": "pedir_dado",
+        "cta": "Pode me enviar esses dados pra eu cotar?",
+        "conclusao_id": "conclusao:pedir_dado|meia_30_50",
+        "aresta": "conclusao:pedir_dado|meia_30_50-[FECHA_COM]->pedir_dado",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      }
+    },
+    {
+      "id": 26,
+      "turno": 3,
+      "acao": "pedir_dado",
+      "escalate": false,
+      "premio_mensal": null,
+      "fonte_resposta": "llm",
+      "created_at": "2026-07-23T17:53:34.955498+00:00",
+      "audit": {
+        "type": "audit.chat",
+        "conversation_id": "audit-7b-1784829171",
+        "turno": 3,
+        "estagio": "qualificando",
+        "persona": "meia_30_50",
+        "lead_mascarado": "É um Corolla 2020",
+        "acao": "pedir_dado",
+        "escalate": false,
+        "motivos": [
+          "Pra cotar seu seguro eu preciso de: o plano desejado (essencial, completo ou premium), seu CEP."
+        ],
+        "slots": {
+          "data_inicio": "2026-07-23",
+          "idade": 42,
+          "veiculo_ano": 2020,
+          "veiculo_texto": "Corolla"
+        },
+        "premio_mensal": null,
+        "rascunho": "Pra cotar seu seguro eu preciso de: o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "mensagem_agente": "Pra cotar seu seguro, preciso do plano desejado (essencial, completo ou premium) e seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "fonte_resposta": "llm",
+        "index_key": "pedir_dado",
+        "cta": "Pode me enviar esses dados pra eu cotar?",
+        "conclusao_id": "conclusao:pedir_dado|meia_30_50",
+        "aresta": "conclusao:pedir_dado|meia_30_50-[FECHA_COM]->pedir_dado",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      }
+    },
+    {
+      "id": 27,
+      "turno": 4,
+      "acao": "apresentar_cotacao",
+      "escalate": false,
+      "premio_mensal": 241.38,
+      "fonte_resposta": "llm",
+      "created_at": "2026-07-23T17:53:58.109275+00:00",
+      "audit": {
+        "type": "audit.chat",
+        "conversation_id": "audit-7b-1784829171",
+        "turno": 4,
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "lead_mascarado": "CEP [CEP], quero o plano completo",
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "motivos": [],
+        "slots": {
+          "data_inicio": "2026-07-23",
+          "idade": 42,
+          "veiculo_ano": 2020,
+          "veiculo_texto": "Corolla",
+          "cep": "[CEP]",
+          "plano_id": "completo"
+        },
+        "premio_mensal": 241.38,
+        "rascunho": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+        "mensagem_agente": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+        "fonte_resposta": "llm",
+        "index_key": "apresentar_cotacao|meia_30_50",
+        "cta": "Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+        "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+        "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      }
+    },
+    {
+      "id": 28,
+      "turno": 5,
+      "acao": "emitir_apolice",
+      "escalate": false,
+      "premio_mensal": 241.38,
+      "fonte_resposta": "llm",
+      "created_at": "2026-07-23T17:54:12.539502+00:00",
+      "audit": {
+        "type": "audit.chat",
+        "conversation_id": "audit-7b-1784829171",
+        "turno": 5,
+        "estagio": "contratado",
+        "persona": "meia_30_50",
+        "lead_mascarado": "fechado! pode emitir",
+        "acao": "emitir_apolice",
+        "escalate": false,
+        "motivos": [
+          "lead aprovou a cotação (padrão conversas ganho)"
+        ],
+        "slots": {
+          "data_inicio": "2026-07-23",
+          "idade": 42,
+          "veiculo_ano": 2020,
+          "veiculo_texto": "Corolla",
+          "cep": "[CEP]",
+          "plano_id": "completo"
+        },
+        "premio_mensal": 241.38,
+        "rascunho": "Maravilha! Vou gerar o boleto e te mando a apólice do plano Completo (R$ 241.38/mês). Bem-vindo!",
+        "mensagem_agente": "Maravilha! Vou gerar o boleto e te mando a apólice do plano Completo (R$ 241.38/mês), que inclui cobertura para colisão, roubo, furto, danos a terceiros e quebra de vidros. Bem-vindo!",
+        "fonte_resposta": "llm",
+        "index_key": "emitir_apolice",
+        "cta": "Bem-vindo!",
+        "conclusao_id": "conclusao:emitir_apolice|meia_30_50",
+        "aresta": "conclusao:emitir_apolice|meia_30_50-[FECHA_COM]->emitir_apolice",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": 113,
+      "turno": 1,
+      "step": "turno",
+      "status": "1",
+      "detail": {
+        "estagio": "qualificando"
+      },
+      "created_at": "2026-07-23T17:53:06.196904+00:00"
+    },
+    {
+      "id": 114,
+      "turno": 1,
+      "step": "guardrails",
+      "status": "allow",
+      "detail": {
+        "texto_mascarado": "Oi, quero cotar seguro do meu carro",
+        "pii_types": [],
+        "patterns": []
+      },
+      "created_at": "2026-07-23T17:53:06.196904+00:00"
+    },
+    {
+      "id": 115,
+      "turno": 1,
+      "step": "qualifica",
+      "status": "ok",
+      "detail": {
+        "slots_acumulados": {}
+      },
+      "created_at": "2026-07-23T17:53:06.196904+00:00"
+    },
+    {
+      "id": 116,
+      "turno": 1,
+      "step": "decide",
+      "status": "pedir_dado",
+      "detail": {
+        "faltam": [
+          "idade",
+          "veiculo_ano",
+          "plano_id",
+          "cep"
+        ]
+      },
+      "created_at": "2026-07-23T17:53:06.196904+00:00"
+    },
+    {
+      "id": 117,
+      "turno": 1,
+      "step": "resposta",
+      "status": "llm",
+      "detail": {
+        "lead_mascarado": "Oi, quero cotar seguro do meu carro",
+        "rascunho": "Pra cotar seu seguro eu preciso de: sua idade, o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "mensagem": "Pra cotar seu seguro eu preciso de: sua idade, o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "fonte": "llm",
+        "index_key": "pedir_dado",
+        "cta": "Pode me enviar esses dados pra eu cotar?",
+        "conclusao_id": "conclusao:pedir_dado|desconhecida",
+        "aresta": "conclusao:pedir_dado|desconhecida-[FECHA_COM]->pedir_dado",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      },
+      "created_at": "2026-07-23T17:53:06.196904+00:00"
+    },
+    {
+      "id": 118,
+      "turno": 2,
+      "step": "turno",
+      "status": "2",
+      "detail": {
+        "estagio": "qualificando"
+      },
+      "created_at": "2026-07-23T17:53:20.749592+00:00"
+    },
+    {
+      "id": 119,
+      "turno": 2,
+      "step": "guardrails",
+      "status": "allow",
+      "detail": {
+        "texto_mascarado": "Tenho 42 anos",
+        "pii_types": [],
+        "patterns": []
+      },
+      "created_at": "2026-07-23T17:53:20.749592+00:00"
+    },
+    {
+      "id": 120,
+      "turno": 2,
+      "step": "qualifica",
+      "status": "ok",
+      "detail": {
+        "slots_acumulados": {
+          "data_inicio": "2026-07-23",
+          "idade": 42
+        }
+      },
+      "created_at": "2026-07-23T17:53:20.749592+00:00"
+    },
+    {
+      "id": 121,
+      "turno": 2,
+      "step": "decide",
+      "status": "pedir_dado",
+      "detail": {
+        "faltam": [
+          "veiculo_ano",
+          "plano_id",
+          "cep"
+        ]
+      },
+      "created_at": "2026-07-23T17:53:20.749592+00:00"
+    },
+    {
+      "id": 122,
+      "turno": 2,
+      "step": "resposta",
+      "status": "llm",
+      "detail": {
+        "lead_mascarado": "Tenho 42 anos",
+        "rascunho": "Pra cotar seu seguro eu preciso de: o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "mensagem": "Pra cotar seu seguro eu preciso de: o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "fonte": "llm",
+        "index_key": "pedir_dado",
+        "cta": "Pode me enviar esses dados pra eu cotar?",
+        "conclusao_id": "conclusao:pedir_dado|meia_30_50",
+        "aresta": "conclusao:pedir_dado|meia_30_50-[FECHA_COM]->pedir_dado",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      },
+      "created_at": "2026-07-23T17:53:20.749592+00:00"
+    },
+    {
+      "id": 123,
+      "turno": 3,
+      "step": "turno",
+      "status": "3",
+      "detail": {
+        "estagio": "qualificando"
+      },
+      "created_at": "2026-07-23T17:53:34.955498+00:00"
+    },
+    {
+      "id": 124,
+      "turno": 3,
+      "step": "guardrails",
+      "status": "allow",
+      "detail": {
+        "texto_mascarado": "É um Corolla 2020",
+        "pii_types": [],
+        "patterns": []
+      },
+      "created_at": "2026-07-23T17:53:34.955498+00:00"
+    },
+    {
+      "id": 125,
+      "turno": 3,
+      "step": "qualifica",
+      "status": "ok",
+      "detail": {
+        "slots_acumulados": {
+          "data_inicio": "2026-07-23",
+          "idade": 42,
+          "veiculo_ano": 2020,
+          "veiculo_texto": "Corolla"
+        }
+      },
+      "created_at": "2026-07-23T17:53:34.955498+00:00"
+    },
+    {
+      "id": 126,
+      "turno": 3,
+      "step": "decide",
+      "status": "pedir_dado",
+      "detail": {
+        "faltam": [
+          "plano_id",
+          "cep"
+        ]
+      },
+      "created_at": "2026-07-23T17:53:34.955498+00:00"
+    },
+    {
+      "id": 127,
+      "turno": 3,
+      "step": "resposta",
+      "status": "llm",
+      "detail": {
+        "lead_mascarado": "É um Corolla 2020",
+        "rascunho": "Pra cotar seu seguro eu preciso de: o plano desejado (essencial, completo ou premium), seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "mensagem": "Pra cotar seu seguro, preciso do plano desejado (essencial, completo ou premium) e seu CEP. Pode me enviar esses dados pra eu cotar?",
+        "fonte": "llm",
+        "index_key": "pedir_dado",
+        "cta": "Pode me enviar esses dados pra eu cotar?",
+        "conclusao_id": "conclusao:pedir_dado|meia_30_50",
+        "aresta": "conclusao:pedir_dado|meia_30_50-[FECHA_COM]->pedir_dado",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      },
+      "created_at": "2026-07-23T17:53:34.955498+00:00"
+    },
+    {
+      "id": 128,
+      "turno": 4,
+      "step": "turno",
+      "status": "4",
+      "detail": {
+        "estagio": "qualificando"
+      },
+      "created_at": "2026-07-23T17:53:58.109275+00:00"
+    },
+    {
+      "id": 129,
+      "turno": 4,
+      "step": "guardrails",
+      "status": "allow",
+      "detail": {
+        "texto_mascarado": "CEP [CEP], quero o plano completo",
+        "pii_types": [
+          "cep"
+        ],
+        "patterns": []
+      },
+      "created_at": "2026-07-23T17:53:58.109275+00:00"
+    },
+    {
+      "id": 130,
+      "turno": 4,
+      "step": "qualifica",
+      "status": "ok",
+      "detail": {
+        "slots_acumulados": {
+          "data_inicio": "2026-07-23",
+          "idade": 42,
+          "veiculo_ano": 2020,
+          "veiculo_texto": "Corolla",
+          "cep": "[CEP]",
+          "plano_id": "completo"
+        }
+      },
+      "created_at": "2026-07-23T17:53:58.109275+00:00"
+    },
+    {
+      "id": 131,
+      "turno": 4,
+      "step": "decide",
+      "status": "apresentar_cotacao",
+      "detail": {
+        "faltam": [],
+        "premio_mensal": 241.38,
+        "escalate": false,
+        "exemplos_n": 3,
+        "rerank": true
+      },
+      "created_at": "2026-07-23T17:53:58.109275+00:00"
+    },
+    {
+      "id": 132,
+      "turno": 4,
+      "step": "resposta",
+      "status": "llm",
+      "detail": {
+        "lead_mascarado": "CEP [CEP], quero o plano completo",
+        "rascunho": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+        "mensagem": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+        "fonte": "llm",
+        "index_key": "apresentar_cotacao|meia_30_50",
+        "cta": "Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+        "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+        "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      },
+      "created_at": "2026-07-23T17:53:58.109275+00:00"
+    },
+    {
+      "id": 133,
+      "turno": 5,
+      "step": "turno",
+      "status": "5",
+      "detail": {
+        "estagio": "cotado"
+      },
+      "created_at": "2026-07-23T17:54:12.539502+00:00"
+    },
+    {
+      "id": 134,
+      "turno": 5,
+      "step": "guardrails",
+      "status": "allow",
+      "detail": {
+        "texto_mascarado": "fechado! pode emitir",
+        "pii_types": [],
+        "patterns": []
+      },
+      "created_at": "2026-07-23T17:54:12.539502+00:00"
+    },
+    {
+      "id": 135,
+      "turno": 5,
+      "step": "decide",
+      "status": "emitir_apolice",
+      "detail": {
+        "escalate": false,
+        "premio_mensal": 241.38
+      },
+      "created_at": "2026-07-23T17:54:12.539502+00:00"
+    },
+    {
+      "id": 136,
+      "turno": 5,
+      "step": "resposta",
+      "status": "llm",
+      "detail": {
+        "lead_mascarado": "fechado! pode emitir",
+        "rascunho": "Maravilha! Vou gerar o boleto e te mando a apólice do plano Completo (R$ 241.38/mês). Bem-vindo!",
+        "mensagem": "Maravilha! Vou gerar o boleto e te mando a apólice do plano Completo (R$ 241.38/mês), que inclui cobertura para colisão, roubo, furto, danos a terceiros e quebra de vidros. Bem-vindo!",
+        "fonte": "llm",
+        "index_key": "emitir_apolice",
+        "cta": "Bem-vindo!",
+        "conclusao_id": "conclusao:emitir_apolice|meia_30_50",
+        "aresta": "conclusao:emitir_apolice|meia_30_50-[FECHA_COM]->emitir_apolice",
+        "model": "qwen2.5:7b",
+        "pii": "masked"
+      },
+      "created_at": "2026-07-23T17:54:12.539502+00:00"
+    }
+  ]
+}

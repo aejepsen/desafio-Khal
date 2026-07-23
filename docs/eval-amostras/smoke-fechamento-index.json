@@ -1,0 +1,31 @@
+{
+  "conversation_id": "fechamento-1784819446",
+  "mensagem": "Pronto — cotação do plano Completo: R$ 209.9/mês (franquia R$ 3000). Cobre: colisão, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com outro plano (Essencial / Completo / Premium)?",
+  "audit": {
+    "type": "audit.chat",
+    "conversation_id": "fechamento-1784819446",
+    "turno": 1,
+    "estagio": "cotado",
+    "persona": "meia_30_50",
+    "lead_mascarado": "Tenho 42 anos, Fiat Argo 2021, CEP [CEP], quero plano completo, inicio 2026-09-01.",
+    "acao": "apresentar_cotacao",
+    "escalate": false,
+    "motivos": [],
+    "slots": {
+      "idade": 42,
+      "veiculo_ano": 2021,
+      "cep": "[CEP]",
+      "plano_id": "completo",
+      "veiculo_texto": "Fiat Argo",
+      "data_inicio": "2026-09-01"
+    },
+    "premio_mensal": 209.9,
+    "rascunho": "Pronto — cotação do plano Completo: R$ 209.9/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com outro plano (Essencial / Completo / Premium)?",
+    "mensagem_agente": "Pronto — cotação do plano Completo: R$ 209.9/mês (franquia R$ 3000). Cobre: colisão, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com outro plano (Essencial / Completo / Premium)?",
+    "fonte_resposta": "llm",
+    "index_key": "apresentar_cotacao|meia_30_50",
+    "cta": "Quer que eu detalhe as coberturas ou compare com outro plano (Essencial / Completo / Premium)?",
+    "model": "qwen2.5:3b",
+    "pii": "masked"
+  }
+}

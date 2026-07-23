@@ -20,6 +20,9 @@ class Settings:
     backend_url: str = field(
         default_factory=lambda: os.environ.get("BACKEND_URL", "http://localhost:11434")
     )
+    backend_api_key: str = field(
+        default_factory=lambda: os.environ.get("BACKEND_API_KEY", "")
+    )
     default_model: str = field(default_factory=lambda: os.environ.get("DEFAULT_MODEL", ""))
     request_deadline_s: float = field(
         default_factory=lambda: float(os.environ.get("REQUEST_DEADLINE_S", "120"))

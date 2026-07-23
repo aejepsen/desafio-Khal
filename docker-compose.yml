@@ -1,30 +1,87 @@
-# docker-compose do desafio-Khal — ESQUELETO
-# Princípio (docs/isolamento-dados.md): cada serviço sobe com estado DO ZERO.
-# Volumes NOVOS (nomeados com prefixo do desafio); nada montado de outros projetos.
+# docker-compose — solução completa do desafio-Khal (um comando)
+# Princípio: estado DO ZERO; volumes com prefixo namastex_*.
+#
+# Stack completa (recomendado — ver README § Hardware):
+#   cp env.example .env && docker compose up --build
+#
+# Sem GPU NVIDIA (ASR em CPU, mais lento):
+#   docker compose -f docker-compose.yml -f docker-compose.cpu.yml up --build
+#
+# Offline sem Ollama/LLM (DemoBackend):
+#   docker compose -f docker-compose.yml -f docker-compose.demo.yml up --build
 
-# Auth interna dos svc-* (portfolio: INTERNAL_KEY). Dev default local — trocar em prod.
 x-internal-auth: &internal-auth
   INTERNAL_KEY: ${INTERNAL_KEY:-dev-namastex-key}
 
 services:
-  # --- sistema externo fornecido pelo desafio (falha 20% + lento de propósito) ---
   quote-api:
-    build: ./quote-service          # copiado do enunciado (namastex-fde-challenge)
+    build: ./quote-service
     environment:
-      QUOTE_FAILURE_RATE: "0.20"
-      QUOTE_SLOW_SECONDS: "8"
+      QUOTE_FAILURE_RATE: ${QUOTE_FAILURE_RATE:-0.20}
+      QUOTE_SLOW_SECONDS: ${QUOTE_SLOW_SECONDS:-8}
     ports: ["8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
-  # --- infra (instâncias DEDICADAS, volumes limpos) ---
   qdrant:
     image: qdrant/qdrant:latest
-    volumes: [namastex_qdrant:/qdrant/storage]   # volume NOVO — sem coleções de outros projetos
+    volumes: [namastex_qdrant:/qdrant/storage]
     ports: ["6333:6333"]
 
-  # --- microsserviços reusados (vendoring limpo em services/, estado do zero) ---
+  # Grafo de conhecimento (fechamento + corpus) — pesquisa semântica / GraphRAG path
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-namastex-graph}
+      NEO4J_server_memory_heap_initial__size: ${NEO4J_HEAP_INIT:-512m}
+      NEO4J_server_memory_heap_max__size: ${NEO4J_HEAP_MAX:-1g}
+      NEO4J_server_memory_pagecache_size: ${NEO4J_PAGECACHE:-512m}
+    volumes:
+      - namastex_neo4j:/data
+      - namastex_neo4j_logs:/logs
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "namastex-graph", "RETURN 1;"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 50s
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes: [namastex_ollama:/root/.ollama]
+    ports: ["11434:11434"]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+
+  ollama-pull:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - "ollama pull ${OLLAMA_MODEL:-qwen2.5:7b}"
+    restart: "no"
+
   svc-guardrails:
     build: ./services/svc-guardrails
-    environment: { <<: *internal-auth, PII_LOCALE: "pt-BR" }   # regex CPF/placa/CNH/CEP
+    ports: ["8200:8200"]
+    environment:
+      <<: *internal-auth
+      PII_LOCALE: "pt-BR"
 
   svc-rag:
     build: ./services/svc-rag
@@ -33,40 +90,101 @@ services:
       <<: *internal-auth
       VECTOR_STORE: qdrant
       QDRANT_URL: "http://qdrant:6333"
-      # Local/docker: Qdrant sem API key (portfolio usa QDRANT_API_KEY só se o cluster exigir)
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
-      # Necessário: QDRANT_URL em rede docker é IP privado (anti-SSRF do svc-rag)
       ALLOW_LOCAL_STORE: "1"
-      GRAPHRAG_ENABLED: "0"
+      GRAPHRAG_ENABLED: ${GRAPHRAG_ENABLED:-0}
       EMBED_MODEL: ${EMBED_MODEL:-paraphrase-multilingual-MiniLM-L12-v2}
-    depends_on: [qdrant]
-
+      NEO4J_URI: "bolt://neo4j:7687"
+      NEO4J_USER: ${NEO4J_USER:-neo4j}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-namastex-graph}
+    depends_on:
+      qdrant:
+        condition: service_started
+      neo4j:
+        condition: service_healthy
 
   svc-inference:
     build: ./services/svc-inference
+    ports: ["8202:8202"]
     environment:
       <<: *internal-auth
-      LLM_PROVIDER: ${LLM_PROVIDER:-claude}      # plugável: claude | qwen-ollama | ...
-      LLM_MODEL: ${LLM_MODEL:-claude-sonnet-4-6}
+      BACKEND: ${BACKEND:-ollama}
+      BACKEND_URL: ${BACKEND_URL:-http://ollama:11434}
+      BACKEND_API_KEY: ${BACKEND_API_KEY:-}
+      DEFAULT_MODEL: ${DEFAULT_MODEL:-qwen2.5:7b}
+      BACKEND_TIMEOUT_S: ${BACKEND_TIMEOUT_S:-120}
+    depends_on:
+      ollama-pull:
+        condition: service_completed_successfully
 
   svc-observability:
     build: ./services/svc-observability
-    environment: { <<: *internal-auth }         # traces começam vazios
+    ports: ["8205:8205"]
+    environment: { <<: *internal-auth }
 
-  svc-orchestrator:
-    build: ./services/svc-orchestrator          # o agente (fluxo cotação) + cliente resiliente /quote
+  # ASR — faster-whisper small (~2–3 GB VRAM com CUDA)
+  svc-media-asr:
+    build: ./services/svc-media-asr
+    ports: ["8210:8210"]
     environment:
       <<: *internal-auth
-      QUOTE_URL: "http://quote-api:8080"
-      GUARDRAILS_URL: "http://svc-guardrails:8000"
-      RAG_URL: "http://svc-rag:8000"
-      INFERENCE_URL: "http://svc-inference:8000"
-      OBSERVABILITY_URL: "http://svc-observability:8000"
-      QUOTE_MAX_RETRIES: "3"
-      QUOTE_TIMEOUT_S: "10"
-      QUOTE_CIRCUIT_THRESHOLD: "5"
-    depends_on: [quote-api, svc-guardrails, svc-rag, svc-inference, svc-observability]
+      WHISPER_MODEL: ${WHISPER_MODEL:-small}
+      WHISPER_DEVICE: ${WHISPER_DEVICE:-cuda}
+      WHISPER_COMPUTE: ${WHISPER_COMPUTE:-float16}
+    gpus: all
+
+  # OCR — Tesseract CPU
+  svc-media-ocr:
+    build: ./services/svc-media-ocr
+    ports: ["8211:8211"]
+    environment:
+      <<: *internal-auth
+      OCR_LANG: ${OCR_LANG:-por+eng}
+
+  agente:
+    build: .
     ports: ["8100:8100"]
+    environment:
+      <<: *internal-auth
+      QUOTE_URL: "http://quote-api:8000"
+      GUARDRAILS_URL: "http://svc-guardrails:8200"
+      RAG_URL: "http://svc-rag:8204"
+      INFERENCE_URL: "http://svc-inference:8202"
+      INFERENCE_MODEL: ${INFERENCE_MODEL:-qwen2.5:7b}
+      MEDIA_ASR_URL: "http://svc-media-asr:8210"
+      MEDIA_OCR_URL: "http://svc-media-ocr:8211"
+      AUDIT_DB_PATH: "/data/audit.db"
+      NEO4J_URI: "bolt://neo4j:7687"
+      NEO4J_USER: ${NEO4J_USER:-neo4j}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-namastex-graph}
+      NEO4J_SEED_ON_BOOT: ${NEO4J_SEED_ON_BOOT:-1}
+      QUOTE_MAX_RETRIES: "3"
+      QUOTE_TIMEOUT_S: "15"
+      QUOTE_CIRCUIT_THRESHOLD: "5"
+    volumes:
+      - namastex_audit:/data
+      - ./dataset:/app/dataset:ro
+    depends_on:
+      quote-api:
+        condition: service_started
+      svc-guardrails:
+        condition: service_started
+      svc-rag:
+        condition: service_started
+      svc-inference:
+        condition: service_started
+      svc-observability:
+        condition: service_started
+      svc-media-asr:
+        condition: service_started
+      svc-media-ocr:
+        condition: service_started
+      neo4j:
+        condition: service_healthy
 
 volumes:
-  namastex_qdrant:            # volumes DEDICADOS do desafio — não reaproveitar de outros projetos
+  namastex_qdrant:
+  namastex_ollama:
+  namastex_audit:
+  namastex_neo4j:
+  namastex_neo4j_logs:

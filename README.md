@@ -4,84 +4,103 @@ Solução do **Desafio Técnico FDE / AI Engineer (Namastex)** — um agente que
 um lead de seguro auto de ponta a ponta: **conversa → qualifica → cota → decide**
 (resolve ou escala pro humano, com critério explícito).
 
-> 🚧 Em desenvolvimento. Ver [`STATE.md`](./STATE.md) para o estado atual e próximos passos.
+> Ver [`STATE.md`](./STATE.md) para handoff / decisões de engenharia.
 
 ## Arquitetura
 
-Diagrama interativo em [`arquitetura.html`](./arquitetura.html). Resumo:
+Diagrama: [`arquitetura.html`](./arquitetura.html).
 
-Um **agente orquestrador (svc-orchestrator, LangGraph)** conduz o fluxo e integra
-**microsserviços plugáveis reusados** do ecossistema `microservicos-ai-orchestrator`
-(contract-first, OpenAPI `/v1/`, `X-Internal-Key`, `/health`, `/metrics`, OTel):
+Um **agente de cotação** (`app/main.py` + `orch_svc`) integra microsserviços
+(`svc-guardrails`, `svc-rag`, `svc-inference`, `svc-observability`) + **ASR/OCR**
++ **quote-service** (API do desafio) + **Ollama** (LLM local).
 
-| Serviço | Papel no agente |
-|---|---|
-| **svc-guardrails** | sanitiza + mascara PII (CPF/placa/CNH) + injection |
-| **svc-router** | classifica a etapa/intenção do lead |
-| **svc-rag** | recupera conversas similares/ganhas (few-shot dinâmico) |
-| **svc-inference** | serving do LLM (provider plugável) |
-| **svc-observability** | rastreabilidade: id + status + trilha (OTel) |
-| **svc-orchestrator** | o agente (fluxo de cotação) |
+| Serviço | Porta | Papel |
+|---------|-------|--------|
+| **agente** | 8100 | `POST /chat` multi-turno |
+| **quote-api** | 8000 | cotação (20% 5xx + lentidão) |
+| **svc-guardrails** | 8200 | sanitize + PII + injection |
+| **svc-inference** | 8202 | extract/redação via LLM |
+| **svc-rag** | 8204 | few-shot `namastex_conversas` |
+| **svc-observability** | 8205 | métricas / trilha |
+| **svc-media-asr** | 8210 | Whisper `small` (áudio → texto) |
+| **svc-media-ocr** | 8211 | Tesseract (imagem/PDF → texto) |
+| **ollama** | 11434 | `qwen2.5:7b` (Q4) |
+| **qdrant** | 6333 | vetores |
+| **neo4j** | 7474 / 7687 | grafo (Browser + Bolt) |
 
-Fora do ecossistema: **quote-service** (fornecido pelo desafio) como tool externa;
-**dataset** de 2500 conversas alimenta o svc-rag; **humano (HITL)** recebe a escalada.
+## Hardware recomendado (stack completa)
 
-### Por que reuso e não construção do zero
-Os microsserviços **já existem** (código, contratos, testes). Reusar demonstra
-**visão de plataforma** (desacoplamento/escala) e **velocidade com qualidade** —
-exatamente o que o desafio pede. Fragmentar do zero em 3 dias seria over-engineering;
-reusar plataforma pronta é senioridade. Detalhe: **não** copio o monólito
-AI-Orchestrator — reuso os `svc-*` já desacoplados dele, por vendoring limpo.
+Um único `docker compose up` sobe **tudo**. Orçamento típico (combo sem stress):
 
-## Princípios de engenharia (o que o desafio avalia)
+| Peça | Device | VRAM / RAM |
+|------|--------|------------|
+| Ollama `qwen2.5:7b` (Q4) | GPU | ~**4.5–5.5 GB VRAM** |
+| faster-whisper **`small`** | GPU | ~**2–3 GB VRAM** |
+| Tesseract OCR | CPU | ~**0.5–1 GB RAM** |
+| SBERT (rag + guardrails) | CPU | ~**1–2 GB RAM** |
+| Neo4j (heap+pagecache default) | CPU | ~**1–2 GB RAM** |
+| Qdrant + APIs + Docker | CPU | ~**2–4 GB RAM** |
+| **Total GPU** | | **~8–10 GB VRAM** (cabe na **3060 12 GB**) |
+| **Total RAM host** | | **≥16 GB** (confortável **32 GB**) |
 
-- **Resiliência ao `/quote` falhar** (20% 500/502/503 + lentidão 8s): erro é
-  **observação ao loop**, não exceção — `retry + backoff + timeout + circuit breaker`;
-  falha persistente **escala pro humano**, nunca inventa cotação.
-- **Critério HITL explícito**: dados insuficientes · mídia sem transcrição ·
-  `/quote` falhou N vezes · idade/veículo fora de faixa · objeção complexa.
-- **Isolamento de dados** — cada serviço reusado sobe com estado **do zero**; o RAG é
-  populado só do dataset do desafio; nada de outros projetos vaza pro repo público.
-  Ver [`docs/isolamento-dados.md`](./docs/isolamento-dados.md).
-- **Rastreabilidade** — cada mensagem/cotação com `id` e `status` (svc-observability).
-- **PII / dados sensíveis** — mascarados em log e store; dataset fora do git.
+**Recomendado para a solução completa:** GPU **NVIDIA ≥ 8 GB VRAM** (ideal **12 GB**, ex. RTX 3060) + **≥16 GB RAM** + [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
+
+| Cenário | Comando | Notas |
+|---------|---------|--------|
+| **Completo (GPU)** | `docker compose up --build` | ASR em CUDA |
+| Sem NVIDIA | `docker compose -f docker-compose.yml -f docker-compose.cpu.yml up --build` | Whisper em CPU (lento) |
+| Offline sem LLM | `… -f docker-compose.demo.yml` | `BACKEND=demo`, sem Ollama |
+
+Sem GPU e sem o override `cpu.yml`, o serviço ASR pode falhar ao reservar `gpus: all`.
 
 ## Como rodar
 
 ```bash
-docker compose up            # sobe quote-service + serviços do agente + infra (volumes limpos)
-# ... pipeline de ingestão do dataset no svc-rag (a documentar)
+cp env.example .env
+docker compose up --build
+# 1ª vez: pull qwen2.5:3b + build das imagens (pode demorar)
 ```
 
-_(instruções completas conforme a implementação evolui — ver STATE.md)_
+```bash
+curl -s http://localhost:8100/health
+curl -s -X POST http://localhost:8100/chat -H 'content-type: application/json' \
+  -d '{"conversation_id":"c1","mensagem":"tenho 35 anos, Gol 2020, plano essencial, cep 01310100"}'
+```
+
+Neo4j (Browser http://localhost:7474 — user `neo4j` / senha `.env`):
+```bash
+curl -s http://localhost:8100/graph/neo4j
+curl -s 'http://localhost:8100/graph/neo4j/search?q=apresentar_cotacao'
+```
+
+Áudio (ASR integrado):
+```bash
+curl -s -X POST http://localhost:8100/chat -H 'content-type: application/json' \
+  -d '{"conversation_id":"a1","mensagem":"[áudio]","message_type":"audio","media_url":"http://<host-acessivel-do-container>/voz.mp3"}'
+```
+
+Falha de ASR/OCR → HITL (`mídia sem transcrição`). Falha de `/quote` → retry/circuit → HITL (nunca inventa prêmio).
+
+## Princípios (régua do desafio)
+
+- Resiliência ao `/quote` (20% 5xx + 8s)
+- HITL explícito (mídia, objeção, faixa etária, quote down, turnos)
+- Rastreabilidade (`eventos` com step/status)
+- PII mascarada em log (guardrails)
+- Isolamento de dados — [`docs/isolamento-dados.md`](./docs/isolamento-dados.md)
 
 ## Estrutura
 
 ```
 desafio-Khal/
-  arquitetura.html          # diagrama archify da solução
-  STATE.md                  # handoff / estado / decisões
-  docs/isolamento-dados.md  # política de reuso limpo
-  docker-compose.yml        # orquestração (volumes novos, coleção namastex_conversas)
-  services/                 # svc-* vendorizados (limpos) + código novo do agente
+  docker-compose.yml       # solução completa (tudo integrado)
+  docker-compose.cpu.yml   # ASR sem GPU
+  docker-compose.demo.yml  # sem LLM real
+  env.example
+  app/                     # agente
+  services/                # svc-* + media-asr/ocr
+  domains/seguro_auto/     # porteiro do body /quote
 ```
 
-## Rodar o agente (API)
-
-```bash
-pip install -r requirements.txt
-docker compose up -d quote-api            # sobe o quote-service (porta 8000)
-QUOTE_URL=http://localhost:8000 uvicorn app.main:app --port 8100
-```
-
-Endpoints: `GET /health` · `POST /chat`.
-
-```bash
-# exemplo (via httpx/python — curl também serve)
-POST /chat  {"mensagens": ["tenho 45 anos, Onix 2019, cep 20040-002", "tá caro"], "idade": 45}
-# -> {"decisao":{"acao":"reverter_objecao",...}, "persona":"meia_30_50",
-#     "eventos":[... {"step":"objecao","detail":{"framework":"feel-felt-found + ancoragem-valor"}}]}
-```
-
-Desfechos de `/chat`: `apresentar_cotacao` · `reverter_objecao` (não desiste no 1º não) ·
-`pedir_dado` · `recusar` · `escalar_humano`. Cada passo é logado (id/status), PII mascarada.
+Desfechos: `apresentar_cotacao` · `reverter_objecao` · `pedir_dado` · `recusar` · `escalar_humano`.  
+Detalhes: [`STATE.md`](./STATE.md).

@@ -5,3 +5,4 @@ pydantic
 pandas
 networkx
 pyarrow
+neo4j>=5.14,<6

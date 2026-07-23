@@ -59,12 +59,17 @@ def test_requires_verification_gate():
 def test_missing_required_fields():
     r = build_quote_request(LeadSlots(plano_id="completo"), verified=True)
     assert not r.ok
-    assert set(r.missing) == {"idade", "veiculo_ano"}
+    assert set(r.missing) == {"idade", "veiculo_ano", "cep"}
 
 
 def test_extract_year_from_veiculo_texto():
     r = build_quote_request(
-        LeadSlots(idade="42", veiculo_texto="Civic LX 2019 prata", plano_id="Completo"),
+        LeadSlots(
+            idade="42",
+            veiculo_texto="Civic LX 2019 prata",
+            plano_id="Completo",
+            cep="01310-100",
+        ),
         verified=True,
         today=date(2026, 7, 22),
     )

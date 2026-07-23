@@ -6,12 +6,12 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-Check = Literal["sanitize", "injection", "ood"]
+Check = Literal["sanitize", "injection", "ood", "pii"]
 
 
 class AnalyzeRequest(BaseModel):
     text: str = Field(min_length=1)
-    checks: list[Check] = ["sanitize", "injection", "ood"]
+    checks: list[Check] = ["sanitize", "injection", "ood", "pii"]
     context: str | None = None
 
 
@@ -27,9 +27,15 @@ class OodVerdictModel(BaseModel):
     threshold: float
 
 
+class PiiVerdictModel(BaseModel):
+    flagged: bool
+    types: list[str]
+
+
 class Verdicts(BaseModel):
     injection: InjectionVerdictModel | None
     ood: OodVerdictModel | None
+    pii: PiiVerdictModel | None = None
 
 
 class AnalyzeResponse(BaseModel):

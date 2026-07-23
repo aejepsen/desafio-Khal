@@ -1,0 +1,125 @@
+{
+  "nota_dataset": "Parquet não tem 'escalar humano' explícito; 538 convs usam 'posso te ligar?' após objeção de preço (handoff soft).",
+  "pass": true,
+  "results": [
+    {
+      "id": "DS_objecao_preco_conv_00003",
+      "dataset_cid": "conv_00003",
+      "conversation_id": "hitl-ds_objecao_preco_conv_00003-1784830720",
+      "pass": true,
+      "expect": {
+        "acao": "escalar_humano",
+        "escalate": true
+      },
+      "final_acao": "escalar_humano",
+      "final_escalate": true,
+      "turns": [
+        {
+          "turno": 1,
+          "lead": "tenho 61 anos, Toyota Corolla 2010, plano essencial, cep 59158-132",
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "estagio": "cotado",
+          "motivos": [],
+          "mensagem": "Seguem as informações do seu plano Essencial: R$ 316.42/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com os planos Completo ou Premium?"
+        },
+        {
+          "turno": 2,
+          "lead": "achei caro pra esse carro... a Porto Seguro me ofereceu menos",
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "estagio": "objecao",
+          "motivos": [
+            "Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.'"
+          ],
+          "mensagem": "Entendo sua dúvida, senhor. À primeira vista pode parecer caro, mas quando analisamos a proteção que este plano oferece diariamente, vemos que é uma pequena quantia para garantir a segurança do seu ca"
+        },
+        {
+          "turno": 3,
+          "lead": "ainda tá caro",
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "estagio": "objecao",
+          "motivos": [
+            "Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento."
+          ],
+          "mensagem": "Entendo sua dúvida. Além do valor, tem mais algo que te impede de fechar? Faz sentido olharmos isso juntos?"
+        },
+        {
+          "turno": 4,
+          "lead": "caro demais",
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "estagio": "objecao",
+          "motivos": [
+            "Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total)."
+          ],
+          "mensagem": "Entendo sua preocupação, senhor. Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total). Faz sentido olharmos isso juntos?"
+        },
+        {
+          "turno": 5,
+          "lead": "muito caro mesmo",
+          "acao": "escalar_humano",
+          "escalate": true,
+          "estagio": "escalado",
+          "motivos": [
+            "objeção 'preco' persistiu após 3 tentativa(s)"
+          ],
+          "mensagem": "Vou te conectar com um atendente humano para que possamos continuar a conversa. Motivo: objeção 'preço' persistiu após 3 tentativas. Um atendente humano vai continuar daqui."
+        }
+      ]
+    },
+    {
+      "id": "DS_media_document_conv_00033",
+      "dataset_cid": "conv_00033",
+      "conversation_id": "hitl-ds_media_document_conv_00033-1784830720",
+      "pass": true,
+      "expect": {
+        "acao": "escalar_humano",
+        "escalate": true
+      },
+      "final_acao": "escalar_humano",
+      "final_escalate": true,
+      "turns": [
+        {
+          "turno": 1,
+          "lead": "[documento] CNH_frente.pdf",
+          "acao": "escalar_humano",
+          "escalate": true,
+          "estagio": "escalado",
+          "motivos": [
+            "mídia sem transcrição"
+          ],
+          "mensagem": "Vou te conectar com um atendente humano para darmos continuidade. Motivo: mídia sem transcrição. Um atendente humano vai continuar daqui."
+        }
+      ]
+    },
+    {
+      "id": "DS_idade_fora_faixa_conv_00008",
+      "dataset_cid": "conv_00008",
+      "conversation_id": "hitl-ds_idade_fora_faixa_conv_00008-1784830720",
+      "pass": true,
+      "expect": {
+        "acao_in": [
+          "recusar",
+          "escalar_humano"
+        ]
+      },
+      "final_acao": "recusar",
+      "final_escalate": false,
+      "turns": [
+        {
+          "turno": 1,
+          "lead": "tenho 78 anos, Honda HR-V 2008, plano essencial, cep 01310-100",
+          "acao": "recusar",
+          "escalate": false,
+          "estagio": "qualificando",
+          "motivos": [
+            "Idade acima do limite de aceitacao (75 anos)."
+          ],
+          "mensagem": "Posso te conectar com um especialista para avaliar o seu caso?"
+        }
+      ]
+    }
+  ]
+}

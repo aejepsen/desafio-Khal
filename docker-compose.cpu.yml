@@ -1,0 +1,9 @@
+# Override sem GPU NVIDIA — ASR em CPU (mais lento; ~8–16 GB RAM extras no host).
+#   docker compose -f docker-compose.yml -f docker-compose.cpu.yml up --build
+
+services:
+  svc-media-asr:
+    gpus: !reset []
+    environment:
+      WHISPER_DEVICE: cpu
+      WHISPER_COMPUTE: int8

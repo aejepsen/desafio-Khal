@@ -34,10 +34,10 @@ MOCK_CASES: list[tuple[str, dict, bool, bool, dict | None]] = [
     ),
     (
         "plano_completo_ok",
-        {"idade": 28, "veiculo_ano": 2024, "plano_id": "completo"},
+        {"idade": 28, "veiculo_ano": 2024, "plano_id": "completo", "cep": "01310-100"},
         True,
         True,
-        {"plano_id": "completo", "idade": 28, "veiculo_ano": 2024},
+        {"plano_id": "completo", "idade": 28, "veiculo_ano": 2024, "cep": "01310-100"},
     ),
     (
         "plano_premium_ok",
@@ -49,28 +49,28 @@ MOCK_CASES: list[tuple[str, dict, bool, bool, dict | None]] = [
     # --- faixas etárias (amostra por banda de planos.json) ---
     (
         "faixa_18_24",
-        {"idade": 22, "veiculo_ano": 2022, "plano_id": "essencial"},
+        {"idade": 22, "veiculo_ano": 2022, "plano_id": "essencial", "cep": "01310-100"},
         True,
         True,
         {"idade": 22, "veiculo_ano": 2022},
     ),
     (
         "faixa_25_29",
-        {"idade": 27, "veiculo_ano": 2022, "plano_id": "essencial"},
+        {"idade": 27, "veiculo_ano": 2022, "plano_id": "essencial", "cep": "01310-100"},
         True,
         True,
         {"idade": 27},
     ),
     (
         "faixa_30_59",
-        {"idade": 45, "veiculo_ano": 2022, "plano_id": "essencial"},
+        {"idade": 45, "veiculo_ano": 2022, "plano_id": "essencial", "cep": "01310-100"},
         True,
         True,
         {"idade": 45},
     ),
     (
         "faixa_60_75",
-        {"idade": 70, "veiculo_ano": 2022, "plano_id": "essencial"},
+        {"idade": 70, "veiculo_ano": 2022, "plano_id": "essencial", "cep": "01310-100"},
         True,
         True,
         {"idade": 70},
@@ -92,21 +92,21 @@ MOCK_CASES: list[tuple[str, dict, bool, bool, dict | None]] = [
     # --- idade do veículo (bandas planos.json; today=2026) ---
     (
         "veiculo_0_5",
-        {"idade": 40, "veiculo_ano": 2023, "plano_id": "completo"},
+        {"idade": 40, "veiculo_ano": 2023, "plano_id": "completo", "cep": "01310-100"},
         True,
         True,
         {"veiculo_ano": 2023},
     ),
     (
         "veiculo_6_10",
-        {"idade": 40, "veiculo_ano": 2018, "plano_id": "completo"},
+        {"idade": 40, "veiculo_ano": 2018, "plano_id": "completo", "cep": "01310-100"},
         True,
         True,
         {"veiculo_ano": 2018},
     ),
     (
         "veiculo_11_20",
-        {"idade": 40, "veiculo_ano": 2010, "plano_id": "completo"},
+        {"idade": 40, "veiculo_ano": 2010, "plano_id": "completo", "cep": "01310-100"},
         True,
         True,
         {"veiculo_ano": 2010},
@@ -133,13 +133,20 @@ MOCK_CASES: list[tuple[str, dict, bool, bool, dict | None]] = [
         False,
         None,
     ),
+    (
+        "cep_obrigatorio_faltando",
+        {"idade": 33, "veiculo_ano": 2021, "plano_id": "essencial"},
+        True,
+        False,
+        None,
+    ),
     # --- extração de texto / aliases ---
     (
         "veiculo_texto_e_alias_plano",
-        {"idade": "42 anos", "veiculo_texto": "Gol 1.0 2019", "plano_id": "Básico"},
+        {"idade": "42 anos", "veiculo_texto": "Gol 1.0 2019", "plano_id": "Básico", "cep": "01310-100"},
         True,
         True,
-        {"idade": 42, "veiculo_ano": 2019, "plano_id": "essencial"},
+        {"idade": 42, "veiculo_ano": 2019, "plano_id": "essencial", "cep": "01310-100"},
     ),
     # --- gates ---
     (

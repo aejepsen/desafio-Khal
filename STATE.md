@@ -49,16 +49,26 @@ Escala pro humano quando: dados insuficientes p/ cotar · mídia sem transcriç�
 (image/audio/document) · /quote falhou N vezes (circuit aberto) · idade/veículo
 fora de faixa cotável · objeção complexa · pedido fora de escopo.
 
-## Estado atual (2026-07-22 noite)
-- Vendoring dos 6 `svc-*` + `quote-service` + compose esqueleto: feitos.
-- **Domínio determinístico** `domains/seguro_auto/`: feito (monta body `/quote`, não calcula prêmio).
-- **quote-api** testado local (`docker compose up --build quote-api`, porta **8000:8000**).
-- Docs de regras + Archify do fluxo `/quote`: feitos.
-- **RAG:** qdrant + svc-rag no ar; coleção `namastex_conversas` populada (712 conversas `ganho`,
-  771 chunks). Script `scripts/ingest_namastex_conversas.py`.
-- **PRÓXIMO:** (a) cliente HTTP resiliente do `/quote` no orchestrator;
-  (b) wire domínio → agente; (c) wire orchestrator → `POST /v1/search`;
-  (d) HITL em código; (e) adaptar prompts; (f) log de execução completa.
+## Estado atual (2026-07-23)
+- Domínio determinístico, quote resiliente, RAG, objeções, persona, thread, `/chat` — feitos.
+- PII (mask só em log), CEP obrigatório, HITL explícito (mídia / quote fail / faixa) — feitos.
+- Eval amostras 7/7 PASS; smoke feliz Ollama + smoke áudio Whisper GPU — feitos.
+- **Compose único = solução completa:** `docker compose up --build` sobe quote + qdrant +
+  guardrails + rag + inference + ollama (`qwen2.5:7b` Q4) + asr (Whisper small GPU) +
+  ocr (Tesseract) + observability + agente. Sem profiles `ollama`/`media`.
+  `MEDIA_ASR_URL`/`MEDIA_OCR_URL` fixos no agente. Overrides: `docker-compose.cpu.yml`,
+  `docker-compose.demo.yml`. Removido `docker-compose.media.yml`.
+- **Hardware alvo (README):** RTX 3060 12 GB + 32 GB RAM; VRAM tip. ~8–10 GB
+  (7b Q4 + whisper small); OCR/SBERT no CPU.
+- **Grafo de fechamento:** `NoConclusao` + aresta `FECHA_COM` → `FechamentoSpec`
+  (in-process; Graphify em `docs/grafo-fechamento/graphify-out/`). Neo4j no compose
+  (`:7474`/`:7687`) com seed + dataset ganho.
+- **Re-rank:** `orch_svc/rerank.py` — RAG top_k=10 + closes Neo4j → score
+  (vetor + ganho/plano/close) → top 3 em `exemplos`; injetados no prompt de redação.
+- **Ciclo E2E ganho:** qualifica → cota → aceite (`fechado`) → `emitir_apolice`
+  (`estagio=contratado`). Script `scripts/e2e_ciclo_ganho.py` + log
+  `docs/log-execucao-real.md`. Extração LLM ancorada no texto (anti-alucinação).
+- **PRÓXIMO:** polir README final (decisões / mapa régua / entregável #3) se ainda faltar.
 
 ## Handoff / troca de LLM
 Este STATE + README + docs/isolamento-dados.md + arquitetura.html
@@ -303,5 +313,173 @@ silencioso. thread: OBRIGATORIOS=[idade,veiculo_ano,plano_id] (sempre pergunta) 
 OPCIONAIS_ATIVOS=[cep] (pede 1x, cota sem se lead não der) · data_inicio=hoje (default explícito).
 ThreadState.pedidos evita re-perguntar. Demonstrado: lead completo mas sem plano → pergunta o
 plano → "premium" → cota Premium R$390.88 (antes cotava Essencial R$137.88 silencioso). 33 testes.
-**PRÓXIMO:** extração LLM (plano/veículo de texto livre mais rico); resposta redigida
-(svc-inference persona+tática); README final (decisões).
+**PRÓXIMO:** resposta redigida (svc-inference persona+tática); README final (decisões);
+  opcional: subir svc-inference real e setar INFERENCE_URL.
+
+## SESSÃO 2026-07-23 — EXTRAÇÃO LLM (PRÓXIMO anterior FEITO)
+`orch_svc/extracao.py`: heurística + LLM opcional via `HttpInference`.
+LLM enriquece plano/veículo/idade; falha → degrada para heurística (não bloqueia).
+`app/main.py`: `INFERENCE_URL` / `INFERENCE_MODEL` opcionais; health expõe `inference`.
+Body `/quote` nunca envia null (`cotacao_flow._extrair_body` filtra None).
+Tests: test_extracao 5 → **38 passed** no pacote orch_svc tests.
+**PRÓXIMO:** redigir resposta com persona+tática (svc-inference); README final.
+
+## SESSÃO 2026-07-23 — RESPOSTA REDIGIDA (persona + tática)
+`orch_svc/resposta.py`: `redigir_resposta(decisao, idade, …)`.
+- Template determinístico por ação (cotação / pedir_dado / objeção / escala…).
+- LLM opcional (`INFERENCE_URL`) reescreve no tom da persona sem inventar fatos.
+- Objeção: injeta `framework` (LAER / feel-felt-found / …) no prompt/template.
+- `/chat` passa a devolver `mensagem` (texto ao lead). Tests: test_resposta 5 → **43 passed**.
+Smoke: /chat caminho feliz → mensagem com Essencial R$137.88, persona meia_30_50.
+**PRÓXIMO:** README final (decisões / entregável #3).
+
+## SESSÃO 2026-07-23 — PII no svc-guardrails + wire /chat
+Check `pii` pt-BR (CPF/placa/CNH/CEP/email) em `guardrails/pii.py`; CNH rotulada antes do CPF genérico.
+`/v1/analyze` inclui pii por default; texto mascarado em `sanitized_text` (logs), decisão allow/block só por injection.
+Wire: `HttpGuardrails` → sanitize+injection+pii; `run_turno` block→HITL; slots extraídos do texto ORIGINAL (CEP intacto).
+`app/main.py`: `GUARDRAILS_URL`. Compose: `8200` + `GUARDRAILS_URL=http://svc-guardrails:8200` (QUOTE/RAG ports alinhados).
+Tests: test_pii + test_guardrails_wire; orch suite 45 passed.
+**PRÓXIMO:** README final (decisões); opcional smoke com container guardrails.
+
+## SESSÃO 2026-07-23 — CEP obrigatório (mantido)
+Antes (`6cd6ca2`): `OPCIONAIS_ATIVOS=[cep]` — pedia 1x e cotava sem se o lead não der.
+Agora (decisão confirmada): `cep` em `OBRIGATORIOS` + domain `missing=["cep"]` se ausente.
+Sem CEP → `pedir_dado` (não cotar). Payload `/quote` sempre inclui `cep` quando ok.
+`QuoteRequestPayload.cep: str` (não mais opcional no body montado pelo domain).
+**PRÓXIMO:** README final (decisões).
+
+## SESSÃO 2026-07-23 — svc-inference plug (item 4)
+Wire já existia em `app/main.py` (`INFERENCE_URL` → extracao + redigir_resposta).
+Fechado o gap operacional:
+- `DemoBackend` no svc-inference (`BACKEND=demo`): extract → JSON de slots; polish → ecoa RASCUNHO.
+- Compose: porta **8202**, `BACKEND=demo`, `INFERENCE_URL=http://svc-inference:8202`.
+- Sem URL / falha → degrada pra heurística/template (não bloqueia).
+- Ollama: `BACKEND=ollama` + `BACKEND_URL` + `DEFAULT_MODEL`.
+Tests: `test_demo_backend`, `test_inference_plug`.
+**PRÓXIMO:** README final (decisões / mapa régua); smoke compose ponta a ponta.
+
+## SESSÃO 2026-07-23 — SMOKE caminho feliz
+Stack: quote :8000 · guardrails :8200 · inference :8202 · rag :8204 · agente :8100.
+`POST /chat` one-shot com idade+Corolla 2020+essencial+CEP+CPF →
+`apresentar_cotacao` Essencial **R$137.88**, persona `meia_30_50`, PII mascarada no log
+(`[CEP]`/`cpf` em guardrails), slots completos, `escalate=false`.
+Snapshot: `docs/smoke-happy-path.json`.
+**PRÓXIMO:** README final (decisões / mapa régua).
+
+## SESSÃO 2026-07-23 — Compose completo + LLM de avaliação
+- `docker-compose.yml`: quote + qdrant + guardrails + rag + inference + observability + **agente** (`app/main.py` :8100).
+- LLM padrão de avaliação: **Ollama** (`--profile ollama` / `COMPOSE_PROFILES=ollama`) + `qwen2.5:3b` (`ollama-pull`).
+- `OpenAICompatBackend` (`BACKEND=openai`) p/ cloud OpenAI-compat.
+- Offline: `docker-compose.demo.yml` → `BACKEND=demo`.
+- `Dockerfile` do agente · `env.example` · README atualizado.
+**PRÓXIMO:** smoke `compose --profile ollama up` (pull do modelo); README decisões.
+
+## SESSÃO 2026-07-23 — SMOKE feliz com Ollama (stack compose)
+`docker compose --profile ollama up --build` → agente :8100 + inference `BACKEND=ollama`/`qwen2.5:3b`.
+Fix: `plans.json` no Dockerfile do agente (`.dockerignore` excluía `quote-service`).
+`POST /chat` → Essencial **R$137.88**, persona `meia_30_50`, PII mascarada; `mensagem` reformulada pelo LLM
+(ex.: "R$ 137,88/mês… detalhe as coberturas?"). Snapshot: `docs/smoke-happy-path-ollama.json`.
+**PRÓXIMO:** README final (decisões / mapa régua).
+
+## SESSÃO 2026-07-23 — Eval amostras dataset × régua (realtime)
+7 casos em `docs/eval-amostras/` (catálogo mascarado + resultados). Rodados 1 a 1 no `/chat`.
+**7/7 PASS**: happy · quote fail (sintético rate=1) · objeção→HITL · mídia→pedir_dado · idade fora→recusar · trace · PII.
+Gap: mídia ainda não tem `escalar_humano` dedicado (só não cota).
+
+## SESSÃO 2026-07-23 — HITL mídia sem transcrição (gap fechado)
+`orch_svc/midia.py` + `run_turno`/`ChatIn.message_type`: placeholder `[documento]|[áudio]|…`
+ou `message_type=audio|image|document` → `escalar_humano` motivo **mídia sem transcrição**.
+Legenda útil após marcador não escala. Tests: `test_midia` 5.
+
+## SESSÃO 2026-07-23 — Plug ASR/OCR opcional (opção B, tear-free)
+`MEDIA_ASR_URL` / `MEDIA_OCR_URL` + `media_url` no `/chat`. Sem URL → HITL (padrão avaliação).
+Com URL: tenta `/v1/transcribe` ou `/v1/ocr`; texto útil → fluxo normal; falha → HITL.
+README: tabela GPU/RAM (Whisper large ≥10 GB VRAM; stack padrão sem GPU).
+Tests: enricher ok + falha→HITL.
+
+## SESSÃO 2026-07-23 — Combo 3 media (whisper small + tesseract)
+Profile `media`: `svc-media-asr` (:8210, faster-whisper **small**, GPU) + `svc-media-ocr` (:8211, Tesseract CPU).
+`docker-compose.media.yml` seta `MEDIA_*_URL` no agente. Avaliação sem profile = HITL tear-free.
+Orçamento: 3b+small ≈ 5–7 GB VRAM / 12 GB.
+
+## SESSÃO 2026-07-23 — Compose único (solução completa) [REGISTRADO]
+**Decisão:** a entrega sobe como UM stack — um comando = desafio ponta a ponta
+(texto + áudio + cotação + HITL + PII + LLM).
+
+**Mudanças:**
+- Removidos profiles `ollama` / `media` e arquivo `docker-compose.media.yml`.
+- `docker-compose.yml` sempre sobe: qdrant · quote-api · guardrails · rag ·
+  inference · ollama + ollama-pull · svc-media-asr · svc-media-ocr ·
+  observability · agente.
+- Agente com `MEDIA_ASR_URL` / `MEDIA_OCR_URL` wired (sem opt-in).
+- README: seção Hardware (VRAM/RAM) — alvo RTX 3060 12 GB + 32 GB RAM;
+  orçamento tip. qwen 3b + whisper small ≈ 5–7 GB VRAM.
+- Fallbacks (não são o caminho principal):
+  - `docker-compose.cpu.yml` → ASR sem NVIDIA (`gpus: !reset []`)
+  - `docker-compose.demo.yml` → omite ollama; `BACKEND=demo`
+
+**Comando canônico:** `docker compose up --build`
+
+**Validado:** `docker compose config --services` lista os 11 serviços do stack.
+
+## SESSÃO 2026-07-23 — Audit log chat↔LLM (governança)
+Gap: docker logs só tinham access log HTTP; resposta LLM ficava só no JSON HTTP.
+Agora cada `/chat` emite:
+1. linha JSON `audit.chat` no stdout do agente (docker logs) com lead_mascarado,
+   rascunho, mensagem_agente, fonte, model, acao, slots (mascarados), premio.
+2. evento `resposta` no payload (`eventos[]`) — só campos mascarados (`pii: masked`).
+`redigir_resposta` → `RedacaoResult{texto,rascunho,fonte}`. Smoke: `docs/eval-amostras/smoke-audit-chat.json`.
+**PII sempre ativa nos logs:** sem `lead` cru; CEP/CPF/e-mail/placa → `[CEP]`/`[CPF]`/…;
+slots no audit com `cep: "[CEP]"`. API `/chat` ainda devolve slots reais p/ cotar.
+
+## SESSÃO 2026-07-23 — SQLite audit por conversation_id
+`app/audit_store.py` + volume `namastex_audit` (`AUDIT_DB_PATH=/data/audit.db`).
+Cada `/chat` grava o mesmo payload `audit.chat` (PII masked) em `audit_turn` e
+cada passo em `audit_event` (id + step + status). Consulta: `GET /audit/{conversation_id}`.
+Smoke: `docs/eval-amostras/smoke-audit-sqlite.json`.
+**Esclarecimento:** ao pedir “mostrar o log” antes do SQLite, o que apareceu na
+conversa foi o JSON HTTP (`mensagem`/`eventos`) e access log uvicorn — NÃO a
+consulta do store; `audit.chat` só existia em stdout do container.
+
+## SESSÃO 2026-07-23 — Índice de fechamento (grafo cotação→CTA)
+Problema: LLM (`qwen2.5:3b`) reescrevia e gerava CTA sem nexo (“ajustar o plano agora”),
+às vezes omitindo o prêmio.
+Solução: `orch_svc/fechamento_index.py` — lookup por `acao|persona` → molde parametrizado
+(prêmio/plano/franquia/coberturas) + **CTA fixa** (detalhar coberturas OU comparar planos).
+`resposta.py` usa o índice; LLM só estiliza; `validar_fechamento_llm` rejeita CTA proibida
+ou ausência de prêmio → `llm_fallback` (template do índice).
+Audit/SQLite passam a gravar `index_key` + `cta`.
+Tests: `test_fechamento_index.py` + resposta. Smoke: `docs/eval-amostras/smoke-fechamento-index.json`.
+
+## SESSÃO 2026-07-23 — Grafo formal NoConclusao + Graphify (sem Neo4j)
+Runtime in-process (proporcional ao desafio; Neo4j evitado de propósito):
+- `NoConclusao{acao, quote/coberturas, persona}` + aresta **`FECHA_COM`** → `FechamentoSpec`
+- `orch_svc/conclusao_graph.py` · `resolver_fechamento()` · audit grava `conclusao_id` + `aresta`
+- `GET /graph/fechamento` devolve catálogo nós/arestas
+- Catálogo: `docs/grafo-fechamento/catalogo.json` + README
+- **Graphify OSS** no corpus `docs/grafo-fechamento/src/` →
+  `docs/grafo-fechamento/graphify-out/` (33 nós, 56 edges, god nodes:
+  `resolver_fechamento`, `NoConclusao`, `FechamentoSpec`)
+Decisão de produto: Graphify = documentação/visualização; runtime = grafo leve no agente.
+Tests: `test_conclusao_graph.py`.
+
+## SESSÃO 2026-07-23 — CTA omite plano já cotado
+`cta_cotacao(plano_id)`: Essencial → “compare com Completo ou Premium?”;
+Completo → Essencial ou Premium; Premium → Essencial ou Completo.
+Validação LLM rejeita lista `(Essencial / Completo / Premium)` e relistar o plano
+atual após “compare”. Tests + smoke `/chat` jovem essencial.
+
+## SESSÃO 2026-07-23 — Neo4j no compose (grafo persistente)
+Serviço `neo4j:5-community` (:7474 Browser / :7687 Bolt), volume `namastex_neo4j`,
+heap default ~1 GB. Agente: `NEO4J_URI=bolt://neo4j:7687`, seed no boot
+(`app/neo4j_graph.py`) — catálogo FECHA_COM + âncoras do dataset
+(aprovar_cotacao → emitir_apolice → ganho). Endpoints:
+`GET /graph/neo4j`, `GET /graph/neo4j/search`, `POST /graph/neo4j/seed`.
+svc-rag também recebe NEO4J_* (caminho GraphRAG). Lookup in-process permanece;
+Neo4j = pesquisa/persistência do grafo alinhado ao corpus.
+
+## SESSÃO 2026-07-23 — Dataset → Neo4j + ciclo ganho (aprovar→apólice)
+Ingest: `POST /graph/neo4j/seed-dataset` / `scripts/neo4j_seed_dataset.py`
+(400+ conversas `ganho` → nós Conversation, MENTIONS_PLAN, EXEMPLIFIES emitir_apolice).
+Agente: pós-`cotado`, aceite do lead (`fechado`/`pode emitir`/…) → `emitir_apolice`
+(mensagem boleto+apólice, espelho dataset). `estagio=contratado`. Tests `test_aceitacao`.

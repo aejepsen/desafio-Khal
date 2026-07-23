@@ -17,6 +17,8 @@ from orch_svc.circuit import DownstreamBusiness, DownstreamError
 class GuardVerdict:
     decision: str  # allow | flag | block
     patterns: list[str]
+    sanitized_text: str = ""
+    pii_types: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -42,7 +44,7 @@ class RouterClient(Protocol):
 
 
 class RagClient(Protocol):
-    def search(self, query: str, domain: str, trace: str) -> list[RagHit]: ...
+    def search(self, query: str, domain: str, trace: str, top_k: int = 10) -> list[RagHit]: ...
 
 
 class InferenceClient(Protocol):
@@ -82,10 +84,17 @@ class _Http:
 
 class HttpGuardrails(_Http):
     def analyze(self, text: str, trace: str) -> GuardVerdict:
-        payload = {"text": text, "checks": ["sanitize", "injection", "ood"]}
+        # ood omitido no caminho /chat (artefato pode estar ausente); pii sempre
+        payload = {"text": text, "checks": ["sanitize", "injection", "pii"]}
         d = self._post("/v1/analyze", payload, trace)
         inj = d.get("verdicts", {}).get("injection") or {}
-        return GuardVerdict(d["decision"], inj.get("patterns", []))
+        pii = d.get("verdicts", {}).get("pii") or {}
+        return GuardVerdict(
+            d["decision"],
+            list(inj.get("patterns") or []),
+            str(d.get("sanitized_text") or text),
+            tuple(pii.get("types") or []),
+        )
 
 
 class HttpRouter(_Http):
@@ -95,8 +104,12 @@ class HttpRouter(_Http):
 
 
 class HttpRag(_Http):
-    def search(self, query: str, domain: str, trace: str) -> list[RagHit]:
-        d = self._post("/v1/search", {"query": query, "collection": domain, "top_k": 3}, trace)
+    def search(self, query: str, domain: str, trace: str, top_k: int = 10) -> list[RagHit]:
+        d = self._post(
+            "/v1/search",
+            {"query": query, "collection": domain, "top_k": top_k},
+            trace,
+        )
         return [RagHit(h["text"], h["score"]) for h in d.get("hits", [])]
 
 
@@ -116,7 +129,12 @@ class FakeGuardrails:
     def analyze(self, text: str, trace: str) -> GuardVerdict:
         self.calls.append(trace)
         pats = ["ignore_instructions"] if self.verdict == "block" else []
-        return GuardVerdict(self.verdict, pats)
+        # fake mascara mínima para testes de log
+        masked = text
+        for needle, repl in (("529.982.247-25", "[CPF]"), ("ABC1D23", "[PLACA]")):
+            masked = masked.replace(needle, repl)
+        return GuardVerdict(self.verdict, pats, masked, ("cpf",) if "[CPF]" in masked else ())
+
 
 
 @dataclass
@@ -135,9 +153,10 @@ class FakeRag:
     hits: int = 2
     calls: list[str] = field(default_factory=list)
 
-    def search(self, query: str, domain: str, trace: str) -> list[RagHit]:
+    def search(self, query: str, domain: str, trace: str, top_k: int = 10) -> list[RagHit]:
         self.calls.append(trace)
-        return [RagHit(f"contexto {domain} {i}", 0.9 - i * 0.1) for i in range(self.hits)]
+        n = min(self.hits, top_k)
+        return [RagHit(f"contexto {domain} {i}", 0.9 - i * 0.1) for i in range(n)]
 
 
 @dataclass

@@ -1,0 +1,263 @@
+{
+  "name": "grafo-fechamento-seguro-auto",
+  "engine": "in-process",
+  "note": "Runtime sem Neo4j; Graphify documenta este catálogo.",
+  "nodes": [
+    {
+      "id": "padrao:apresentar_cotacao|jovem_18_30",
+      "label": "NoConclusao",
+      "acao": "apresentar_cotacao",
+      "persona": "jovem_18_30"
+    },
+    {
+      "id": "apresentar_cotacao|jovem_18_30",
+      "label": "FechamentoSpec",
+      "key": "apresentar_cotacao|jovem_18_30"
+    },
+    {
+      "id": "padrao:apresentar_cotacao|meia_30_50",
+      "label": "NoConclusao",
+      "acao": "apresentar_cotacao",
+      "persona": "meia_30_50"
+    },
+    {
+      "id": "apresentar_cotacao|meia_30_50",
+      "label": "FechamentoSpec",
+      "key": "apresentar_cotacao|meia_30_50"
+    },
+    {
+      "id": "padrao:apresentar_cotacao|senior_50+",
+      "label": "NoConclusao",
+      "acao": "apresentar_cotacao",
+      "persona": "senior_50+"
+    },
+    {
+      "id": "apresentar_cotacao|senior_50+",
+      "label": "FechamentoSpec",
+      "key": "apresentar_cotacao|senior_50+"
+    },
+    {
+      "id": "padrao:apresentar_cotacao|desconhecida",
+      "label": "NoConclusao",
+      "acao": "apresentar_cotacao",
+      "persona": "desconhecida"
+    },
+    {
+      "id": "apresentar_cotacao|desconhecida",
+      "label": "FechamentoSpec",
+      "key": "apresentar_cotacao|desconhecida"
+    },
+    {
+      "id": "padrao:pedir_dado",
+      "label": "NoConclusao",
+      "acao": "pedir_dado"
+    },
+    {
+      "id": "pedir_dado",
+      "label": "FechamentoSpec",
+      "key": "pedir_dado"
+    },
+    {
+      "id": "padrao:pedir_correcao",
+      "label": "NoConclusao",
+      "acao": "pedir_correcao"
+    },
+    {
+      "id": "pedir_correcao",
+      "label": "FechamentoSpec",
+      "key": "pedir_correcao"
+    },
+    {
+      "id": "padrao:recusar",
+      "label": "NoConclusao",
+      "acao": "recusar"
+    },
+    {
+      "id": "recusar",
+      "label": "FechamentoSpec",
+      "key": "recusar"
+    },
+    {
+      "id": "padrao:reverter_objecao",
+      "label": "NoConclusao",
+      "acao": "reverter_objecao"
+    },
+    {
+      "id": "reverter_objecao",
+      "label": "FechamentoSpec",
+      "key": "reverter_objecao"
+    },
+    {
+      "id": "padrao:escalar_humano",
+      "label": "NoConclusao",
+      "acao": "escalar_humano"
+    },
+    {
+      "id": "escalar_humano",
+      "label": "FechamentoSpec",
+      "key": "escalar_humano"
+    },
+    {
+      "id": "padrao:fallback",
+      "label": "NoConclusao",
+      "acao": "fallback"
+    },
+    {
+      "id": "fallback",
+      "label": "FechamentoSpec",
+      "key": "fallback"
+    },
+    {
+      "id": "plano:essencial",
+      "label": "Plano",
+      "plano_id": "essencial"
+    },
+    {
+      "id": "plano:completo",
+      "label": "Plano",
+      "plano_id": "completo"
+    },
+    {
+      "id": "plano:premium",
+      "label": "Plano",
+      "plano_id": "premium"
+    },
+    {
+      "id": "cob:colisao",
+      "label": "Cobertura",
+      "nome": "colisao"
+    },
+    {
+      "id": "cob:roubo",
+      "label": "Cobertura",
+      "nome": "roubo"
+    },
+    {
+      "id": "cob:furto",
+      "label": "Cobertura",
+      "nome": "furto"
+    },
+    {
+      "id": "cob:terceiros",
+      "label": "Cobertura",
+      "nome": "terceiros"
+    },
+    {
+      "id": "cob:vidros",
+      "label": "Cobertura",
+      "nome": "vidros"
+    },
+    {
+      "id": "cob:carro_reserva",
+      "label": "Cobertura",
+      "nome": "carro_reserva"
+    },
+    {
+      "id": "cob:assistencia_24h",
+      "label": "Cobertura",
+      "nome": "assistencia_24h"
+    }
+  ],
+  "edges": [
+    {
+      "source": "padrao:apresentar_cotacao|jovem_18_30",
+      "rel": "FECHA_COM",
+      "target": "apresentar_cotacao|jovem_18_30"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|meia_30_50",
+      "rel": "FECHA_COM",
+      "target": "apresentar_cotacao|meia_30_50"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|senior_50+",
+      "rel": "FECHA_COM",
+      "target": "apresentar_cotacao|senior_50+"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|desconhecida",
+      "rel": "FECHA_COM",
+      "target": "apresentar_cotacao|desconhecida"
+    },
+    {
+      "source": "padrao:pedir_dado",
+      "rel": "FECHA_COM",
+      "target": "pedir_dado"
+    },
+    {
+      "source": "padrao:pedir_correcao",
+      "rel": "FECHA_COM",
+      "target": "pedir_correcao"
+    },
+    {
+      "source": "padrao:recusar",
+      "rel": "FECHA_COM",
+      "target": "recusar"
+    },
+    {
+      "source": "padrao:reverter_objecao",
+      "rel": "FECHA_COM",
+      "target": "reverter_objecao"
+    },
+    {
+      "source": "padrao:escalar_humano",
+      "rel": "FECHA_COM",
+      "target": "escalar_humano"
+    },
+    {
+      "source": "padrao:fallback",
+      "rel": "FECHA_COM",
+      "target": "fallback"
+    },
+    {
+      "source": "plano:essencial",
+      "rel": "PODE_GERAR",
+      "target": "padrao:apresentar_cotacao|meia_30_50"
+    },
+    {
+      "source": "plano:completo",
+      "rel": "PODE_GERAR",
+      "target": "padrao:apresentar_cotacao|meia_30_50"
+    },
+    {
+      "source": "plano:premium",
+      "rel": "PODE_GERAR",
+      "target": "padrao:apresentar_cotacao|meia_30_50"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|meia_30_50",
+      "rel": "INCLUI_COBERTURA",
+      "target": "cob:colisao"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|meia_30_50",
+      "rel": "INCLUI_COBERTURA",
+      "target": "cob:roubo"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|meia_30_50",
+      "rel": "INCLUI_COBERTURA",
+      "target": "cob:furto"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|meia_30_50",
+      "rel": "INCLUI_COBERTURA",
+      "target": "cob:terceiros"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|meia_30_50",
+      "rel": "INCLUI_COBERTURA",
+      "target": "cob:vidros"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|meia_30_50",
+      "rel": "INCLUI_COBERTURA",
+      "target": "cob:carro_reserva"
+    },
+    {
+      "source": "padrao:apresentar_cotacao|meia_30_50",
+      "rel": "INCLUI_COBERTURA",
+      "target": "cob:assistencia_24h"
+    }
+  ]
+}

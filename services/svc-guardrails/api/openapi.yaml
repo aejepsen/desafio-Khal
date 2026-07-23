@@ -41,6 +41,15 @@ components:
         flagged: { type: boolean }
         residual: { type: number, description: "resíduo normalizado do subespaço [0,1]" }
         threshold: { type: number, description: "threshold calibrado via LOO no fit" }
+    PiiVerdict:
+      type: object
+      required: [flagged, types]
+      properties:
+        flagged: { type: boolean }
+        types:
+          type: array
+          items: { type: string }
+          description: "cpf | placa | cnh | email | cep"
     AnalyzeRequest:
       type: object
       required: [text]
@@ -48,8 +57,8 @@ components:
         text: { type: string, minLength: 1 }
         checks:
           type: array
-          items: { type: string, enum: [sanitize, injection, ood] }
-          default: [sanitize, injection, ood]
+          items: { type: string, enum: [sanitize, injection, ood, pii] }
+          default: [sanitize, injection, ood, pii]
         context:
           type: [string, "null"]
           description: rótulo do chamador para logs (ex. svc-orchestrator)
@@ -69,6 +78,10 @@ components:
             ood:
               oneOf:
                 - $ref: "#/components/schemas/OodVerdict"
+                - type: "null"
+            pii:
+              oneOf:
+                - $ref: "#/components/schemas/PiiVerdict"
                 - type: "null"
         decision: { type: string, enum: [allow, flag, block] }
         latency_ms: { type: number }

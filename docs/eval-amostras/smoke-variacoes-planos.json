@@ -1,0 +1,973 @@
+{
+  "ran_at": "2026-07-23",
+  "n": 8,
+  "cases": [
+    {
+      "case_id": "completo_jovem_carro_novo",
+      "conversation_id": "var-completo_jovem_carro_novo-1784817333",
+      "http_status": 200,
+      "latency_ms": 11253,
+      "mensagem_in": "Tenho 28 anos, carro Honda Civic 2024, CEP 01310-100, quero plano completo, inicio em 2026-08-01.",
+      "response": {
+        "conversation_id": "var-completo_jovem_carro_novo-1784817333",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "jovem_18_30",
+        "mensagem": "Pronta! Cotação Completo: R$262,38/mês (franquia R$3000). Precisa falar sobre coberturas?",
+        "slots": {
+          "idade": 28,
+          "veiculo_ano": 2024,
+          "cep": "01310-100",
+          "plano_id": "completo",
+          "veiculo_texto": "Honda Civic",
+          "data_inicio": "2026-08-01"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "completo",
+            "plano_nome": "Completo",
+            "premio_mensal": 262.38,
+            "franquia": 3000,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto",
+              "terceiros",
+              "vidros"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.25,
+              "idade_veiculo": 1.0,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL"
+          },
+          "exemplos": [
+            "- lead_idade_informada: 67 - veiculo_texto: Honda Civic 2022 [lead] Boa tarde, quero uma cotacao [vendedor] Ola Ana, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo? [lead] e um Civic 2022 [vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme? [lead] Tenho 67 anos, cep 01999-852, cpf 516.880.731-32 [lead] meu email é anasilva@bol.com.br e o whats é esse mesmo +55 51 98794-1018 [lead|image] [imagem] foto do veiculo na garagem [lead|audio] [audio] mensagem de voz (18s) [lead] a placa é SPC3Q58 se precisar [vendedor] Show! Pelo perfil consigo o plano Completo por R$ 349,90/mes. Cobre colisao, roubo e furto. Te interessa? [lead] fechado! [vendedor] Maravilha! Vou gerar o boleto e te mando a apolice.",
+            "- lead_idade_informada: 73\n- veiculo_texto: Honda Civic 2021\n\n[lead] Boa tarde, quero uma cotacao\n[vendedor] Ola Bruno, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Civic, ano 2021\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cep 59842-470, cpf 712.206.837-44, tenho 73 anos\n[lead] meu email é bruno_santos@outlook.com e o whats é esse mesmo +55 48 96847-2874\n[lead] to no aguardo\n[vendedor] Show! Pelo perfil consigo o plano Completo por R$ 299,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 39\n- veiculo_texto: Honda Civic 2020\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Bruno, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Honda Civic 2020\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Tenho 39 anos, cep 08707-356, cpf 172.398.587-23\n[lead] meu email é brunooliveira@outlook.com e o whats é esse mesmo +55 61 96329-6508\n[lead|image] [imagem] foto do veiculo na garagem\n[lead] to no aguardo\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 259,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "Tenho 28 anos, carro Honda Civic 2024, CEP [CEP], quero plano completo, inicio em 2026-08-01.",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 28,
+                "veiculo_ano": 2024,
+                "cep": "01310-100",
+                "plano_id": "completo",
+                "veiculo_texto": "Honda Civic",
+                "data_inicio": "2026-08-01"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 262.38,
+              "escalate": false
+            }
+          }
+        ]
+      },
+      "summary": {
+        "estagio": "cotado",
+        "persona": "jovem_18_30",
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "motivos": [],
+        "faltam": [],
+        "slots": {
+          "idade": 28,
+          "veiculo_ano": 2024,
+          "cep": "01310-100",
+          "plano_id": "completo",
+          "veiculo_texto": "Honda Civic",
+          "data_inicio": "2026-08-01"
+        },
+        "premio_mensal": 262.38,
+        "plano_nome": "Completo",
+        "multiplicadores": {
+          "faixa_etaria": 1.25,
+          "idade_veiculo": 1.0,
+          "regiao": 1.0
+        },
+        "mensagem_out": "Pronta! Cotação Completo: R$262,38/mês (franquia R$3000). Precisa falar sobre coberturas?"
+      }
+    },
+    {
+      "case_id": "premium_idoso_cep_risco",
+      "conversation_id": "var-premium_idoso_cep_risco-1784817333",
+      "http_status": 200,
+      "latency_ms": 12182,
+      "mensagem_in": "Tenho 65 anos, dirijo um Gol 2018, moro no CEP 22041-080, quero o plano premium, inicio 2026-09-15.",
+      "response": {
+        "conversation_id": "var-premium_idoso_cep_risco-1784817333",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "senior_50+",
+        "mensagem": "Pronta — Cotação do plano Premium: R$ 547,24 mensal (franquia R$ 1500). Deseja detalhar as coberturas ou ajustar o plano?",
+        "slots": {
+          "idade": 65,
+          "veiculo_ano": 2018,
+          "cep": "22041-080",
+          "plano_id": "premium",
+          "veiculo_texto": "Gol",
+          "data_inicio": "2026-09-15"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "premium",
+            "plano_nome": "Premium",
+            "premio_mensal": 547.24,
+            "franquia": 1500,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto",
+              "terceiros",
+              "vidros",
+              "carro_reserva",
+              "assistencia_24h"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.4,
+              "idade_veiculo": 1.15,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 30,
+              "dias_cobrados": 16,
+              "valor_primeiro_pagamento": 291.86
+            }
+          },
+          "exemplos": [
+            "- lead_idade_informada: 28\n- veiculo_texto: Fiat Pulse 2021\n\n[lead] Boa tarde, quero uma cotacao\n[vendedor] Ola Queila, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] e um Pulse 2021\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cpf 355.691.249-00, tenho 28 anos, cep 21872-837\n[lead] meu email é queila.rodrigues@gmail.com e o whats é esse mesmo +55 71 99951-6877\n[lead] to no aguardo\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 349,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] fechado!\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 37\n- veiculo_texto: Honda Civic 2022\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Queila, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Civic, ano 2022\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Tenho 37 anos, cep 21976-993, cpf 295.047.915-49\n[lead] meu email é queila.silva@outlook.com e o whats é esse mesmo +55 71 96600-1996\n[lead|audio] [audio] mensagem de voz (18s)\n[lead] a placa é SJT1R47 se precisar\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 129,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] pode emitir entao\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 61 - veiculo_texto: Toyota Corolla 2024 [lead] Oi, queria fazer um seguro pro meu carro [vendedor] Ola Olivia, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo? [lead] Corolla, ano 2024 [vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme? [lead] Tenho 61 anos, cep 07345-917, cpf 987.948.775-30 [lead] meu email é olivia_costa75@outlook.com e o whats é esse mesmo +55 61 99150-4391 [lead|document] [documento] CNH_frente.pdf [lead|audio] [audio] mensagem de voz (18s) [lead] a placa é CDF2Q95 se precisar [vendedor] Show! Pelo perfil consigo o plano Completo por R$ 259,90/mes. Cobre colisao, roubo e furto. Te interessa? [lead] pode emitir entao [vendedor] Maravilha! Vou gerar o"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "Tenho 65 anos, dirijo um Gol 2018, moro no CEP [CEP], quero o plano premium, inicio 2026-09-15.",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 65,
+                "veiculo_ano": 2018,
+                "cep": "22041-080",
+                "plano_id": "premium",
+                "veiculo_texto": "Gol",
+                "data_inicio": "2026-09-15"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 547.24,
+              "escalate": false
+            }
+          }
+        ]
+      },
+      "summary": {
+        "estagio": "cotado",
+        "persona": "senior_50+",
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "motivos": [],
+        "faltam": [],
+        "slots": {
+          "idade": 65,
+          "veiculo_ano": 2018,
+          "cep": "22041-080",
+          "plano_id": "premium",
+          "veiculo_texto": "Gol",
+          "data_inicio": "2026-09-15"
+        },
+        "premio_mensal": 547.24,
+        "plano_nome": "Premium",
+        "multiplicadores": {
+          "faixa_etaria": 1.4,
+          "idade_veiculo": 1.15,
+          "regiao": 1.0
+        },
+        "mensagem_out": "Pronta — Cotação do plano Premium: R$ 547,24 mensal (franquia R$ 1500). Deseja detalhar as coberturas ou ajustar o plano?"
+      }
+    },
+    {
+      "case_id": "essencial_faixa_22",
+      "conversation_id": "var-essencial_faixa_22-1784817333",
+      "http_status": 200,
+      "latency_ms": 8883,
+      "mensagem_in": "Sou jovem, 22 anos, Onix 2022, CEP 30130-000, plano essencial por favor.",
+      "response": {
+        "conversation_id": "var-essencial_faixa_22-1784817333",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "jovem_18_30",
+        "mensagem": "Pronto, cotamos o Essencial por R$ 191.84/mês (franquia R$ 4500). Contratar rápido pelo WhatsApp?",
+        "slots": {
+          "idade": 22,
+          "veiculo_ano": 2022,
+          "cep": "30130-000",
+          "plano_id": "essencial",
+          "veiculo_texto": "Onix",
+          "data_inicio": "2026-07-23"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "essencial",
+            "plano_nome": "Essencial",
+            "premio_mensal": 191.84,
+            "franquia": 4500,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.6,
+              "idade_veiculo": 1.0,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 31,
+              "dias_cobrados": 9,
+              "valor_primeiro_pagamento": 55.7
+            }
+          },
+          "exemplos": [
+            "- lead_idade_informada: 41\n- veiculo_texto: Chevrolet Onix Plus 2022\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Ursula, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] e um Onix Plus 2022\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cpf 252.211.025-01, tenho 41 anos, cep 01335-846\n[lead] meu email é ursulaaraujo23@outlook.com e o whats é esse mesmo +55 61 93614-5716\n[lead] a placa é EGL9F63 se precisar\n[vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 389,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 34\n- veiculo_texto: Chevrolet Onix 2019\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Nicolas, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] e um Onix 2019\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cep 51234-454, tenho 34 anos, cpf 610.188.288-85\n[lead|image] [imagem] foto do veiculo na garagem\n[lead] to no aguardo\n[vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 349,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] fechado!\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 18\n- veiculo_texto: Chevrolet Onix Plus 2020\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Paulo, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Onix Plus, ano 2020\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cpf 804.933.557-74, cep 13284-329, tenho 18 anos\n[lead] meu email é pauloribeiro85@outlook.com e o whats é esse mesmo +55 47 94685-7132\n[lead|document] [documento] CNH_frente.pdf\n[lead] to no aguardo\n[vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 189,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "Sou jovem, 22 anos, Onix 2022, CEP [CEP], plano essencial por favor.",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 22,
+                "veiculo_ano": 2022,
+                "cep": "30130-000",
+                "plano_id": "essencial",
+                "veiculo_texto": "Onix"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 191.84,
+              "escalate": false
+            }
+          }
+        ]
+      },
+      "summary": {
+        "estagio": "cotado",
+        "persona": "jovem_18_30",
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "motivos": [],
+        "faltam": [],
+        "slots": {
+          "idade": 22,
+          "veiculo_ano": 2022,
+          "cep": "30130-000",
+          "plano_id": "essencial",
+          "veiculo_texto": "Onix",
+          "data_inicio": "2026-07-23"
+        },
+        "premio_mensal": 191.84,
+        "plano_nome": "Essencial",
+        "multiplicadores": {
+          "faixa_etaria": 1.6,
+          "idade_veiculo": 1.0,
+          "regiao": 1.0
+        },
+        "mensagem_out": "Pronto, cotamos o Essencial por R$ 191.84/mês (franquia R$ 4500). Contratar rápido pelo WhatsApp?"
+      }
+    },
+    {
+      "case_id": "completo_veiculo_2010",
+      "conversation_id": "var-completo_veiculo_2010-1784817333",
+      "http_status": 200,
+      "latency_ms": 11645,
+      "mensagem_in": "Idade 40 anos, veiculo Fiat Uno 2010, CEP 80010-000, quero plano completo, inicio 2026-07-25.",
+      "response": {
+        "conversation_id": "var-completo_veiculo_2010-1784817333",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "mensagem": "Pronto — seu plano completo cobre colisão, roubo, furto, terceiros e vidros. Ideal para proteger sua família e patrimônio. Quer detalhar mais as coberturas?",
+        "slots": {
+          "idade": 40,
+          "veiculo_ano": 2010,
+          "cep": "80010-000",
+          "plano_id": "completo",
+          "veiculo_texto": "Fiat Uno",
+          "data_inicio": "2026-07-25"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "completo",
+            "plano_nome": "Completo",
+            "premio_mensal": 304.36,
+            "franquia": 3000,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto",
+              "terceiros",
+              "vidros"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.0,
+              "idade_veiculo": 1.45,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 31,
+              "dias_cobrados": 7,
+              "valor_primeiro_pagamento": 68.73
+            }
+          },
+          "exemplos": [
+            "- lead_idade_informada: 81 - veiculo_texto: Fiat Toro 2020 [lead] Boa tarde, quero uma cotacao [vendedor] Ola Eduarda, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo? [lead] Fiat Toro 2020 [vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme? [lead] Tenho 81 anos, cpf 422.321.429-22, cep 26590-801 [lead] meu email é eduardasilva@hotmail.com e o whats é esse mesmo +55 85 99100-3496 [lead|document] [documento] CNH_frente.pdf [lead|image] [imagem] foto do veiculo na garagem [lead] qualquer coisa me chama [vendedor] Show! Pelo perfil consigo o plano Premium por R$ 349,90/mes. Cobre colisao, roubo e furto. Te interessa? [lead] pode emitir entao [vendedor] Maravilha! Vou gerar o boleto e te mando a",
+            "- lead_idade_informada: 20\n- veiculo_texto: Fiat Cronos 2020\n\n[lead] eae, tudo bem? to querendo segurar meu carro\n[vendedor] Ola Sabrina, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Fiat Cronos 2020\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cep 07665-378, cpf 013.036.202-60, tenho 20 anos\n[lead] a placa é KJA5R18 se precisar\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 349,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 31\n- veiculo_texto: Fiat Mobi 2020\n\n[lead] eae, tudo bem? to querendo segurar meu carro\n[vendedor] Ola Rafael, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Mobi, ano 2020\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Tenho 31 anos, cpf 737.284.290-58, cep 41166-715\n[lead] meu email é rafael.souza72@outlook.com e o whats é esse mesmo +55 71 92221-3480\n[lead|document] [documento] CNH_frente.pdf\n[lead] a placa é JJP0M15 se precisar\n[vendedor] Show! Pelo perfil consigo o plano Completo por R$ 259,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] pode emitir entao\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "Idade 40 anos, veiculo Fiat Uno 2010, CEP [CEP], quero plano completo, inicio 2026-07-25.",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 40,
+                "veiculo_ano": 2010,
+                "cep": "80010-000",
+                "plano_id": "completo",
+                "veiculo_texto": "Fiat Uno",
+                "data_inicio": "2026-07-25"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 304.36,
+              "escalate": false
+            }
+          }
+        ]
+      },
+      "summary": {
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "motivos": [],
+        "faltam": [],
+        "slots": {
+          "idade": 40,
+          "veiculo_ano": 2010,
+          "cep": "80010-000",
+          "plano_id": "completo",
+          "veiculo_texto": "Fiat Uno",
+          "data_inicio": "2026-07-25"
+        },
+        "premio_mensal": 304.36,
+        "plano_nome": "Completo",
+        "multiplicadores": {
+          "faixa_etaria": 1.0,
+          "idade_veiculo": 1.45,
+          "regiao": 1.0
+        },
+        "mensagem_out": "Pronto — seu plano completo cobre colisão, roubo, furto, terceiros e vidros. Ideal para proteger sua família e patrimônio. Quer detalhar mais as coberturas?"
+      }
+    },
+    {
+      "case_id": "premium_meia_idade_sp",
+      "conversation_id": "var-premium_meia_idade_sp-1784817333",
+      "http_status": 200,
+      "latency_ms": 21972,
+      "mensagem_in": "Tenho 45 anos, Toyota Corolla 2018, CEP 04547-130, quero premium com inicio em 2026-10-01.",
+      "response": {
+        "conversation_id": "var-premium_meia_idade_sp-1784817333",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "mensagem": "Pronto — cotação do plano Premium: R$ 390.88/mês (franquia R$ 1500). Compreendemos suas preocupações de proteger sua família e patrimônio com coberturas como colisão, roubo, furto, terceiros, vidros, carro reserva e assistência 24h. Quer detalhar mais as coberturas ou ajustar o plano?",
+        "slots": {
+          "idade": 45,
+          "veiculo_ano": 2018,
+          "cep": "04547-130",
+          "plano_id": "premium",
+          "veiculo_texto": "Toyota Corolla",
+          "data_inicio": "2026-10-01"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "premium",
+            "plano_nome": "Premium",
+            "premio_mensal": 390.88,
+            "franquia": 1500,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto",
+              "terceiros",
+              "vidros",
+              "carro_reserva",
+              "assistencia_24h"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.0,
+              "idade_veiculo": 1.15,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL"
+          },
+          "exemplos": [
+            "- lead_idade_informada: 36\n- veiculo_texto: Toyota Corolla 2016\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Carla, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Toyota Corolla 2016\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Tenho 36 anos, cpf 598.483.821-43, cep 80791-782\n[lead] meu email é carla.pereira45@hotmail.com e o whats é esse mesmo +55 47 97862-4980\n[lead] a placa é KZY3O71 se precisar\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 129,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 21\n- veiculo_texto: Toyota Corolla 2021\n\n[lead] Boa tarde, quero uma cotacao\n[vendedor] Ola Eduarda, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Toyota Corolla 2021\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Tenho 21 anos, cpf 215.545.521-68, cep 13717-939\n[lead|document] [documento] CNH_frente.pdf\n[lead] qualquer coisa me chama\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 389,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 77\n- veiculo_texto: Toyota Corolla 2016\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Joao, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] e um Corolla 2016\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Tenho 77 anos, cep 30931-703, cpf 062.249.289-67\n[lead] meu email é joaopereira@hotmail.com e o whats é esse mesmo +55 62 95496-2080\n[lead|document] [documento] CNH_frente.pdf\n[lead] qualquer coisa me chama\n[vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 159,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "Tenho 45 anos, Toyota Corolla 2018, CEP [CEP], quero premium com inicio em 2026-10-01.",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 45,
+                "veiculo_ano": 2018,
+                "cep": "04547-130",
+                "plano_id": "premium",
+                "veiculo_texto": "Toyota Corolla",
+                "data_inicio": "2026-10-01"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 390.88,
+              "escalate": false
+            }
+          }
+        ]
+      },
+      "summary": {
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "motivos": [],
+        "faltam": [],
+        "slots": {
+          "idade": 45,
+          "veiculo_ano": 2018,
+          "cep": "04547-130",
+          "plano_id": "premium",
+          "veiculo_texto": "Toyota Corolla",
+          "data_inicio": "2026-10-01"
+        },
+        "premio_mensal": 390.88,
+        "plano_nome": "Premium",
+        "multiplicadores": {
+          "faixa_etaria": 1.0,
+          "idade_veiculo": 1.15,
+          "regiao": 1.0
+        },
+        "mensagem_out": "Pronto — cotação do plano Premium: R$ 390.88/mês (franquia R$ 1500). Compreendemos suas preocupações de proteger sua família e patrimônio com coberturas como colisão, roubo, furto, terceiros, vidros, carro reserva e assistência 24h. Quer detalhar mais as coberturas ou ajustar o plano?"
+      }
+    },
+    {
+      "case_id": "essencial_70_anos",
+      "conversation_id": "var-essencial_70_anos-1784817333",
+      "http_status": 200,
+      "latency_ms": 11238,
+      "mensagem_in": "Tenho 70 anos, HB20 2022, CEP 70040-010, plano essencial, inicio 2026-08-20.",
+      "response": {
+        "conversation_id": "var-essencial_70_anos-1784817333",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "senior_50+",
+        "mensagem": "Pronta — Cotação para você, senhor/senhora: R$ 167.86 mensais no plano Essencial (franquia de R$ 4500). Tem interesse em detalhar as coberturas ou gostaria de ajustar o plano?",
+        "slots": {
+          "idade": 70,
+          "veiculo_ano": 2022,
+          "cep": "70040-010",
+          "plano_id": "essencial",
+          "veiculo_texto": "HB20",
+          "data_inicio": "2026-08-20"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "essencial",
+            "plano_nome": "Essencial",
+            "premio_mensal": 167.86,
+            "franquia": 4500,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.4,
+              "idade_veiculo": 1.0,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 31,
+              "dias_cobrados": 12,
+              "valor_primeiro_pagamento": 64.98
+            }
+          },
+          "exemplos": [
+            "- lead_idade_informada: 23\n- veiculo_texto: Hyundai HB20 2021\n\n[lead] Boa tarde, quero uma cotacao\n[vendedor] Ola Carla, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] e um HB20 2021\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Tenho 23 anos, cpf 643.372.472-89, cep 41509-416\n[lead] a placa é QPJ1M65 se precisar\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 389,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] fechado!\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 40\n- veiculo_texto: Honda HR-V 2021\n\n[lead] Boa tarde, quero uma cotacao\n[vendedor] Ola Paulo, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] e um HR-V 2021\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cpf 775.109.187-82, tenho 40 anos, cep 20576-786\n[lead] meu email é paulorodrigues@hotmail.com e o whats é esse mesmo +55 71 95163-8194\n[lead] qualquer coisa me chama\n[vendedor] Show! Pelo perfil consigo o plano Completo por R$ 129,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "- lead_idade_informada: 28\n- veiculo_texto: Fiat Pulse 2021\n\n[lead] Boa tarde, quero uma cotacao\n[vendedor] Ola Queila, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] e um Pulse 2021\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cpf 355.691.249-00, tenho 28 anos, cep 21872-837\n[lead] meu email é queila.rodrigues@gmail.com e o whats é esse mesmo +55 71 99951-6877\n[lead] to no aguardo\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 349,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] fechado!\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "Tenho 70 anos, HB20 2022, CEP [CEP], plano essencial, inicio 2026-08-20.",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 70,
+                "veiculo_ano": 2022,
+                "cep": "70040-010",
+                "plano_id": "essencial",
+                "veiculo_texto": "HB20",
+                "data_inicio": "2026-08-20"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 167.86,
+              "escalate": false
+            }
+          }
+        ]
+      },
+      "summary": {
+        "estagio": "cotado",
+        "persona": "senior_50+",
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "motivos": [],
+        "faltam": [],
+        "slots": {
+          "idade": 70,
+          "veiculo_ano": 2022,
+          "cep": "70040-010",
+          "plano_id": "essencial",
+          "veiculo_texto": "HB20",
+          "data_inicio": "2026-08-20"
+        },
+        "premio_mensal": 167.86,
+        "plano_nome": "Essencial",
+        "multiplicadores": {
+          "faixa_etaria": 1.4,
+          "idade_veiculo": 1.0,
+          "regiao": 1.0
+        },
+        "mensagem_out": "Pronta — Cotação para você, senhor/senhora: R$ 167.86 mensais no plano Essencial (franquia de R$ 4500). Tem interesse em detalhar as coberturas ou gostaria de ajustar o plano?"
+      }
+    },
+    {
+      "case_id": "recusa_idade_16",
+      "conversation_id": "var-recusa_idade_16-1784817333",
+      "http_status": 200,
+      "latency_ms": 5788,
+      "mensagem_in": "Tenho 16 anos, carro 2022, CEP 01310-100, quero essencial.",
+      "response": {
+        "conversation_id": "var-recusa_idade_16-1784817333",
+        "turno": 1,
+        "estagio": "qualificando",
+        "persona": "jovem_18_30",
+        "mensagem": "Idade fora das faixas aceitas. Recusamos seu caso. Precisa de mais ajuda?",
+        "slots": {
+          "idade": 16,
+          "veiculo_ano": 2022,
+          "cep": "01310-100",
+          "plano_id": "essencial",
+          "data_inicio": "2026-07-23"
+        },
+        "decisao": {
+          "acao": "recusar",
+          "escalate": false,
+          "motivos": [
+            "Idade fora das faixas aceitas."
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "Tenho 16 anos, carro 2022, CEP [CEP], quero essencial.",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 16,
+                "veiculo_ano": 2022,
+                "cep": "01310-100",
+                "plano_id": "essencial"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "recusar",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": null,
+              "escalate": false
+            }
+          }
+        ]
+      },
+      "summary": {
+        "estagio": "qualificando",
+        "persona": "jovem_18_30",
+        "acao": "recusar",
+        "escalate": false,
+        "motivos": [
+          "Idade fora das faixas aceitas."
+        ],
+        "faltam": [],
+        "slots": {
+          "idade": 16,
+          "veiculo_ano": 2022,
+          "cep": "01310-100",
+          "plano_id": "essencial",
+          "data_inicio": "2026-07-23"
+        },
+        "premio_mensal": null,
+        "plano_nome": null,
+        "multiplicadores": null,
+        "mensagem_out": "Idade fora das faixas aceitas. Recusamos seu caso. Precisa de mais ajuda?"
+      }
+    },
+    {
+      "case_id": "recusa_veiculo_muito_antigo",
+      "conversation_id": "var-recusa_veiculo_muito_antigo-1784817333",
+      "http_status": 200,
+      "latency_ms": 7010,
+      "mensagem_in": "Tenho 40 anos, carro ano 2004, CEP 01310-100, plano completo.",
+      "response": {
+        "conversation_id": "var-recusa_veiculo_muito_antigo-1784817333",
+        "turno": 1,
+        "estagio": "qualificando",
+        "persona": "meia_30_50",
+        "mensagem": "Vamos avaliar seu caso novamente. Seu carro tem mais de 20 anos, o que não é considerado por nossa cobertura. Vou encaminhar para um especialista em casos especiais.",
+        "slots": {
+          "idade": 40,
+          "veiculo_ano": 2004,
+          "cep": "01310-100",
+          "plano_id": "completo",
+          "data_inicio": "2026-07-23"
+        },
+        "decisao": {
+          "acao": "recusar",
+          "escalate": false,
+          "motivos": [
+            "Veiculo com mais de 20 anos nao e aceito."
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "Tenho 40 anos, carro ano 2004, CEP [CEP], plano completo.",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 40,
+                "veiculo_ano": 2004,
+                "cep": "01310-100",
+                "plano_id": "completo"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "recusar",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": null,
+              "escalate": false
+            }
+          }
+        ]
+      },
+      "summary": {
+        "estagio": "qualificando",
+        "persona": "meia_30_50",
+        "acao": "recusar",
+        "escalate": false,
+        "motivos": [
+          "Veiculo com mais de 20 anos nao e aceito."
+        ],
+        "faltam": [],
+        "slots": {
+          "idade": 40,
+          "veiculo_ano": 2004,
+          "cep": "01310-100",
+          "plano_id": "completo",
+          "data_inicio": "2026-07-23"
+        },
+        "premio_mensal": null,
+        "plano_nome": null,
+        "multiplicadores": null,
+        "mensagem_out": "Vamos avaliar seu caso novamente. Seu carro tem mais de 20 anos, o que não é considerado por nossa cobertura. Vou encaminhar para um especialista em casos especiais."
+      }
+    }
+  ]
+}

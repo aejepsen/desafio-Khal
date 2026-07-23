@@ -36,6 +36,7 @@ class Settings:
     request_deadline_s: float = field(
         default_factory=lambda: float(os.environ.get("REQUEST_DEADLINE_S", "10"))
     )
+    pii_locale: str = field(default_factory=lambda: os.environ.get("PII_LOCALE", "pt-BR"))
 
     def auth_enabled(self) -> bool:
         """Fail-closed: sem key e sem opt-in explícito de modo aberto, tudo bloqueia."""

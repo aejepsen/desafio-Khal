@@ -22,8 +22,8 @@ class QuoteRequestPayload:
 
     idade: int
     veiculo_ano: int
+    cep: str
     plano_id: str = "essencial"
-    cep: str | None = None
     data_inicio: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
@@ -31,9 +31,8 @@ class QuoteRequestPayload:
             "plano_id": self.plano_id,
             "idade": self.idade,
             "veiculo_ano": self.veiculo_ano,
+            "cep": self.cep,
         }
-        if self.cep is not None:
-            body["cep"] = self.cep
         if self.data_inicio is not None:
             body["data_inicio"] = self.data_inicio
         return body

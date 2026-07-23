@@ -1,0 +1,116 @@
+{
+  "chat_summary": {
+    "conversation_id": "sqlite-audit-1784818438",
+    "turno": 1,
+    "audit_turn_id": 1,
+    "mensagem": "Pronto — cotação do plano Essencial: R$ 137.88/mês (franquia R$ 4500). Como destacamos, cobre colisão, roubo e furto. Como o carro é de sua família, a proteção contra perdas e danos será essencial para a tranquilidade financeira. Quer detalhar mais as coberturas ou ajustar o plano?"
+  },
+  "audit": {
+    "conversation_id": "sqlite-audit-1784818438",
+    "turns": [
+      {
+        "id": 1,
+        "turno": 1,
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "premio_mensal": 137.88,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-23T14:54:15.631226+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "sqlite-audit-1784818438",
+          "turno": 1,
+          "estagio": "cotado",
+          "persona": "meia_30_50",
+          "lead_mascarado": "Tenho 35 anos, Corolla 2020, CEP [CEP], plano essencial.",
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "slots": {
+            "idade": 35,
+            "veiculo_ano": 2020,
+            "cep": "[CEP]",
+            "plano_id": "essencial",
+            "veiculo_texto": "Corolla",
+            "data_inicio": "2026-07-23"
+          },
+          "premio_mensal": 137.88,
+          "rascunho": "Pronto — cotação do plano Essencial: R$ 137.88/mês (franquia R$ 4500). Quer que eu detalhe coberturas ou ajuste o plano?",
+          "mensagem_agente": "Pronto — cotação do plano Essencial: R$ 137.88/mês (franquia R$ 4500). Como destacamos, cobre colisão, roubo e furto. Como o carro é de sua família, a proteção contra perdas e danos será essencial para a tranquilidade financeira. Quer detalhar mais as coberturas ou ajustar o plano?",
+          "fonte_resposta": "llm",
+          "model": "qwen2.5:3b",
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 1,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-23T14:54:15.631226+00:00"
+      },
+      {
+        "id": 2,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "Tenho 35 anos, Corolla 2020, CEP [CEP], plano essencial.",
+          "pii_types": [
+            "cep"
+          ],
+          "patterns": []
+        },
+        "created_at": "2026-07-23T14:54:15.631226+00:00"
+      },
+      {
+        "id": 3,
+        "turno": 1,
+        "step": "qualifica",
+        "status": "ok",
+        "detail": {
+          "slots_acumulados": {
+            "idade": 35,
+            "veiculo_ano": 2020,
+            "cep": "[CEP]",
+            "plano_id": "essencial",
+            "veiculo_texto": "Corolla"
+          }
+        },
+        "created_at": "2026-07-23T14:54:15.631226+00:00"
+      },
+      {
+        "id": 4,
+        "turno": 1,
+        "step": "decide",
+        "status": "apresentar_cotacao",
+        "detail": {
+          "faltam": [],
+          "premio_mensal": 137.88,
+          "escalate": false
+        },
+        "created_at": "2026-07-23T14:54:15.631226+00:00"
+      },
+      {
+        "id": 5,
+        "turno": 1,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "Tenho 35 anos, Corolla 2020, CEP [CEP], plano essencial.",
+          "rascunho": "Pronto — cotação do plano Essencial: R$ 137.88/mês (franquia R$ 4500). Quer que eu detalhe coberturas ou ajuste o plano?",
+          "mensagem": "Pronto — cotação do plano Essencial: R$ 137.88/mês (franquia R$ 4500). Como destacamos, cobre colisão, roubo e furto. Como o carro é de sua família, a proteção contra perdas e danos será essencial para a tranquilidade financeira. Quer detalhar mais as coberturas ou ajustar o plano?",
+          "fonte": "llm",
+          "model": "qwen2.5:3b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-23T14:54:15.631226+00:00"
+      }
+    ]
+  }
+}

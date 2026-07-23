@@ -1,0 +1,97 @@
+{
+  "conversation_id": "happy-1784811590",
+  "turno": 1,
+  "estagio": "cotado",
+  "persona": "meia_30_50",
+  "mensagem": "Pronto — cotação do plano Essencial: R$ 137.88/mês (franquia R$ 4500). Quer que eu detalhe coberturas ou ajuste o plano?",
+  "slots": {
+    "idade": 35,
+    "veiculo_ano": 2020,
+    "cep": "01310-100",
+    "plano_id": "essencial",
+    "data_inicio": "2026-07-23"
+  },
+  "decisao": {
+    "acao": "apresentar_cotacao",
+    "escalate": false,
+    "motivos": [],
+    "faltam": [],
+    "quote": {
+      "plano_id": "essencial",
+      "plano_nome": "Essencial",
+      "premio_mensal": 137.88,
+      "franquia": 4500,
+      "coberturas": [
+        "colisao",
+        "roubo",
+        "furto"
+      ],
+      "multiplicadores": {
+        "faixa_etaria": 1.0,
+        "idade_veiculo": 1.15,
+        "regiao": 1.0
+      },
+      "carencia": {
+        "coberturas": [
+          "roubo",
+          "furto"
+        ],
+        "dias": 30,
+        "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+      },
+      "moeda": "BRL",
+      "primeiro_pagamento_pro_rata": {
+        "dias_no_mes": 31,
+        "dias_cobrados": 9,
+        "valor_primeiro_pagamento": 40.03
+      }
+    },
+    "exemplos": [
+      "- lead_idade_informada: 65 - veiculo_texto: Toyota Corolla 2010 [lead] Oi, queria fazer um seguro pro meu carro [vendedor] Ola Queila, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo? [lead] e um Corolla 2010 [vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme? [lead] Cpf 947.727.945-57, tenho 65 anos, cep 08890-935 [lead] meu email é queila.almeida@outlook.com e o whats é esse mesmo +55 81 91250-6342 [lead|image] [imagem] foto do veiculo na garagem [lead|audio] [audio] mensagem de voz (18s) [lead] qualquer coisa me chama [vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 259,90/mes. Cobre colisao, roubo e furto. Te interessa? [lead] pode emitir entao [vendedor] Maravilha! Vou gerar o",
+      "- lead_idade_informada: 41\n- veiculo_texto: Toyota Corolla 2018\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Felipe, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Corolla, ano 2018\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cpf 905.287.195-72, cep 30499-782, tenho 41 anos\n[lead] meu email é felipe_ribeiro95@gmail.com e o whats é esse mesmo +55 21 99582-3806\n[lead] qualquer coisa me chama\n[vendedor] Show! Pelo perfil consigo o plano Premium por R$ 159,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] vamos nessa, gostei\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+      "- lead_idade_informada: 28 - veiculo_texto: Toyota Corolla Cross 2021 [lead] Oi, queria fazer um seguro pro meu carro [vendedor] Ola Paulo, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo? [lead] e um Corolla Cross 2021 [vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme? [lead] Cep 30699-415, tenho 28 anos, cpf 129.672.623-15 [lead] meu email é paulo_pereira@bol.com.br e o whats é esse mesmo +55 21 96956-8038 [lead|audio] [audio] mensagem de voz (18s) [lead] a placa é CXK3R44 se precisar [vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 349,90/mes. Cobre colisao, roubo e furto. Te interessa? [lead] pode emitir entao [vendedor] Maravilha! Vou gerar o boleto e te mando a apolice."
+    ]
+  },
+  "eventos": [
+    {
+      "step": "turno",
+      "status": "1",
+      "detail": {
+        "estagio": "qualificando"
+      }
+    },
+    {
+      "step": "guardrails",
+      "status": "allow",
+      "detail": {
+        "texto_mascarado": "Oi! Tenho 35 anos, quero seguro pro meu Corolla 2020, plano essencial, cep [CEP]. Meu CPF é [CPF].",
+        "pii_types": [
+          "cpf",
+          "cep"
+        ],
+        "patterns": []
+      }
+    },
+    {
+      "step": "qualifica",
+      "status": "ok",
+      "detail": {
+        "slots_acumulados": {
+          "idade": 35,
+          "veiculo_ano": 2020,
+          "cep": "01310-100",
+          "plano_id": "essencial"
+        }
+      }
+    },
+    {
+      "step": "decide",
+      "status": "apresentar_cotacao",
+      "detail": {
+        "faltam": [],
+        "premio_mensal": 137.88,
+        "escalate": false
+      }
+    }
+  ]
+}

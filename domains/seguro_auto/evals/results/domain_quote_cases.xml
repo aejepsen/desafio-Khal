@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<domain_quote_results generated_at="2026-07-22T22:12:54.280385+00:00" today="2026-07-22" source_plans="quote-service/data/plans.json">
+<domain_quote_results generated_at="2026-07-23T12:32:23.160781+00:00" today="2026-07-22" source_plans="quote-service/data/plans.json">
   <columns>
     <col name="case_id" role="input_planos_slots" />
     <col name="plano_id_in" role="input_planos_slots" />
@@ -66,8 +66,8 @@
       <veiculo_ano>2024</veiculo_ano>
       <idade_veiculo_anos>2</idade_veiculo_anos>
       <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto />
@@ -76,7 +76,7 @@
       <out_plano_id>completo</out_plano_id>
       <out_idade>28</out_idade>
       <out_veiculo_ano>2024</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -120,8 +120,8 @@
       <veiculo_ano>2022</veiculo_ano>
       <idade_veiculo_anos>4</idade_veiculo_anos>
       <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto />
@@ -130,7 +130,7 @@
       <out_plano_id>essencial</out_plano_id>
       <out_idade>22</out_idade>
       <out_veiculo_ano>2022</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -147,8 +147,8 @@
       <veiculo_ano>2022</veiculo_ano>
       <idade_veiculo_anos>4</idade_veiculo_anos>
       <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto />
@@ -157,7 +157,7 @@
       <out_plano_id>essencial</out_plano_id>
       <out_idade>27</out_idade>
       <out_veiculo_ano>2022</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -174,8 +174,8 @@
       <veiculo_ano>2022</veiculo_ano>
       <idade_veiculo_anos>4</idade_veiculo_anos>
       <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto />
@@ -184,7 +184,7 @@
       <out_plano_id>essencial</out_plano_id>
       <out_idade>45</out_idade>
       <out_veiculo_ano>2022</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -201,8 +201,8 @@
       <veiculo_ano>2022</veiculo_ano>
       <idade_veiculo_anos>4</idade_veiculo_anos>
       <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto />
@@ -211,7 +211,7 @@
       <out_plano_id>essencial</out_plano_id>
       <out_idade>70</out_idade>
       <out_veiculo_ano>2022</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -240,7 +240,7 @@
       <out_veiculo_ano />
       <out_cep />
       <out_data_inicio />
-      <missing />
+      <missing>cep</missing>
       <errors />
       <refusals>Idade acima do limite de aceitacao (75 anos).</refusals>
     </row>
@@ -267,7 +267,7 @@
       <out_veiculo_ano />
       <out_cep />
       <out_data_inicio />
-      <missing />
+      <missing>cep</missing>
       <errors />
       <refusals>Idade fora das faixas aceitas.</refusals>
     </row>
@@ -282,8 +282,8 @@
       <veiculo_ano>2023</veiculo_ano>
       <idade_veiculo_anos>3</idade_veiculo_anos>
       <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto />
@@ -292,7 +292,7 @@
       <out_plano_id>completo</out_plano_id>
       <out_idade>40</out_idade>
       <out_veiculo_ano>2023</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -309,8 +309,8 @@
       <veiculo_ano>2018</veiculo_ano>
       <idade_veiculo_anos>8</idade_veiculo_anos>
       <faixa_idade_veiculo>6-10(x1.15)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto />
@@ -319,7 +319,7 @@
       <out_plano_id>completo</out_plano_id>
       <out_idade>40</out_idade>
       <out_veiculo_ano>2018</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -336,8 +336,8 @@
       <veiculo_ano>2010</veiculo_ano>
       <idade_veiculo_anos>16</idade_veiculo_anos>
       <faixa_idade_veiculo>11-20(x1.45)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto />
@@ -346,7 +346,7 @@
       <out_plano_id>completo</out_plano_id>
       <out_idade>40</out_idade>
       <out_veiculo_ano>2010</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -375,7 +375,7 @@
       <out_veiculo_ano />
       <out_cep />
       <out_data_inicio />
-      <missing />
+      <missing>cep</missing>
       <errors />
       <refusals>Veiculo com mais de 20 anos nao e aceito.</refusals>
     </row>
@@ -434,6 +434,33 @@
       <refusals />
     </row>
     <row>
+      <case_id>cep_obrigatorio_faltando</case_id>
+      <plano_id_in>essencial</plano_id_in>
+      <plano_nome>Essencial</plano_nome>
+      <base_mensal>119.9</base_mensal>
+      <franquia>4500</franquia>
+      <idade>33</idade>
+      <faixa_etaria>30-59(x1.0)</faixa_etaria>
+      <veiculo_ano>2021</veiculo_ano>
+      <idade_veiculo_anos>5</idade_veiculo_anos>
+      <faixa_idade_veiculo>0-5(x1.0)</faixa_idade_veiculo>
+      <cep />
+      <cep_prefixo />
+      <cep_alto_risco>false</cep_alto_risco>
+      <data_inicio />
+      <veiculo_texto />
+      <verified>true</verified>
+      <ok>false</ok>
+      <out_plano_id />
+      <out_idade />
+      <out_veiculo_ano />
+      <out_cep />
+      <out_data_inicio />
+      <missing>cep</missing>
+      <errors />
+      <refusals />
+    </row>
+    <row>
       <case_id>veiculo_texto_e_alias_plano</case_id>
       <plano_id_in>Básico</plano_id_in>
       <plano_nome />
@@ -444,8 +471,8 @@
       <veiculo_ano />
       <idade_veiculo_anos>7</idade_veiculo_anos>
       <faixa_idade_veiculo>6-10(x1.15)</faixa_idade_veiculo>
-      <cep />
-      <cep_prefixo />
+      <cep>01310-100</cep>
+      <cep_prefixo>01</cep_prefixo>
       <cep_alto_risco>false</cep_alto_risco>
       <data_inicio />
       <veiculo_texto>Gol 1.0 2019</veiculo_texto>
@@ -454,7 +481,7 @@
       <out_plano_id>essencial</out_plano_id>
       <out_idade>42</out_idade>
       <out_veiculo_ano>2019</out_veiculo_ano>
-      <out_cep />
+      <out_cep>01310-100</out_cep>
       <out_data_inicio />
       <missing />
       <errors />
@@ -510,7 +537,7 @@
       <out_veiculo_ano />
       <out_cep />
       <out_data_inicio />
-      <missing>idade|veiculo_ano</missing>
+      <missing>idade|veiculo_ano|cep</missing>
       <errors />
       <refusals />
     </row>
@@ -537,7 +564,7 @@
       <out_veiculo_ano />
       <out_cep />
       <out_data_inicio />
-      <missing />
+      <missing>cep</missing>
       <errors>Plano 'ouro' inexistente. Opcoes: completo, essencial, premium.</errors>
       <refusals />
     </row>

@@ -1,0 +1,681 @@
+{
+  "passed": 7,
+  "total": 7,
+  "results": [
+    {
+      "id": "R1_happy_path",
+      "rubrica": [
+        "1_e2e"
+      ],
+      "pass": true,
+      "reason": "got apresentar_cotacao",
+      "dataset_cid": "conv_00001",
+      "turns": [
+        {
+          "turno": 1,
+          "http": 200,
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "estagio": "cotado",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "1",
+              "detail": {
+                "estagio": "qualificando"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "Oi, queria fazer um seguro pro meu carro Sandero, ano 2022 Cep [CEP], cpf [CPF], tenho 30 anos, quero o plano essencial",
+                "pii_types": [
+                  "cpf",
+                  "cep"
+                ],
+                "patterns": []
+              }
+            },
+            {
+              "step": "qualifica",
+              "status": "ok",
+              "detail": {
+                "slots_acumulados": {
+                  "idade": 30,
+                  "veiculo_ano": 2022,
+                  "cep": "07624-954",
+                  "plano_id": "essencial",
+                  "veiculo_texto": "Sandero"
+                }
+              }
+            },
+            {
+              "step": "decide",
+              "status": "apresentar_cotacao",
+              "detail": {
+                "faltam": [],
+                "premio_mensal": 155.87,
+                "escalate": false
+              }
+            }
+          ],
+          "mensagem": "Pronta, cotação Essencial: R$ 155.87/mês (franquia R$ 4500). Tem algo específico em mente?",
+          "slots": {
+            "idade": 30,
+            "veiculo_ano": 2022,
+            "cep": "07624-954",
+            "plano_id": "essencial",
+            "veiculo_texto": "Sandero",
+            "data_inicio": "2026-07-23"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R5_pii",
+      "rubrica": [
+        "5_pii",
+        "1_e2e"
+      ],
+      "pass": true,
+      "reason": "pii_types=['cpf', 'cep'] masked_ok=True",
+      "dataset_cid": "conv_00001",
+      "turns": [
+        {
+          "turno": 1,
+          "http": 200,
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "estagio": "cotado",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "1",
+              "detail": {
+                "estagio": "qualificando"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "Oi, queria fazer um seguro pro meu carro Sandero, ano 2022 Cep [CEP], cpf [CPF], tenho 30 anos, quero o plano essencial",
+                "pii_types": [
+                  "cpf",
+                  "cep"
+                ],
+                "patterns": []
+              }
+            },
+            {
+              "step": "qualifica",
+              "status": "ok",
+              "detail": {
+                "slots_acumulados": {
+                  "idade": 30,
+                  "veiculo_ano": 2022,
+                  "cep": "07624-954",
+                  "plano_id": "essencial",
+                  "veiculo_texto": "Sandero"
+                }
+              }
+            },
+            {
+              "step": "decide",
+              "status": "apresentar_cotacao",
+              "detail": {
+                "faltam": [],
+                "premio_mensal": 155.87,
+                "escalate": false
+              }
+            }
+          ],
+          "mensagem": "Pronto! Cotação Essencial: R$ 155.87/mês, franquia R$ 4500. Quero detalhar coberturas ou mudar?",
+          "slots": {
+            "idade": 30,
+            "veiculo_ano": 2022,
+            "cep": "07624-954",
+            "plano_id": "essencial",
+            "veiculo_texto": "Sandero",
+            "data_inicio": "2026-07-23"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R3_objecao_hitl",
+      "rubrica": [
+        "3_hitl"
+      ],
+      "pass": true,
+      "reason": "got escalar_humano",
+      "dataset_cid": "conv_00003",
+      "turns": [
+        {
+          "turno": 1,
+          "http": 200,
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "estagio": "cotado",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "1",
+              "detail": {
+                "estagio": "qualificando"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "tenho 61 anos, Toyota Corolla 2010, plano essencial, cep [CEP]",
+                "pii_types": [
+                  "cep"
+                ],
+                "patterns": []
+              }
+            },
+            {
+              "step": "qualifica",
+              "status": "ok",
+              "detail": {
+                "slots_acumulados": {
+                  "idade": 61,
+                  "veiculo_ano": 2010,
+                  "cep": "01310-100",
+                  "plano_id": "essencial"
+                }
+              }
+            },
+            {
+              "step": "decide",
+              "status": "apresentar_cotacao",
+              "detail": {
+                "faltam": [],
+                "premio_mensal": 243.4,
+                "escalate": false
+              }
+            }
+          ],
+          "mensagem": "Próspecto, a cotação para o seu plano Essencial é de R$ 243.40 mensais, com franquia de R$ 4500. Gostaria que eu detalhássemos as coberturas ou ajustássemos algum aspecto do plano?",
+          "slots": {
+            "idade": 61,
+            "veiculo_ano": 2010,
+            "cep": "01310-100",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-23"
+          }
+        },
+        {
+          "turno": 2,
+          "http": 200,
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "estagio": "objecao",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "2",
+              "detail": {
+                "estagio": "cotado"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "achei caro",
+                "pii_types": [],
+                "patterns": []
+              }
+            },
+            {
+              "step": "objecao",
+              "status": "reverter",
+              "detail": {
+                "objecao": "preco",
+                "framework": "feel-felt-found + ancoragem-valor",
+                "tatica": "Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por cen…",
+                "tentativa": 1
+              }
+            },
+            {
+              "step": "decide",
+              "status": "reverter_objecao",
+              "detail": {
+                "escalate": false
+              }
+            }
+          ],
+          "mensagem": "Entendo sua dúvida. Reconhecer e reancorar: 'Entendo que à primeira vista pode parecer caro, mas olhando a cobertura por dia, trata-se de uma proteção do seu carro por centavos.'",
+          "slots": {
+            "idade": 61,
+            "veiculo_ano": 2010,
+            "cep": "01310-100",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-23"
+          }
+        },
+        {
+          "turno": 3,
+          "http": 200,
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "estagio": "objecao",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "3",
+              "detail": {
+                "estagio": "objecao"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "ainda tá caro",
+                "pii_types": [],
+                "patterns": []
+              }
+            },
+            {
+              "step": "objecao",
+              "status": "reverter",
+              "detail": {
+                "objecao": "preco",
+                "framework": "isolamento + alternativa",
+                "tatica": "Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (ent…",
+                "tentativa": 2
+              }
+            },
+            {
+              "step": "decide",
+              "status": "reverter_objecao",
+              "detail": {
+                "escalate": false
+              }
+            }
+          ],
+          "mensagem": "Entendo sua preocupação. Isolando a objeção: \"Além do valor, há algo mais que te impede de fechar?\" Se é apenas o preço, ofertaríamos um plano essencial com entrada menor ou uma op",
+          "slots": {
+            "idade": 61,
+            "veiculo_ano": 2010,
+            "cep": "01310-100",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-23"
+          }
+        },
+        {
+          "turno": 4,
+          "http": 200,
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "estagio": "objecao",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "4",
+              "detail": {
+                "estagio": "objecao"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "caro demais",
+                "pii_types": [],
+                "patterns": []
+              }
+            },
+            {
+              "step": "objecao",
+              "status": "reverter",
+              "detail": {
+                "objecao": "preco",
+                "framework": "ancoragem-valor",
+                "tatica": "Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total).",
+                "tentativa": 3
+              }
+            },
+            {
+              "step": "decide",
+              "status": "reverter_objecao",
+              "detail": {
+                "escalate": false
+              }
+            }
+          ],
+          "mensagem": "Senhor/Senhora, entendo seu sentimento sobre o preço. Antecipo que comparando a mensalidade do seguro com o custo potencial de um sinistro sem proteção, a segurança oferecida é ben",
+          "slots": {
+            "idade": 61,
+            "veiculo_ano": 2010,
+            "cep": "01310-100",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-23"
+          }
+        },
+        {
+          "turno": 5,
+          "http": 200,
+          "acao": "escalar_humano",
+          "escalate": true,
+          "estagio": "escalado",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "5",
+              "detail": {
+                "estagio": "objecao"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "muito caro mesmo",
+                "pii_types": [],
+                "patterns": []
+              }
+            },
+            {
+              "step": "objecao",
+              "status": "escalar",
+              "detail": {
+                "objecao": "preco",
+                "framework": null,
+                "tatica": null,
+                "tentativa": 3
+              }
+            },
+            {
+              "step": "decide",
+              "status": "escalar_humano",
+              "detail": {
+                "escalate": true
+              }
+            }
+          ],
+          "mensagem": "Vamos acelerar e ligar para você para tirar as dúvidas sobre o preço. Até lá, estarei à disposição se precisar de algo.",
+          "slots": {
+            "idade": 61,
+            "veiculo_ano": 2010,
+            "cep": "01310-100",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-23"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R3_media_sem_transcricao",
+      "rubrica": [
+        "3_hitl"
+      ],
+      "pass": true,
+      "reason": "got pedir_dado",
+      "dataset_cid": "conv_00002",
+      "turns": [
+        {
+          "turno": 1,
+          "http": 200,
+          "acao": "pedir_dado",
+          "escalate": false,
+          "estagio": "qualificando",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "1",
+              "detail": {
+                "estagio": "qualificando"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "[documento] CNH_frente.pdf",
+                "pii_types": [],
+                "patterns": []
+              }
+            },
+            {
+              "step": "qualifica",
+              "status": "ok",
+              "detail": {
+                "slots_acumulados": {}
+              }
+            },
+            {
+              "step": "decide",
+              "status": "pedir_dado",
+              "detail": {
+                "faltam": [
+                  "idade",
+                  "veiculo_ano",
+                  "plano_id",
+                  "cep"
+                ]
+              }
+            }
+          ],
+          "mensagem": "Pra cotar seu seguro eu preciso de: sua idade, o ano do veículo, o plano desejado (essencial, completo ou premium), seu CEP.",
+          "slots": {
+            "data_inicio": "2026-07-23"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R3_idade_fora_faixa",
+      "rubrica": [
+        "3_hitl"
+      ],
+      "pass": true,
+      "reason": "got recusar",
+      "dataset_cid": "conv_00008",
+      "turns": [
+        {
+          "turno": 1,
+          "http": 200,
+          "acao": "recusar",
+          "escalate": false,
+          "estagio": "qualificando",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "1",
+              "detail": {
+                "estagio": "qualificando"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "tenho 78 anos, Honda HR-V 2008, plano essencial, cep [CEP]",
+                "pii_types": [
+                  "cep"
+                ],
+                "patterns": []
+              }
+            },
+            {
+              "step": "qualifica",
+              "status": "ok",
+              "detail": {
+                "slots_acumulados": {
+                  "idade": 78,
+                  "veiculo_ano": 2008,
+                  "cep": "01310-100",
+                  "plano_id": "essencial",
+                  "veiculo_texto": "Honda HR-V"
+                }
+              }
+            },
+            {
+              "step": "decide",
+              "status": "recusar",
+              "detail": {
+                "faltam": [],
+                "premio_mensal": null,
+                "escalate": false
+              }
+            }
+          ],
+          "mensagem": "Senhor/Senhora, após revisar seu perfil com base nos dados fornecidos, não conseguimos atender sua solicitação devido à idade superior a 75 anos. Encaminharei seu caso para um espe",
+          "slots": {
+            "idade": 78,
+            "veiculo_ano": 2008,
+            "cep": "01310-100",
+            "plano_id": "essencial",
+            "veiculo_texto": "Honda HR-V",
+            "data_inicio": "2026-07-23"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R2_quote_falha",
+      "rubrica": [
+        "2_resiliencia"
+      ],
+      "pass": true,
+      "reason": "got escalar_humano",
+      "dataset_cid": null,
+      "turns": [
+        {
+          "turno": 1,
+          "http": 200,
+          "acao": "escalar_humano",
+          "escalate": true,
+          "estagio": "qualificando",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "1",
+              "detail": {
+                "estagio": "qualificando"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "tenho 35 anos, Gol 2020, plano essencial, cep [CEP]",
+                "pii_types": [
+                  "cep"
+                ],
+                "patterns": []
+              }
+            },
+            {
+              "step": "qualifica",
+              "status": "ok",
+              "detail": {
+                "slots_acumulados": {
+                  "idade": 35,
+                  "veiculo_ano": 2020,
+                  "cep": "01310-100",
+                  "plano_id": "essencial",
+                  "veiculo_texto": "Gol"
+                }
+              }
+            },
+            {
+              "step": "decide",
+              "status": "escalar_humano",
+              "detail": {
+                "faltam": [],
+                "premio_mensal": null,
+                "escalate": true
+              }
+            }
+          ],
+          "mensagem": "Vamos conversar melhor sobre o plano para sua situação, especialmente a cobertura familiar e patrimonial. Um bom seguro auto garante proteção para você e seus entes queridos. Conve",
+          "slots": {
+            "idade": 35,
+            "veiculo_ano": 2020,
+            "cep": "01310-100",
+            "plano_id": "essencial",
+            "veiculo_texto": "Gol",
+            "data_inicio": "2026-07-23"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R4_rastreabilidade",
+      "rubrica": [
+        "4_trace"
+      ],
+      "pass": true,
+      "reason": "eventos=4",
+      "dataset_cid": "conv_00001",
+      "turns": [
+        {
+          "turno": 1,
+          "http": 200,
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "estagio": "cotado",
+          "eventos": [
+            {
+              "step": "turno",
+              "status": "1",
+              "detail": {
+                "estagio": "qualificando"
+              }
+            },
+            {
+              "step": "guardrails",
+              "status": "allow",
+              "detail": {
+                "texto_mascarado": "Oi, queria fazer um seguro pro meu carro Sandero, ano 2022 Cep [CEP], cpf [CPF], tenho 30 anos, quero o plano essencial",
+                "pii_types": [
+                  "cpf",
+                  "cep"
+                ],
+                "patterns": []
+              }
+            },
+            {
+              "step": "qualifica",
+              "status": "ok",
+              "detail": {
+                "slots_acumulados": {
+                  "idade": 30,
+                  "veiculo_ano": 2022,
+                  "cep": "07624-954",
+                  "plano_id": "essencial",
+                  "veiculo_texto": "Sandero"
+                }
+              }
+            },
+            {
+              "step": "decide",
+              "status": "apresentar_cotacao",
+              "detail": {
+                "faltam": [],
+                "premio_mensal": 155.87,
+                "escalate": false
+              }
+            }
+          ],
+          "mensagem": "Pronto, cotação Essencial: R$ 155.87/mês (franquia R$ 4500). Quer detalhar coberturas ou ajustar?",
+          "slots": {
+            "idade": 30,
+            "veiculo_ano": 2022,
+            "cep": "07624-954",
+            "plano_id": "essencial",
+            "veiculo_texto": "Sandero",
+            "data_inicio": "2026-07-23"
+          }
+        }
+      ]
+    }
+  ]
+}

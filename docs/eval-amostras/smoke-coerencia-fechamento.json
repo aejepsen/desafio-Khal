@@ -1,0 +1,70 @@
+{
+  "ran_at": "2026-07-23",
+  "results": [
+    {
+      "case": "completo_42",
+      "pass": true,
+      "acao": "apresentar_cotacao",
+      "premio": 209.9,
+      "fonte": "llm",
+      "index_key": "apresentar_cotacao|meia_30_50",
+      "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+      "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+      "ban_hit": [],
+      "premio_na_msg": true,
+      "mensagem": "Pronto — cotação do plano Completo: R$ 209.9/mês (franquia R$ 3000). Cobre: colisão, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com outro plano (Essencial / Completo / Premium)?"
+    },
+    {
+      "case": "essencial_35",
+      "pass": true,
+      "acao": "apresentar_cotacao",
+      "premio": 137.88,
+      "fonte": "llm",
+      "index_key": "apresentar_cotacao|meia_30_50",
+      "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|essencial",
+      "aresta": "conclusao:apresentar_cotacao|meia_30_50|essencial-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+      "ban_hit": [],
+      "premio_na_msg": true,
+      "mensagem": "Pronto — cotação do plano Essencial: R$ 137.88/mês (franquia R$ 4500). Cobre: colisão, roubo, furto. Quer que eu detalhe as coberturas ou compare com outro plano (Essencial / Completo / Premium)?"
+    },
+    {
+      "case": "premium_65",
+      "pass": true,
+      "acao": "apresentar_cotacao",
+      "premio": 547.24,
+      "fonte": "llm",
+      "index_key": "apresentar_cotacao|senior_50+",
+      "conclusao_id": "conclusao:apresentar_cotacao|senior_50+|premium",
+      "aresta": "conclusao:apresentar_cotacao|senior_50+|premium-[FECHA_COM]->apresentar_cotacao|senior_50+",
+      "ban_hit": [],
+      "premio_na_msg": true,
+      "mensagem": "Seguro apresentado: Plano Premium. Preço mensal R$ 547.24, franquia R$ 1500. Coberturas: colisão, roubo, furto, terceiros, vidros, carro reserva e assistência 24h. Quer que eu detalhe as coberturas ou compare com outro plano (Essencial / Completo / Premium)?"
+    },
+    {
+      "case": "jovem_22",
+      "pass": true,
+      "acao": "apresentar_cotacao",
+      "premio": 191.84,
+      "fonte": "llm",
+      "index_key": "apresentar_cotacao|jovem_18_30",
+      "conclusao_id": "conclusao:apresentar_cotacao|jovem_18_30|essencial",
+      "aresta": "conclusao:apresentar_cotacao|jovem_18_30|essencial-[FECHA_COM]->apresentar_cotacao|jovem_18_30",
+      "ban_hit": [],
+      "premio_na_msg": true,
+      "mensagem": "Pronto! Essencial: R$ 191.84/mês (franquia R$ 4500). Cobre: colisão, roubo, furto. Quer que eu detalhe as coberturas ou compare com outro plano (Essencial / Completo / Premium)?"
+    },
+    {
+      "case": "recusa_16",
+      "pass": true,
+      "acao": "recusar",
+      "premio": null,
+      "fonte": "llm",
+      "index_key": "recusar",
+      "conclusao_id": "conclusao:recusar|jovem_18_30",
+      "aresta": "conclusao:recusar|jovem_18_30-[FECHA_COM]->recusar",
+      "ban_hit": [],
+      "premio_na_msg": null,
+      "mensagem": "Posso te conectar com um especialista pra avaliar o caso?"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "conversation_id": "demo-log-1784818634",
+  "turns": [
+    {
+      "id": 2,
+      "turno": 1,
+      "acao": "apresentar_cotacao",
+      "escalate": false,
+      "premio_mensal": 209.9,
+      "fonte_resposta": "llm",
+      "created_at": "2026-07-23T14:57:24.244893+00:00",
+      "audit": {
+        "type": "audit.chat",
+        "conversation_id": "demo-log-1784818634",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "lead_mascarado": "Tenho 42 anos, Fiat Argo 2021, CEP [CEP], quero plano completo, inicio 2026-09-01.",
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "motivos": [],
+        "slots": {
+          "idade": 42,
+          "veiculo_ano": 2021,
+          "cep": "[CEP]",
+          "plano_id": "completo",
+          "veiculo_texto": "Fiat Argo",
+          "data_inicio": "2026-09-01"
+        },
+        "premio_mensal": 209.9,
+        "rascunho": "Pronto — cotação do plano Completo: R$ 209.9/mês (franquia R$ 3000). Quer que eu detalhe coberturas ou ajuste o plano?",
+        "mensagem_agente": "Pronto — Plano Completo cobre colisão, roubo, furto, terceiros e vidros. Ideal para proteger sua família e patrimônio. Como podemos ajustar o plano agora?",
+        "fonte_resposta": "llm",
+        "model": "qwen2.5:3b",
+        "pii": "masked"
+      }
+    }
+  ],
+  "eventos": [
+    {
+      "id": 6,
+      "turno": 1,
+      "step": "turno",
+      "status": "1",
+      "detail": {
+        "estagio": "qualificando"
+      },
+      "created_at": "2026-07-23T14:57:24.244893+00:00"
+    },
+    {
+      "id": 7,
+      "turno": 1,
+      "step": "guardrails",
+      "status": "allow",
+      "detail": {
+        "texto_mascarado": "Tenho 42 anos, Fiat Argo 2021, CEP [CEP], quero plano completo, inicio 2026-09-01.",
+        "pii_types": [
+          "cep"
+        ],
+        "patterns": []
+      },
+      "created_at": "2026-07-23T14:57:24.244893+00:00"
+    },
+    {
+      "id": 8,
+      "turno": 1,
+      "step": "qualifica",
+      "status": "ok",
+      "detail": {
+        "slots_acumulados": {
+          "idade": 42,
+          "veiculo_ano": 2021,
+          "cep": "[CEP]",
+          "plano_id": "completo",
+          "veiculo_texto": "Fiat Argo",
+          "data_inicio": "2026-09-01"
+        }
+      },
+      "created_at": "2026-07-23T14:57:24.244893+00:00"
+    },
+    {
+      "id": 9,
+      "turno": 1,
+      "step": "decide",
+      "status": "apresentar_cotacao",
+      "detail": {
+        "faltam": [],
+        "premio_mensal": 209.9,
+        "escalate": false
+      },
+      "created_at": "2026-07-23T14:57:24.244893+00:00"
+    },
+    {
+      "id": 10,
+      "turno": 1,
+      "step": "resposta",
+      "status": "llm",
+      "detail": {
+        "lead_mascarado": "Tenho 42 anos, Fiat Argo 2021, CEP [CEP], quero plano completo, inicio 2026-09-01.",
+        "rascunho": "Pronto — cotação do plano Completo: R$ 209.9/mês (franquia R$ 3000). Quer que eu detalhe coberturas ou ajuste o plano?",
+        "mensagem": "Pronto — Plano Completo cobre colisão, roubo, furto, terceiros e vidros. Ideal para proteger sua família e patrimônio. Como podemos ajustar o plano agora?",
+        "fonte": "llm",
+        "model": "qwen2.5:3b",
+        "pii": "masked"
+      },
+      "created_at": "2026-07-23T14:57:24.244893+00:00"
+    }
+  ]
+}

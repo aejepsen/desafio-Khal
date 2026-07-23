@@ -1,0 +1,19 @@
+# Override offline — sem Ollama/LLM real (DemoBackend). ASR/OCR seguem no ar.
+#   docker compose -f docker-compose.yml -f docker-compose.demo.yml up --build
+
+services:
+  ollama:
+    profiles: ["omit"]
+  ollama-pull:
+    profiles: ["omit"]
+
+  svc-inference:
+    depends_on: []
+    environment:
+      BACKEND: demo
+      DEFAULT_MODEL: demo-model
+      BACKEND_URL: "http://127.0.0.1:9"
+
+  agente:
+    environment:
+      INFERENCE_MODEL: demo-model
