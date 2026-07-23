@@ -41,9 +41,6 @@ services:
       EMBED_MODEL: ${EMBED_MODEL:-paraphrase-multilingual-MiniLM-L12-v2}
     depends_on: [qdrant]
 
-  svc-router:
-    build: ./services/svc-router
-    environment: { <<: *internal-auth }         # golden do domínio do desafio (não herdar)
 
   svc-inference:
     build: ./services/svc-inference
@@ -62,14 +59,13 @@ services:
       <<: *internal-auth
       QUOTE_URL: "http://quote-api:8080"
       GUARDRAILS_URL: "http://svc-guardrails:8000"
-      ROUTER_URL: "http://svc-router:8000"
       RAG_URL: "http://svc-rag:8000"
       INFERENCE_URL: "http://svc-inference:8000"
       OBSERVABILITY_URL: "http://svc-observability:8000"
       QUOTE_MAX_RETRIES: "3"
       QUOTE_TIMEOUT_S: "10"
       QUOTE_CIRCUIT_THRESHOLD: "5"
-    depends_on: [quote-api, svc-guardrails, svc-router, svc-rag, svc-inference, svc-observability]
+    depends_on: [quote-api, svc-guardrails, svc-rag, svc-inference, svc-observability]
     ports: ["8100:8100"]
 
 volumes:
