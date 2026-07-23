@@ -65,3 +65,23 @@ desafio-Khal/
   docker-compose.yml        # orquestração (volumes novos, coleção namastex_conversas)
   services/                 # svc-* vendorizados (limpos) + código novo do agente
 ```
+
+## Rodar o agente (API)
+
+```bash
+pip install -r requirements.txt
+docker compose up -d quote-api            # sobe o quote-service (porta 8000)
+QUOTE_URL=http://localhost:8000 uvicorn app.main:app --port 8100
+```
+
+Endpoints: `GET /health` · `POST /chat`.
+
+```bash
+# exemplo (via httpx/python — curl também serve)
+POST /chat  {"mensagens": ["tenho 45 anos, Onix 2019, cep 20040-002", "tá caro"], "idade": 45}
+# -> {"decisao":{"acao":"reverter_objecao",...}, "persona":"meia_30_50",
+#     "eventos":[... {"step":"objecao","detail":{"framework":"feel-felt-found + ancoragem-valor"}}]}
+```
+
+Desfechos de `/chat`: `apresentar_cotacao` · `reverter_objecao` (não desiste no 1º não) ·
+`pedir_dado` · `recusar` · `escalar_humano`. Cada passo é logado (id/status), PII mascarada.
