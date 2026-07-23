@@ -8,10 +8,14 @@ venv/
 .pytest_cache/
 .ruff_cache/
 
-# Dados sensíveis (nunca commitar dataset com PII)
-*.parquet
+# Runtime / volumes locais (não o dataset do desafio)
 data/
-dataset/
+
+# Dataset do desafio É sintético (ver dataset/DICIONARIO.md) e vai no repo.
+# Outros *.parquet fora de dataset/ continuam ignorados.
+*.parquet
+!dataset/
+!dataset/**
 
 # Node
 node_modules/
@@ -21,4 +25,3 @@ dist/
 .DS_Store
 .idea/
 .vscode/
-data/
