@@ -201,3 +201,16 @@ o Orchestrator multi-domínio, NÃO a solução de cotação). Tests da soluçã
 test_quote_client (7) + test_cotacao_flow (6). **0 refs** de domínio antigo no repo.
 Nota: grafo antigo (orchestrator.py/app.py) ainda no código; será substituído no wire do
 app.py pelo fluxo de cotação (próximo). Núcleo da solução = quote_client + cotacao_flow + agente_cotacao.
+
+## SESSÃO 2026-07-22 — GRAFO de objeções (decisão: grafo p/ ANÁLISE, não transacional)
+Reavaliação: a frase do desafio ("usar dataset p/ entender padrões de objeção") legitima
+grafo na CAMADA DE ANÁLISE (não banco transacional — relacional serve pro store).
+`analysis/build_objecao_graph.py`: heurística de objeções (sem LLM) → grafo objeção→outcome
+(networkx graphml) + `analysis/objecoes_insights.md`.
+**DESCOBERTA:** objeção de preço(628)/concorrente(483)/cobertura(226) = **~0% ganho**;
+os 712 ganhos vêm de qualificação limpa (0 ganhos com objeção detectada).
+**Ressalva (anti-Goodhart):** dataset SINTÉTICO → padrão pode ser artefato de geração.
+**Implicação no agente:** objeção de preço/concorrente = critério HITL ancorado em dado
+(escalar cedo, sem tática vencedora histórica); few-shot dirigido = conversas de GANHO como
+molde do caminho feliz; grafo marca objeção→rota de escalada. svc-rag graphrag segue OFF
+(few-shot vetorial + grafo como sinal de escalada, não retrieval).
