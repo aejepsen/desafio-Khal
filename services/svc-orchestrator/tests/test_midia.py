@@ -71,6 +71,32 @@ def test_enricher_converte_midia_em_texto():
     assert ex.decisao.acao == "apresentar_cotacao"
 
 
+def test_enricher_com_base64_oculta_url():
+    st = ThreadState("m5")
+    fake = FakeMediaEnricher(
+        text="tenho 42 anos Corolla 2020 plano completo cep 01310-100"
+    )
+    ex, _ = run_turno(
+        "[imagem] foto_dados.png",
+        st,
+        _build,
+        _Q(),
+        message_type="image",
+        media_base64="aGVsbG8=",  # conteúdo irrelevante — Fake não lê
+        media_filename="foto_dados.png",
+        media_enricher=fake,
+        extrair=lambda t: {
+            "idade": 42,
+            "veiculo_ano": 2020,
+            "plano_id": "completo",
+            "cep": "01310-100",
+        },
+    )
+    assert fake.calls and fake.calls[0]["b64"] is True
+    assert any(e.step == "midia" and e.status == "enriched" for e in ex.eventos)
+    assert ex.decisao.acao == "apresentar_cotacao"
+
+
 def test_enricher_falha_cai_em_hitl():
     st = ThreadState("m4")
     fake = FakeMediaEnricher(text=None)

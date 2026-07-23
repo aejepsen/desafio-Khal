@@ -66,7 +66,9 @@ class ChatIn(BaseModel):
     mensagem: str                 # a mensagem do lead NESTE turno
     idade: int | None = None
     message_type: str | None = None  # text|audio|image|document
-    media_url: str | None = None     # URL do arquivo p/ ASR/OCR (se MEDIA_*_URL setado)
+    media_url: str | None = None     # URL do arquivo p/ ASR/OCR
+    media_base64: str | None = None  # imagem/PDF em base64 (OCR sem URL externa)
+    media_filename: str | None = None  # ex.: cnh.png / pedido.pdf
 
 
 def _build_fn(slots):
@@ -248,6 +250,8 @@ def chat(inp: ChatIn):
         guardrails=_guardrails(),
         message_type=inp.message_type,
         media_url=inp.media_url,
+        media_base64=inp.media_base64,
+        media_filename=inp.media_filename,
         media_enricher=_media_enricher(),
         graph_examples=_graph_examples,
     )

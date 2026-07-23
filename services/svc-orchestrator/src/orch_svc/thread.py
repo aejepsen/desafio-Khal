@@ -74,6 +74,8 @@ def run_turno(mensagem: str, state: ThreadState, build_fn: Callable[..., Any],
               guardrails: Any = None,
               message_type: str | None = None,
               media_url: str | None = None,
+              media_base64: str | None = None,
+              media_filename: str | None = None,
               media_enricher: Any = None,
               graph_examples: Callable[[str | None], list[str]] | None = None,
               max_turnos: int = MAX_TURNOS) -> tuple[Execucao, ThreadState]:
@@ -104,11 +106,14 @@ def run_turno(mensagem: str, state: ThreadState, build_fn: Callable[..., Any],
             tipo_midia,
             enricher=media_enricher,
             media_url=media_url,
+            media_base64=media_base64,
+            filename=media_filename,
             trace=state.conversation_id,
         )
         if texto:
             ev.append(Evento("midia", "enriched", {
                 "tipo": tipo_midia, "status": st_media, "preview": texto[:80],
+                "via": "ocr" if tipo_midia in {"image", "document", "sticker"} else "asr",
             }))
             mensagem = texto  # segue o fluxo normal com a transcrição/OCR
         else:
@@ -117,6 +122,7 @@ def run_turno(mensagem: str, state: ThreadState, build_fn: Callable[..., Any],
             motivo = "mídia sem transcrição"
             ev.append(Evento("midia", tipo_midia, {
                 "motivo": motivo, "status": st_media, "enricher": bool(media_enricher),
+                "has_url": bool(media_url), "has_b64": bool(media_base64),
             }))
             dec = DecisaoCotacao(
                 "escalar_humano",

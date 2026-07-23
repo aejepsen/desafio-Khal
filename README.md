@@ -79,6 +79,12 @@ curl -s -X POST http://localhost:8100/chat -H 'content-type: application/json' \
   -d '{"conversation_id":"a1","mensagem":"[áudio]","message_type":"audio","media_url":"http://<host-acessivel-do-container>/voz.mp3"}'
 ```
 
+OCR de dados enviados (imagem/PDF em base64 — sem URL externa):
+```bash
+# ver scripts/e2e_ocr_dados.py — fixture docs/fixtures/ocr_dados_cotacao.png
+python scripts/e2e_ocr_dados.py
+```
+
 Falha de ASR/OCR → HITL (`mídia sem transcrição`). Falha de `/quote` → retry/circuit → HITL (nunca inventa prêmio).
 
 ## Princípios (régua do desafio)

@@ -68,6 +68,8 @@ fora de faixa cotável · objeção complexa · pedido fora de escopo.
 - **Ciclo E2E ganho:** qualifica → cota → aceite (`fechado`) → `emitir_apolice`
   (`estagio=contratado`). Script `scripts/e2e_ciclo_ganho.py` + log
   `docs/log-execucao-real.md`. Extração LLM ancorada no texto (anti-alucinação).
+- **OCR dados enviados:** `/chat` aceita `media_base64` (+ `message_type=image|document`);
+  Tesseract lê idade/ano/plano/CEP → fluxo normal. Smoke: `scripts/e2e_ocr_dados.py`.
 - **PRÓXIMO:** polir README final (decisões / mapa régua / entregável #3) se ainda faltar.
 
 ## Handoff / troca de LLM

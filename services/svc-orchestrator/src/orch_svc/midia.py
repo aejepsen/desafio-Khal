@@ -85,6 +85,8 @@ class MediaEnricher(Protocol):
         media_url: str | None,
         placeholder: str,
         trace: str,
+        media_base64: str | None = None,
+        filename: str | None = None,
     ) -> str | None: ...
 
 
@@ -92,9 +94,9 @@ class MediaEnricher(Protocol):
 class HttpMediaEnricher:
     """Cliente HTTP opcional.
 
-    Contratos esperados (OpenAPI-simples):
+    Contratos:
       POST {asr}/v1/transcribe  {"url": "..."} -> {"text": "..."}
-      POST {ocr}/v1/ocr         {"url": "..."} -> {"text": "..."}
+      POST {ocr}/v1/ocr         {"url"| "image_base64"} -> {"text": "..."}
     """
 
     asr_url: str | None = None
@@ -109,16 +111,34 @@ class HttpMediaEnricher:
         media_url: str | None,
         placeholder: str,
         trace: str,
+        media_base64: str | None = None,
+        filename: str | None = None,
     ) -> str | None:
-        if not media_url:
-            return None
         mt = media_type.lower()
         if mt in {"audio", "ptt", "video"}:
             base = self.asr_url
             path = "/v1/transcribe"
+            if not media_url:
+                return None
+            body: dict[str, Any] = {
+                "url": media_url,
+                "media_type": mt,
+                "placeholder": placeholder,
+            }
         elif mt in {"image", "document", "sticker"}:
             base = self.ocr_url
             path = "/v1/ocr"
+            if not media_url and not media_base64:
+                return None
+            body = {
+                "media_type": mt,
+                "placeholder": placeholder,
+                "filename": filename or "upload.png",
+            }
+            if media_base64:
+                body["image_base64"] = media_base64
+            if media_url:
+                body["url"] = media_url
         else:
             return None
         if not base:
@@ -131,7 +151,7 @@ class HttpMediaEnricher:
         try:
             resp = httpx.post(
                 f"{base.rstrip('/')}{path}",
-                json={"url": media_url, "media_type": mt, "placeholder": placeholder},
+                json=body,
                 headers=headers,
                 timeout=self.timeout_s,
             )
@@ -160,8 +180,10 @@ class FakeMediaEnricher:
         media_url: str | None,
         placeholder: str,
         trace: str,
+        media_base64: str | None = None,
+        filename: str | None = None,
     ) -> str | None:
-        self.calls.append(trace)
+        self.calls.append({"trace": trace, "b64": bool(media_base64), "url": media_url})
         return self.text
 
 
@@ -172,9 +194,13 @@ def tentar_enriquecer_midia(
     enricher: MediaEnricher | None,
     media_url: str | None,
     trace: str,
+    media_base64: str | None = None,
+    filename: str | None = None,
 ) -> tuple[str | None, str]:
     """Tenta ASR/OCR. Retorna (texto_ou_None, status: ok|skip|fail)."""
     if enricher is None:
+        return None, "skip"
+    if not media_url and not media_base64:
         return None, "skip"
     try:
         out = enricher.enrich(
@@ -182,6 +208,8 @@ def tentar_enriquecer_midia(
             media_url=media_url,
             placeholder=mensagem,
             trace=trace,
+            media_base64=media_base64,
+            filename=filename,
         )
     except Exception:
         return None, "fail"
