@@ -1,12 +1,16 @@
 """Tratamento de objeção — não desistir no primeiro "não".
 
 Análise do dataset (analysis/objecoes_insights.md): objeção de preço/concorrente/
-cobertura teve ~0% de ganho — mas porque os vendedores NÃO trataram, não porque
-seja irrecuperável. O agente tenta REVERTER com tática (escalando abordagens) e só
-escala pro humano quando a objeção PERSISTE após N tentativas.
+cobertura teve ~0% de ganho — porque os vendedores NÃO trataram, não porque seja
+irrecuperável. O agente REVERTE com tática (abordagens escalonadas) e só escala pro
+humano quando a objeção PERSISTE após N tentativas. Simetria com o /quote: retry
+antes de desistir.
 
-Simetria com o cliente /quote: como não desistimos na 1ª falha de rede (retry+
-backoff), não desistimos na 1ª objeção do lead (rebuttal + limite → escala).
+Táticas ancoradas em metodologias consolidadas de vendas (não no histórico falho):
+- **LAER**  Listen → Acknowledge → Explore → Respond (macro-framework de toda resposta).
+- **feel-felt-found**  "entendo como se sente · outros sentiram o mesmo · descobriram que…".
+- **ancoragem-valor**  reancorar preço em valor/benefício (custo/dia, risco evitado).
+- **isolamento**  "além disso, há mais algo que impede?" — separa a objeção real.
 """
 from __future__ import annotations
 
@@ -17,27 +21,41 @@ from enum import StrEnum
 _OBJ = {
     "preco": r"\bcar[oa]\b|pre[çc]o|desconto|valor.*alto|muito alto|parcel|caro demais",
     "concorrente": r"outra|concorr|porto|azul|cotei|mais barato (em|na|no)|j[áa] tenho",
-    "cobertura": r"cobertura|cobre|cobrir|franquia|o que inclui|s[óo] isso",
+    "cobertura": r"cobertura|cobre|cobrir|franquia|o que inclui|s[óo] isso|terceiro",
     "indeciso": r"vou pensar|depois|te aviso|falar com|n[ãa]o sei|talvez",
 }
 
-# táticas por objeção — ordenadas: cada tentativa usa uma abordagem diferente
-TATICAS: dict[str, list[str]] = {
+
+@dataclass
+class Tatica:
+    texto: str
+    framework: str
+
+
+# táticas por objeção — cada tentativa usa uma abordagem/framework diferente
+TATICAS: dict[str, list[Tatica]] = {
     "preco": [
-        "Reancorar em VALOR: cobertura e tranquilidade por dia, não o total mensal.",
-        "Oferecer alternativa: plano essencial (entrada menor) ou parcelamento.",
-        "Comparar: custo de um sinistro sem seguro >> a mensalidade.",
+        Tatica("Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a "
+               "cobertura por dia, é proteção do seu carro por centavos.'", "feel-felt-found + ancoragem-valor"),
+        Tatica("Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' "
+               "Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento.", "isolamento + alternativa"),
+        Tatica("Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem "
+               "seguro (guincho, terceiros, perda total).", "ancoragem-valor"),
     ],
     "concorrente": [
-        "Destacar o diferencial: o que este plano cobre que o concorrente não.",
-        "Reforçar atendimento/assistência 24h e franquia.",
+        Tatica("Explorar antes de responder: 'o que você mais valorizou na proposta deles?' "
+               "— e então destacar o diferencial que importa pra esse ponto.", "LAER (explore→respond)"),
+        Tatica("'Vários clientes vieram de lá e descobriram que a assistência 24h e a "
+               "franquia daqui compensam.' Comparar valor, não só preço.", "feel-felt-found"),
     ],
     "cobertura": [
-        "Esclarecer o que já está incluso no plano atual.",
-        "Oferecer upgrade pontual para a cobertura que o lead quer.",
+        Tatica("Explorar a preocupação exata ('o que te preocupa não estar coberto?') e "
+               "esclarecer o que já está incluso no plano.", "LAER (explore→respond)"),
+        Tatica("Oferecer upgrade pontual para a cobertura específica que o lead quer.", "ancoragem-valor"),
     ],
     "indeciso": [
-        "Reduzir fricção: resumir o benefício em 1 frase e propor próximo passo simples.",
+        Tatica("Isolar a hesitação: 'o que falta pra você decidir hoje?' e propor um "
+               "próximo passo simples (enviar a cotação formal, tirar 1 dúvida).", "isolamento"),
     ],
 }
 MAX_TENTATIVAS = 3
@@ -53,6 +71,7 @@ class RespostaObjecao:
     acao: AcaoObjecao
     objecao: str
     tatica: str | None = None
+    framework: str | None = None
     tentativa: int = 0
     motivo: str | None = None
 
@@ -70,8 +89,8 @@ def proxima_acao(objecao: str, tentativas_feitas: int,
     """Dada a objeção e quantas reversões já foram tentadas, decide reverter ou escalar."""
     taticas = TATICAS.get(objecao, [])
     if tentativas_feitas < len(taticas) and tentativas_feitas < max_tentativas:
-        return RespostaObjecao(AcaoObjecao.REVERTER, objecao,
-                               tatica=taticas[tentativas_feitas],
-                               tentativa=tentativas_feitas + 1)
+        t = taticas[tentativas_feitas]
+        return RespostaObjecao(AcaoObjecao.REVERTER, objecao, tatica=t.texto,
+                               framework=t.framework, tentativa=tentativas_feitas + 1)
     return RespostaObjecao(AcaoObjecao.ESCALAR, objecao, tentativa=tentativas_feitas,
                            motivo=f"objeção '{objecao}' persistiu após {tentativas_feitas} tentativa(s)")

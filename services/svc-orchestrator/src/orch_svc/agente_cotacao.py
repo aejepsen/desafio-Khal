@@ -83,7 +83,8 @@ def run_conversa(mensagens_lead: list[str], build_fn: Callable[..., Any],
     if objecao:
         resp = proxima_acao(objecao, tentativas_objecao)
         ev.append(Evento("objecao", resp.acao,
-                         {"objecao": objecao, "tatica": resp.tatica, "tentativa": resp.tentativa}))
+                         {"objecao": objecao, "framework": resp.framework,
+                          "tatica": resp.tatica, "tentativa": resp.tentativa}))
         if resp.acao is AcaoObjecao.REVERTER:
             dec = DecisaoCotacao("reverter_objecao", motivos=[resp.tatica or ""])
             ev.append(Evento("decide", dec.acao,

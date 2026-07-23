@@ -256,3 +256,14 @@ idade 18-82, mediana 51). Tests: test_persona 3 + test_objecoes 6. Combina com o
 (tom modula como a tática é apresentada). **PRÓXIMO:** item 1 (táticas de treinamento de
 vendas → coleção namastex_vendas_kb no svc-rag); wire persona+objeção no prompt de resposta;
 wire app.py; README final.
+
+## SESSÃO 2026-07-23 — táticas ancoradas em metodologia (item 1, opção 1)
+`objecoes.py` expandido: táticas por objeção agora estruturadas em frameworks REAIS de
+vendas — LAER (Listen-Acknowledge-Explore-Respond), feel-felt-found, ancoragem-valor,
+isolamento. `Tatica{texto, framework}`; RespostaObjecao carrega `framework` (rastreável/
+explicável no log). preço 3 táticas (feel-felt-found→isolamento→risco), concorrente/
+cobertura 2, indeciso 1. Escalonamento por tentativa mantido (não desiste no 1º não).
+Agente loga o framework usado. **GANCHO item 3 (pendente):** coleção `namastex_vendas_kb`
+no svc-rag p/ recuperar táticas de material específico (quando o usuário trouxer).
+**PRÓXIMO:** wire persona+objeção no prompt de resposta (svc-inference); wire app.py
+(endpoint→run_conversa); README final (entregável #3).

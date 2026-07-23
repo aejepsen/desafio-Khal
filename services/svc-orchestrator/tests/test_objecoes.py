@@ -20,6 +20,7 @@ def test_nao_desiste_no_primeiro_nao():
     r1 = proxima_acao("preco", 1)
     assert r0.acao is AcaoObjecao.REVERTER and r1.acao is AcaoObjecao.REVERTER
     assert r0.tatica != r1.tatica and r0.tentativa == 1 and r1.tentativa == 2
+    assert r0.framework and r1.framework  # tática rastreável ao método de vendas
 
 
 def test_escala_apos_esgotar():

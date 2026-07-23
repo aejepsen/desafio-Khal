@@ -37,5 +37,5 @@
 | 0 | ingest | ok | n_mensagens=2 |
 | 1 | guardrails | ok | texto_mascarado=tenho 30 anos, Corolla 2020, cep [CEP] mas achei muito caro, tem desconto? |
 | 2 | qualifica | ok | slots={'idade': 30, 'veiculo_ano': 2020, 'cep': '01310-100'} |
-| 3 | objecao | reverter | objecao=preco, tatica=Reancorar em VALOR: cobertura e tranquilidade por dia, não o total mensal., tentativa=1 |
-| 4 | decide | reverter_objecao | tatica=Reancorar em VALOR: cobertura e tranquilidade por dia, não o total mensal., tentativa=1 |
+| 3 | objecao | reverter | objecao=preco, framework=feel-felt-found + ancoragem-valor, tatica=Reconhecer e reancorar: 'entendo — à primei |
+| 4 | decide | reverter_objecao | tatica=Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do  |
