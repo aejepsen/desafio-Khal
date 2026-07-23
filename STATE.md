@@ -244,3 +244,15 @@ Integrado em `agente_cotacao.run_conversa` (intercepta antes de cotar). Demo tem
 - Implementar como `persona.py` (dado idade → estilo) que modula o prompt de resposta;
   combinar com a tática de objeção (ex: sênior + objeção preço = tom formal + reancorar em segurança).
 - Validar faixas contra o dataset (idade × outcome) antes de fixar — anti-Goodhart.
+
+## SESSÃO 2026-07-23 — persona por idade (item 2 do backlog)
+Validação anti-Goodhart ANTES de fixar: idade × outcome no dataset é PLANO
+(jovem/meia/sênior ganho ~28-30%, perdido ~21-22%) → **idade NÃO prediz conversão**.
+Decisão honesta: persona = RAPPORT/UX (falar a língua do público), NÃO alavanca de
+conversão. `orch_svc/persona.py`: persona_por_idade(idade)→Persona(tom/foco/diretrizes);
+diretriz_de_estilo() injeta no PROMPT de redação, não na DECISÃO (cotar/reverter/escalar
+inalterados). Faixas: <31 jovem · 31-50 meia · 51+ sênior · None desconhecida (dataset:
+idade 18-82, mediana 51). Tests: test_persona 3 + test_objecoes 6. Combina com objecoes
+(tom modula como a tática é apresentada). **PRÓXIMO:** item 1 (táticas de treinamento de
+vendas → coleção namastex_vendas_kb no svc-rag); wire persona+objeção no prompt de resposta;
+wire app.py; README final.
