@@ -18,7 +18,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "domains"))
 sys.path.insert(0, str(ROOT / "services/svc-orchestrator/src"))
 
-from fastapi import FastAPI  # noqa: E402
+from fastapi import FastAPI, Header, HTTPException  # noqa: E402
 from pydantic import BaseModel  # noqa: E402
 from contextlib import asynccontextmanager  # noqa: E402
 
@@ -144,6 +144,20 @@ def health():
 def audit_by_conversation(conversation_id: str):
     """Trilha persistida (SQLite) — o que foi gravado em audit.chat, por id."""
     return AUDIT_STORE.get_conversation(conversation_id)
+
+
+def _require_internal(x_internal_key: str | None) -> None:
+    if not INTERNAL_KEY:
+        return
+    if x_internal_key != INTERNAL_KEY:
+        raise HTTPException(status_code=401, detail="unauthorized")
+
+
+@app.get("/metrics")
+def metrics(x_internal_key: str | None = Header(default=None, alias="X-Internal-Key")):
+    """KPIs de desempenho do agente/modelo (audit) — raspado pelo svc-observability."""
+    _require_internal(x_internal_key)
+    return AUDIT_STORE.model_performance_metrics()
 
 
 @app.get("/graph/fechamento")

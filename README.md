@@ -23,7 +23,7 @@ Um **agente de cotação** (`app/main.py` + `orch_svc`) integra microsserviços
 | **svc-guardrails** | 8200 | sanitize + PII + injection |
 | **svc-inference** | 8202 | extract/redação via LLM |
 | **svc-rag** | 8204 | few-shot `namastex_conversas` |
-| **svc-observability** | 8205 | métricas / trilha |
+| **svc-observability** | 8205 | agrega métricas LLM + KPIs do agente |
 | **svc-media-asr** | 8210 | Whisper `small` (áudio → texto) |
 | **svc-media-ocr** | 8211 | Tesseract (imagem/PDF → texto) |
 | **ollama** | 11434 | `qwen2.5:7b` (Q4) |
@@ -89,6 +89,9 @@ python scripts/e2e_ciclo_ganho.py      # lead → cota → apólice
 python scripts/e2e_escalar_humano.py  # HITL (objeção / mídia / faixa)
 python scripts/e2e_ocr_dados.py       # imagem → OCR → cotação
 ```
+
+Métricas de desempenho (LLM + KPIs do agente via observability):
+[`docs/metricas-modelo.md`](./docs/metricas-modelo.md).
 
 Neo4j Browser: http://localhost:7474 (`neo4j` / senha no `.env`).
 

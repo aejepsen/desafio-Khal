@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
 
@@ -11,6 +12,7 @@ class Upstream:
     url: str
 
 
+# Default do ecossistema portfolio (gates / FakeScraper).
 REGISTRY: list[Upstream] = [
     Upstream("svc-guardrails", "http://svc-guardrails:8200/metrics"),
     Upstream("svc-evals", "http://svc-evals:8201/metrics"),
@@ -21,5 +23,25 @@ REGISTRY: list[Upstream] = [
 ]
 
 
+def _parse_env_upstreams(raw: str) -> list[Upstream]:
+    """Formato: name=url,name=url  (vírgula separa entradas)."""
+    out: list[Upstream] = []
+    for part in raw.split(","):
+        part = part.strip()
+        if not part or "=" not in part:
+            continue
+        name, url = part.split("=", 1)
+        name, url = name.strip(), url.strip()
+        if name and url:
+            out.append(Upstream(name, url))
+    return out
+
+
 def registry() -> list[Upstream]:
+    """Override via OBS_UPSTREAMS (desafio-Khal compose) sem quebrar gates default."""
+    raw = os.environ.get("OBS_UPSTREAMS", "").strip()
+    if raw:
+        parsed = _parse_env_upstreams(raw)
+        if parsed:
+            return parsed
     return list(REGISTRY)

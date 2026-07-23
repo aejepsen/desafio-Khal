@@ -158,3 +158,78 @@ class AuditStore:
                 for r in events
             ],
         }
+
+    def model_performance_metrics(self) -> dict[str, Any]:
+        """KPIs numéricos p/ scrape do svc-observability (desempenho agente/modelo).
+
+        Contadores + taxas 0–1 derivados do audit SQLite (sem PII).
+        """
+        with self._lock, self._connect() as conn:
+            turns_total = int(
+                conn.execute("SELECT COUNT(*) FROM audit_turn").fetchone()[0]
+            )
+            conversations_total = int(
+                conn.execute(
+                    "SELECT COUNT(DISTINCT conversation_id) FROM audit_turn"
+                ).fetchone()[0]
+            )
+            escalate_turns = int(
+                conn.execute(
+                    "SELECT COUNT(*) FROM audit_turn WHERE escalate = 1"
+                ).fetchone()[0]
+            )
+            by_acao = {
+                str(r["acao"] or "unknown"): int(r["n"])
+                for r in conn.execute(
+                    """
+                    SELECT acao, COUNT(*) AS n FROM audit_turn
+                    GROUP BY acao
+                    """
+                ).fetchall()
+            }
+            by_fonte = {
+                str(r["fonte_resposta"] or "unknown"): int(r["n"])
+                for r in conn.execute(
+                    """
+                    SELECT fonte_resposta, COUNT(*) AS n FROM audit_turn
+                    GROUP BY fonte_resposta
+                    """
+                ).fetchall()
+            }
+            midia_enriched = int(
+                conn.execute(
+                    """
+                    SELECT COUNT(*) FROM audit_event
+                    WHERE step = 'midia' AND status = 'enriched'
+                    """
+                ).fetchone()[0]
+            )
+            resposta_llm = int(by_fonte.get("llm", 0))
+            resposta_fallback = int(by_fonte.get("llm_fallback", 0))
+            apresentar = int(by_acao.get("apresentar_cotacao", 0))
+            emitir = int(by_acao.get("emitir_apolice", 0))
+            escalar = int(by_acao.get("escalar_humano", 0))
+
+        def _rate(num: int, den: int) -> float:
+            return round(num / den, 4) if den else 0.0
+
+        return {
+            "source": "live",
+            "turns_total": turns_total,
+            "conversations_total": conversations_total,
+            "escalate_turns_total": escalate_turns,
+            "acao_apresentar_cotacao_total": apresentar,
+            "acao_emitir_apolice_total": emitir,
+            "acao_escalar_humano_total": escalar,
+            "acao_pedir_dado_total": int(by_acao.get("pedir_dado", 0)),
+            "resposta_llm_total": resposta_llm,
+            "resposta_llm_fallback_total": resposta_fallback,
+            "resposta_template_total": int(by_fonte.get("template", 0)),
+            "midia_enriched_total": midia_enriched,
+            "hitl_rate": _rate(escalate_turns, turns_total),
+            "llm_redacao_rate": _rate(resposta_llm, turns_total),
+            "llm_fallback_rate": _rate(resposta_fallback, turns_total),
+            "cotacao_apresentada_rate": _rate(apresentar, turns_total),
+            "fechamento_sobre_cotacao_rate": _rate(emitir, apresentar),
+            "escala_sobre_turnos_rate": _rate(escalar, turns_total),
+        }
