@@ -267,3 +267,12 @@ Agente loga o framework usado. **GANCHO item 3 (pendente):** coleção `namastex
 no svc-rag p/ recuperar táticas de material específico (quando o usuário trouxer).
 **PRÓXIMO:** wire persona+objeção no prompt de resposta (svc-inference); wire app.py
 (endpoint→run_conversa); README final (entregável #3).
+
+## SESSÃO 2026-07-23 — SERVIÇO NO AR (wire app.py)
+`app/main.py` (raiz): FastAPI amarra domains/seguro_auto + orch_svc. POST /chat
+{mensagens, idade?, tentativas_objecao?} → run_conversa → {decisao, persona, eventos(log)}.
+GET /health. Wire: ResilientQuoteClient(QUOTE_URL) + persona_por_idade + objeção + RAG
+opcional (RAG_URL). `requirements.txt`. **TESTADO NO AR**: uvicorn :8100, httpx — health ok;
+/chat objeção→reverter_objecao (persona+framework); falta_dado→pedir_dado. README com execução.
+**PRÓXIMO:** subir quote-api + /chat caminho feliz real (cotação saindo, log com retry);
+wire persona+tática no prompt via svc-inference (redigir a resposta); README final (decisões).
