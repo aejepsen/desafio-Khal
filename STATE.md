@@ -276,3 +276,12 @@ opcional (RAG_URL). `requirements.txt`. **TESTADO NO AR**: uvicorn :8100, httpx 
 /chat objeção→reverter_objecao (persona+framework); falta_dado→pedir_dado. README com execução.
 **PRÓXIMO:** subir quote-api + /chat caminho feliz real (cotação saindo, log com retry);
 wire persona+tática no prompt via svc-inference (redigir a resposta); README final (decisões).
+
+## SESSÃO 2026-07-23 — CAMINHO FELIZ REAL (quote-api no ar)
+quote-api subido (docker, :8000). /chat com dados completos → 8/8 apresentar_cotacao;
+cotação real saindo (Essencial R$137.88, franquia 4500). Retry absorve os 20% de falha
+(transparente; escala só com 3 seguidas ~0.8%). `docs/log-execucao-real.md` gerado
+(entregável #4 com dados reais + PII mascarada).
+**MELHORIA NOTADA:** extração heurística NÃO capta plano_id (default essencial) nem tudo
+de veiculo_texto livre → **extração via LLM (svc-inference)** é o próximo salto de qualidade.
+**PRÓXIMO:** extração LLM; wire persona+tática no prompt (redigir resposta); README final (decisões).
