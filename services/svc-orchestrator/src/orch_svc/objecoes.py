@@ -19,7 +19,10 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 _OBJ = {
-    "preco": r"\bcar[oa]\b|pre[çc]o|desconto|valor.*alto|muito alto|parcel|caro demais",
+    # "preço"/"parcel" soltos batiam em pergunta neutra ("qual o preço?", "dá pra
+    # parcelar?") ANTES de qualquer cotação existir — vira tática de reversão pra
+    # uma objeção que o lead nunca fez. Só reclamação real dispara "preco".
+    "preco": r"\bcar[oa]\b|caro demais|desconto|valor.*alto|muito alto|t[áa] (alto|salgad[oa])",
     # "azul"/"porto" soltos batiam em cor de veículo / endereço — exigir contexto de seguradora.
     "concorrente": (
         r"concorr|cotei|mais barato (em|na|no)|j[áa] tenho (seguro|outra|cota[çc][ãa]o)|"

@@ -6,6 +6,17 @@ def test_detecta_preco():
     assert detectar_objecao("achei muito caro, tem desconto?") == "preco"
 
 
+def test_preco_pergunta_neutra_nao_e_objecao():
+    # Pergunta sobre preço ANTES de qualquer cotação não é objeção — é falta de
+    # dado; reclamação real ("caro", "desconto", "alto") continua sendo objeção.
+    assert detectar_objecao("qual o preço do plano completo?") is None
+    assert detectar_objecao("quero saber o preço do plano completo antes de decidir") is None
+    assert detectar_objecao("dá pra parcelar?") is None
+    assert detectar_objecao("achei muito caro") == "preco"
+    assert detectar_objecao("tá caro demais") == "preco"
+    assert detectar_objecao("tem desconto?") == "preco"
+
+
 def test_detecta_concorrente():
     assert detectar_objecao("cotei na Porto e tá mais barato") == "concorrente"
 

@@ -109,6 +109,18 @@ def test_pedido_humano_escala_direto():
     assert st.encerrado is True and st.estagio == "escalado"
 
 
+def test_pergunta_preco_antes_de_cotar_nao_e_objecao():
+    # Pergunta neutra de preço (sem cotação ainda) não deve virar tática de
+    # reversão de objeção — deve seguir o fluxo normal de qualificação.
+    st = ThreadState("preq1")
+    ex, st = run_turno(
+        "quero saber o preço do plano completo antes de decidir",
+        st, _build, FakeQuote(),
+    )
+    assert ex.decisao.acao != "reverter_objecao"
+    assert st.tentativas_objecao == {}
+
+
 def test_azul_veiculo_nao_e_confundido_com_concorrente():
     # Cor do carro ("azul") não deve sequestrar a 1ª mensagem de qualificação
     # pro fluxo de objeção de concorrente (bug: regex "azul" sem contexto).
