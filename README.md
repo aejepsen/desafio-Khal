@@ -7,7 +7,8 @@ um lead de seguro auto de ponta a ponta: **conversa → qualifica → cota → d
 > Handoff longo / diário de engenharia: [`STATE.md`](./STATE.md).  
 > Log de execução completa (com cotação): [`docs/log-execucao-real.md`](./docs/log-execucao-real.md)  
 > · audit SQLite: `GET /audit/{conversation_id}` (ex.: `docs/audit-audit-7b-1784829171.json`).  
-> · métricas modelo/agente: [`docs/metricas-modelo.md`](./docs/metricas-modelo.md).
+> · métricas modelo/agente: [`docs/metricas-modelo.md`](./docs/metricas-modelo.md).  
+> · **curadoria E2E (9 cenários, LLM real):** [`docs/curadoria-e2e/relatorio.md`](./docs/curadoria-e2e/relatorio.md).
 
 ## Arquitetura
 
@@ -91,6 +92,8 @@ Smokes úteis:
 python scripts/e2e_ciclo_ganho.py      # lead → cota → apólice
 python scripts/e2e_escalar_humano.py  # HITL (objeção / mídia / faixa)
 python scripts/e2e_ocr_dados.py       # imagem → OCR → cotação
+python scripts/curadoria_e2e.py       # 9 cenários (feliz/objeção/timeout/mídia/
+                                       # OCR/pedido humano/pausa/faixa/PII) → relatório
 ```
 
 Métricas de desempenho (LLM + KPIs do agente):
@@ -136,6 +139,30 @@ Artefato versionado em `services/svc-rag/models/communities.json`; regenerar qua
 o dataset/grafo mudar. Lógica pura testada em `test_community_builder.py`; re-rank
 em `test_search_graphrag.py`.
 
+### Curadoria E2E (revisão manual de qualidade)
+
+`scripts/curadoria_e2e.py` roda 9 tipos de interação lead↔agente↔lead contra o
+stack real (LLM `qwen2.5:7b` no loop, não mock) e grava a transcrição completa +
+audit trail em [`docs/curadoria-e2e/relatorio.md`](./docs/curadoria-e2e/relatorio.md)
+(raw por cenário em `docs/curadoria-e2e/raw/`). Não é gate automático — é material
+pra revisão humana de tom/coerência, não só corretude técnica:
+
+caminho feliz · objeção (reverte 3x → escala) · `/quote` indisponível
+(`QUOTE_FAILURE_RATE=1` forçado) · mídia sem transcrição · OCR de dados reais ·
+pedido explícito de humano · pausa respeitosa · recusa por faixa etária · PII mascarada.
+
+```bash
+python scripts/curadoria_e2e.py --skip quote_indisponivel   # cenários normais
+QUOTE_FAILURE_RATE=1 docker compose up -d quote-api          # força falha
+python scripts/curadoria_e2e.py --only quote_indisponivel
+docker compose up -d quote-api                                # restaura 20%
+```
+
+Dessa revisão saíram 3 correções de qualidade (não de lógica de decisão — a
+ação estava certa nos 9 cenários): formatação de moeda com ponto em vez de
+vírgula pt-BR, LLM ocasionalmente inventando frase fora do rascunho, e cópia
+HITL repetindo "atendente humano" duas vezes seguidas. Detalhe em `STATE.md`.
+
 Áudio (ASR): `message_type=audio` + `media_url`.  
 OCR: `message_type=image|document` + `media_url` **ou** `media_base64`.
 
@@ -153,6 +180,9 @@ Falha persistente de `/quote` → retry/circuit → `escalar_humano` (sem invent
 | **PII só mascarada em log** | CEP/CPF precisamos cotar; mask em audit/SQLite/`[CEP]`/`[CPF]`. |
 | **Dataset → RAG + Neo4j + táticas** | Few-shot, closes ganho, padrões de objeção; não treinar modelo do zero. |
 | **GraphRAG offline (artefato), não Neo4j em runtime no svc-rag** | Comunidades geradas 1x a partir do grafo (Louvain); `/v1/search` só lê o arquivo — evita depender de round-trip Neo4j em toda busca. |
+| **Pedido de humano tem handler dedicado, prioridade máxima** | "Falar com atendente" coincidia com o regex de pausa (virava "sem problema, pensa com calma") ou era ignorado — achado ao auditar a camada de objeção. |
+| **Regex de objeção exige contexto** (`azul seguros`, não `azul`; reclamação de preço, não pergunta neutra) | Sem isso, cor de veículo/pergunta de qualificação eram lidas como objeção e desviavam a conversa antes de qualquer cotação existir. |
+| **Curadoria manual além do teste automatizado** | Assert de pass/fail não pega tom robótico, moeda mal formatada ou LLM inventando frase — só leitura humana da transcrição real pega isso. |
 | **Ollama `qwen2.5:7b` Q4** | Cabe na 3060 12 GB com Whisper small; redação mais estável que 3B. |
 | **OCR `media_base64`** | Lê dados enviados sem depender de URL pública. |
 | **Audit SQLite por `conversation_id`** | Rastreabilidade exigida: cada passo com id + status. |
@@ -165,13 +195,14 @@ Isolamento de dados: [`docs/isolamento-dados.md`](./docs/isolamento-dados.md).
 
 | Critério | Evidência |
 |----------|-----------|
-| Caminho feliz cotando | `scripts/e2e_ciclo_ganho.py` · `docs/log-execucao-real.md` |
-| `/quote` falha | cliente resiliente · HITL grau A · eval R2 |
-| HITL explícito | `scripts/e2e_escalar_humano.py` · `docs/hitl-dataset-validacao.md` |
+| Caminho feliz cotando | `scripts/e2e_ciclo_ganho.py` · `docs/log-execucao-real.md` · curadoria E2E |
+| `/quote` falha | cliente resiliente · HITL grau A · eval R2 · curadoria E2E (`quote_indisponivel`, falha forçada) |
+| HITL explícito | `scripts/e2e_escalar_humano.py` · `docs/hitl-dataset-validacao.md` · curadoria E2E (objeção/mídia/pedido de humano) |
 | Rastreabilidade | `GET /audit/{conversation_id}` · eventos `step`/`status` |
 | Desempenho do modelo | `GET /metrics` · `:8205/v1/overview` · [`docs/metricas-modelo.md`](./docs/metricas-modelo.md) |
-| PII | guardrails + mask no audit |
-| Dataset | RAG `namastex_conversas` · Neo4j ganho · evals |
+| PII | guardrails + mask no audit · curadoria E2E (`pii_mascarada`) |
+| Dataset | RAG `namastex_conversas` · Neo4j ganho · GraphRAG (comunidades) · evals |
+| Qualidade da resposta (não só lógica) | [`docs/curadoria-e2e/relatorio.md`](./docs/curadoria-e2e/relatorio.md) — 9 cenários, revisão manual |
 
 ## Estrutura
 
@@ -182,10 +213,10 @@ desafio-Khal/
   docker-compose.demo.yml  # sem LLM real
   env.example
   app/                     # agente + audit + neo4j
-  services/                # svc-* + media-asr/ocr
+  services/                # svc-* + media-asr/ocr (svc-rag/models/communities.json = GraphRAG)
   domains/seguro_auto/     # porteiro do body /quote
-  scripts/                 # e2e ciclo / HITL / OCR
-  docs/                    # logs, evals, fixtures, metricas-modelo.md
+  scripts/                 # e2e ciclo/HITL/OCR/curadoria + build_rag_communities/neo4j_seed
+  docs/                    # logs, evals, fixtures, metricas-modelo.md, curadoria-e2e/
 ```
 
 Desfechos: `apresentar_cotacao` · `emitir_apolice` · `adiar_conversa` · `reverter_objecao` · `pedir_dado` · `recusar` · `escalar_humano`.
