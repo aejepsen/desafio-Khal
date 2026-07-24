@@ -49,7 +49,7 @@ Escala pro humano quando: dados insuficientes p/ cotar · mídia sem transcriç�
 (image/audio/document) · /quote falhou N vezes (circuit aberto) · idade/veículo
 fora de faixa cotável · objeção complexa · pedido fora de escopo.
 
-## Estado atual (2026-07-23)
+## Estado atual (2026-07-24)
 - Domínio determinístico, quote resiliente, RAG, objeções, persona, thread, `/chat` — feitos.
 - PII (mask só em log), CEP obrigatório, HITL explícito (mídia / quote fail / faixa) — feitos.
 - Eval amostras 7/7 PASS; smoke feliz Ollama + smoke áudio Whisper GPU — feitos.
@@ -84,7 +84,26 @@ fora de faixa cotável · objeção complexa · pedido fora de escopo.
   (antes só `quero contratar` → reapresentava cotação).
 - **Pausa ≠ dúvida:** `vou pensar` / `depois te falo` → ação `adiar_conversa`
   (template, estágio `pausado`) — sem “Entendo sua dúvida”.
-- **PRÓXIMO:** tornar repo público na entrega formal.
+- **Correções de interpretação (objeção/HITL):** pedido explícito de humano
+  (`pedido_humano()`, prioridade máxima), regex de concorrente/cobertura exigindo
+  contexto de seguro (`azul seguros`/`porto seguro`, não cor/endereço soltos),
+  objeção de preço exigindo reclamação real (não pergunta neutra de qualificação).
+  130 testes no orch_svc+domínio+app.
+- **GraphRAG real no `svc-rag`:** comunidades (Louvain) geradas do grafo Neo4j
+  (`scripts/build_rag_communities.py`), servidas em `GET /v1/community/{id}`,
+  anotadas + reordenadas + **expandidas** (`VectorStore.get_by_ids`) no
+  `/v1/search`. Offline (artefato versionado); sem conexão Neo4j em runtime,
+  por decisão (fail-open, mesmo espírito do `resolver_fechamento`). 65/65 no
+  svc-rag.
+- **Curadoria E2E:** `scripts/curadoria_e2e.py` roda 9 cenários (feliz, objeção,
+  quote indisponível forçado, mídia sem transcrição, OCR real, pedido de humano,
+  pausa, recusa por idade, PII) contra o stack real (LLM `qwen2.5:7b`) →
+  `docs/curadoria-e2e/relatorio.md` + raw por cenário. Achados corrigidos:
+  moeda com ponto (`209.9`) em vez de vírgula pt-BR (`209,90`), LLM inventando
+  frase sem nexo fora do rascunho, cópia HITL repetindo "atendente humano" 2x.
+- **PRÓXIMO:** cenário de ASR (áudio) real na curadoria (precisa servir o
+  arquivo via HTTP pro Whisper alcançar — não incluído ainda); tornar repo
+  público na entrega formal.
 
 ## Handoff / troca de LLM
 Este STATE + README + docs/isolamento-dados.md + docs/metricas-modelo.md
@@ -596,3 +615,54 @@ bolt por busca contradiria o padrão fail-open do resto do projeto (RAG/quote/
 guardrails todos degradam sem travar).
 Tests: `test_get_by_ids_*` (store), `test_expande_com_membros_*` /
 `test_expansao_nao_duplica_*` (app). 65/65 no pacote svc-rag.
+
+## SESSÃO 2026-07-24 (tarde) — stack completa no ar + curadoria E2E
+
+**Stack completa validada de verdade:** `docker compose up --build -d` — todos
+os 11 serviços (`agente`, `quote-api`, `ollama`+`qwen2.5:7b`, `neo4j`, `qdrant`,
+`svc-rag`, `svc-guardrails`, `svc-inference`, `svc-media-asr`, `svc-media-ocr`,
+`svc-observability`) `Up`/`healthy`; `ollama-pull`/`rag-ingest` (one-shot) saem
+com código 0 como esperado. `GET /health` do agente: `rag/inference/guardrails/
+media_asr/media_ocr=true`, Neo4j 752 nós. GPU RTX 3060 confirmada com runtime
+`nvidia` no Docker.
+
+**`scripts/curadoria_e2e.py`** (novo): roda uma bateria de 9 cenários reais
+contra o `/chat` do agente no ar — não é gate automático (sem assert), é
+material de transcript bruto + audit trail (`GET /audit/{id}`) pra revisão
+humana de tom/coerência. Cenários: `caminho_feliz` (qualifica→cota→aceita→
+apólice), `objecao_escala` (reverte 3x, escala na 4ª), `quote_indisponivel`
+(`QUOTE_FAILURE_RATE=1` forçado no quote-api pra esgotar retry+circuito de
+forma determinística — depois restaurado ao default 0.20),
+`midia_sem_transcricao`, `ocr_dados` (fixture real `docs/fixtures/
+ocr_dados_cotacao.png` via Tesseract), `pedido_humano_explicito`,
+`pausa_respeitosa`, `fora_de_faixa_recusa` (idade 80, regra `plans.json`
+idade>75), `pii_mascarada` (CPF+CEP no texto). Output:
+`docs/curadoria-e2e/relatorio.md` (consolidado) + `raw/<cenario>.json`.
+Suporta `--only`/`--skip` (permite rodar em passadas separadas, ex.: a de
+`/quote` forçado a falhar à parte — o relatório final agrega todos os
+`raw/*.json` presentes, não só os da última invocação).
+
+**3 achados de qualidade corrigidos** (revisão manual do relatório, não bug de
+lógica de decisão — a ação em todos os 9 cenários estava certa):
+1. **Moeda inconsistente:** `NoConclusao.params()` formatava `premio` com
+   `str(float)` (Python = ponto: `"209.9"`); o LLM às vezes reformatava pra
+   vírgula na reescrita, às vezes não — resultado inconsistente entre
+   cenários (`R$ 137,88` vs `R$ 241.38` no mesmo relatório). Fix: `_fmt_brl()`
+   formata na fonte (vírgula + 2 casas sempre — `209.9` vira `209,90`, não só
+   `209,9`). Reforçada também a instrução no prompt do LLM.
+2. **LLM inventando conteúdo fora do rascunho:** ex. "...para garantir o seu
+   patrimônio está seguro" (frase sem nexo gramatical, não vinha do template).
+   Prompt de `resposta.py` ganhou proibição explícita de acrescentar frases/
+   promessas além do RASCUNHO.
+3. **Cópia HITL redundante:** as 6 entradas de `hitl_copy._HITL_LEAD` diziam
+   "vou te conectar com um atendente humano" e logo depois repetiam "um
+   atendente humano vai continuar daqui" — soava robótico. Removida a
+   repetição (a CTA formal `cta_hitl()` continua existindo separada, pra
+   validação/params, sem precisar duplicar a frase no texto lido pelo lead).
+
+Validado ao vivo (rebuild do `agente` + re-run dos cenários afetados contra o
+LLM real, não só nos testes unitários): moeda consistente, sem duplicação
+HITL, sem a frase inventada nas novas respostas.
+Tests: 7 arquivos de teste atualizados pro formato vírgula/2-casas
+(`209.9`→`209,90`, `137.88`→`137,88`). 130/130 no orch_svc+domínio+app.
+Commits: `6dc22fd`, `65680ac`, `cb1799d`, `1937793`, `c8bdf9b`.
