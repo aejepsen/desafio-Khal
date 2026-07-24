@@ -47,3 +47,11 @@ def test_community_404(tmp_path: Path) -> None:
                  graphrag_enabled=True, models_dir=str(tmp_path))
     c = TestClient(create_app(settings=s, state=State(s, FakeEmbedder(), InMemoryStore())))
     assert c.get("/v1/community/999", headers={"X-Internal-Key": "k"}).status_code == 404
+
+
+def test_community_of_membership(tmp_path: Path) -> None:
+    _write_artifact(tmp_path)
+    cs = CommunityStore(str(tmp_path))
+    assert cs.community_of("reembolso") == "1"
+    assert cs.community_of("alcada") == "1"
+    assert cs.community_of("doc_inexistente") is None

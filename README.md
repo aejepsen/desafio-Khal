@@ -23,7 +23,7 @@ Um **agente de cotação** (`app/main.py` + `orch_svc`) integra microsserviços
 | **quote-api** | 8000 | cotação (20% 5xx + lentidão) |
 | **svc-guardrails** | 8200 | sanitize + PII + injection |
 | **svc-inference** | 8202 | extract/redação via LLM · tokens/latência em `/metrics` |
-| **svc-rag** | 8204 | few-shot `namastex_conversas` |
+| **svc-rag** | 8204 | few-shot `namastex_conversas` + GraphRAG (comunidades) |
 | **svc-observability** | 8205 | scrape + `GET /v1/overview` · `GET /v1/prometheus` |
 | **svc-media-asr** | 8210 | Whisper `small` (áudio → texto) |
 | **svc-media-ocr** | 8211 | Tesseract (imagem/PDF → texto) |
@@ -107,6 +107,29 @@ Detalhe das taxas (HITL, redação LLM, fechamento) e eval offline:
 
 Neo4j Browser: http://localhost:7474 (`neo4j` / senha no `.env`).
 
+### GraphRAG (svc-rag)
+
+O `svc-rag` serve um artefato de **comunidades** (`GET /v1/community/{id}`) detectadas
+via Louvain sobre o grafo Neo4j de conversas `ganho` (agrupadas por plano cotado +
+faixa etária — grafo denso dentro do grupo, esparso entre grupos, pra dar estrutura
+real ao algoritmo de comunidade). O `/v1/search` anota cada hit com sua comunidade e
+reordena pra reforçar a comunidade dominante entre os resultados (`score` vetorial
+não é alterado, só a ordem). Geração é **offline** — o serviço só lê o artefato em
+runtime, não abre conexão Neo4j (latência/resiliência, mesmo espírito do
+`resolver_fechamento` local):
+
+```bash
+docker compose up -d neo4j
+python scripts/neo4j_seed_dataset.py --limit 1000   # popula o grafo (712 ganho)
+NEO4J_URI=bolt://127.0.0.1:7687 python scripts/build_rag_communities.py
+docker compose up --build svc-rag
+curl -s http://localhost:8204/v1/community/0 -H "X-Internal-Key: dev-namastex-key"
+```
+
+Artefato versionado em `services/svc-rag/models/communities.json`; regenerar quando
+o dataset/grafo mudar. Lógica pura testada em `test_community_builder.py`; re-rank
+em `test_search_graphrag.py`.
+
 Áudio (ASR): `message_type=audio` + `media_url`.  
 OCR: `message_type=image|document` + `media_url` **ou** `media_base64`.
 
@@ -123,6 +146,7 @@ Falha persistente de `/quote` → retry/circuit → `escalar_humano` (sem invent
 | **Mensagem HITL grau A (template)** | Lead ouve “instabilidade / atendente”; jargão `503`/circuito fica só no **audit**. |
 | **PII só mascarada em log** | CEP/CPF precisamos cotar; mask em audit/SQLite/`[CEP]`/`[CPF]`. |
 | **Dataset → RAG + Neo4j + táticas** | Few-shot, closes ganho, padrões de objeção; não treinar modelo do zero. |
+| **GraphRAG offline (artefato), não Neo4j em runtime no svc-rag** | Comunidades geradas 1x a partir do grafo (Louvain); `/v1/search` só lê o arquivo — evita depender de round-trip Neo4j em toda busca. |
 | **Ollama `qwen2.5:7b` Q4** | Cabe na 3060 12 GB com Whisper small; redação mais estável que 3B. |
 | **OCR `media_base64`** | Lê dados enviados sem depender de URL pública. |
 | **Audit SQLite por `conversation_id`** | Rastreabilidade exigida: cada passo com id + status. |

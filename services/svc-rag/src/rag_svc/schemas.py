@@ -37,6 +37,8 @@ class Hit(BaseModel):
     text: str
     score: float
     metadata: dict[str, Any] = Field(default_factory=dict)
+    community_id: str | None = None
+    community_title: str | None = None
 
 
 class SearchResponse(BaseModel):

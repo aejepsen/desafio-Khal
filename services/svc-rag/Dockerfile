@@ -10,6 +10,10 @@ RUN pip install .
 # Baixa o embedder no build — boot sem rede, sem cold start.
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')"
 
+# GraphRAG: artefato de comunidades pré-gerado (offline, ver
+# scripts/build_rag_communities.py) — o serviço só serve/consulta, não gera.
+COPY models/communities.json ./models/communities.json
+
 COPY api ./api
 
 EXPOSE 8204

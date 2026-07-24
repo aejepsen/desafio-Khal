@@ -7,6 +7,7 @@ __pycache__
 .mypy_cache
 .ruff_cache
 models
+!models/communities.json
 evals/results
 tests
 SPEC.md

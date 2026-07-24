@@ -2,8 +2,9 @@
 __pycache__/
 *.pyc
 .env
-models/
+models/*
 !models/.gitkeep
+!models/communities.json
 evals/results/*.json
 !evals/results/.gitkeep
 .pytest_cache/

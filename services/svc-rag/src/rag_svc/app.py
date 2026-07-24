@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import statistics
 import time
-from collections import deque
+from collections import Counter, deque
 from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException, Request
@@ -37,6 +37,49 @@ from rag_svc.security_headers import add_security_headers
 from rag_svc.store import InMemoryStore, QdrantStore, VectorStore
 
 logger = logging.getLogger("rag")
+
+_COMMUNITY_BOOST = 0.05  # empurrão leve p/ hits que reforçam a comunidade dominante
+
+
+def _annotate_and_rerank_by_community(hits: list[Any], st: "State") -> list[Hit]:
+    """GraphRAG leve sobre o resultado vetorial.
+
+    Anota cada hit com a comunidade (Louvain, artefato offline — ver
+    community_builder.py) e reordena pra priorizar hits que reforçam a
+    comunidade dominante entre os resultados. `score` continua sendo a
+    similaridade vetorial real (não é sobrescrito) — só a ORDEM leva em
+    conta coerência de comunidade. Sem artefato/flag ou em qualquer erro,
+    devolve os hits como vieram (fail-open — GraphRAG nunca derruba a busca).
+    """
+    out = [
+        Hit(chunk_id=h.chunk_id, doc_id=h.doc_id, text=h.text,
+            score=round(h.score, 4), metadata=h.metadata)
+        for h in hits
+    ]
+    if not (st.settings.graphrag_enabled and st.communities.available):
+        return out
+    try:
+        for hit in out:
+            cid = st.communities.community_of(hit.doc_id)
+            if cid is None:
+                continue
+            hit.community_id = cid
+            community = st.communities.get(cid)
+            hit.community_title = community.get("title") if community else None
+
+        counts = Counter(h.community_id for h in out if h.community_id is not None)
+        if not counts:
+            return out
+        dominant, _ = counts.most_common(1)[0]
+
+        def _sort_key(h: Hit) -> float:
+            return h.score + (_COMMUNITY_BOOST if h.community_id == dominant else 0.0)
+
+        out.sort(key=_sort_key, reverse=True)
+        return out
+    except Exception:  # noqa: BLE001 — GraphRAG é enriquecimento, nunca bloqueia
+        logger.warning("graphrag rerank falhou — devolvendo hits sem boost", exc_info=True)
+        return out
 
 
 class State:
@@ -143,8 +186,7 @@ def create_app(settings: Settings | None = None, state: State | None = None) -> 
         )
         return SearchResponse(
             query=req.query, collection=req.collection,
-            hits=[Hit(chunk_id=h.chunk_id, doc_id=h.doc_id, text=h.text,
-                      score=round(h.score, 4), metadata=h.metadata) for h in hits],
+            hits=_annotate_and_rerank_by_community(hits, st),
         )
 
     @app.get("/v1/collections", response_model=list[CollectionInfo])

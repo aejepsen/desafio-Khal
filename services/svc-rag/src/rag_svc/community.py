@@ -14,6 +14,7 @@ class CommunityStore:
     def __init__(self, models_dir: str) -> None:
         self._path = Path(models_dir) / "communities.json"
         self._data: dict[str, dict[str, Any]] = {}
+        self._membership: dict[str, str] = {}  # doc_id -> community_id
         self._load()
 
     @property
@@ -28,7 +29,14 @@ class CommunityStore:
         except (json.JSONDecodeError, OSError):
             return
         for c in raw.get("communities", []):
-            self._data[str(c["id"])] = c
+            cid = str(c["id"])
+            self._data[cid] = c
+            for member in c.get("members", []):
+                self._membership[str(member)] = cid
 
     def get(self, cid: str) -> dict[str, Any] | None:
         return self._data.get(cid)
+
+    def community_of(self, doc_id: str) -> str | None:
+        """Id da comunidade que contém `doc_id` (member), ou None se não houver."""
+        return self._membership.get(str(doc_id))

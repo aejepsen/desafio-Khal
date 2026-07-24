@@ -526,3 +526,56 @@ Commit: `55b9110`.
   estágio `pausado`, porta aberta. Pattern `depois` solto removido.
   Tests: `test_vou_pensar_adia_sem_inventar_duvida`, `test_detecta_indeciso_pausa`.
 Commit: `b12800e`.
+
+## SESSÃO 2026-07-24 — correções de interpretação (objeção/HITL) + GraphRAG real no svc-rag
+
+**Auditoria da camada determinística de objeção** (regex que classifica a mensagem
+do lead ANTES do LLM, em `orch_svc/objecoes.py`/`thread.py`) achou 3 falhas de
+contexto, todas com teste de regressão:
+- Pedido explícito de humano ("posso falar com o atendente?") não tinha handler —
+  ou colava por acidente no regex de `indeciso` (virava pausa, o oposto do pedido)
+  ou era ignorado. Nova função `pedido_humano()`, prioridade máxima em `run_turno`.
+- `azul`/`porto` soltos no regex de `concorrente` confundiam cor de veículo/endereço
+  com as seguradoras Azul/Porto Seguro — sequestravam a 1ª mensagem de qualificação.
+  Agora exigem `azul seguros`/`porto seguro`.
+- `preço`/`parcel` soltos disparavam tática de reversão de objeção pra pergunta
+  neutra ("qual o preço do completo?") ANTES de qualquer cotação existir. Agora só
+  reclamação real (`caro`, `desconto`, `alto`, `salgado`) é objeção.
+Commits: `6dc22fd`, `65680ac`. 130 testes no pacote orch_svc+domínio+app.
+
+**GraphRAG real no `svc-rag` (estava só a metade — auditoria achou):** `docker-compose.yml`
+passava `NEO4J_URI/USER/PASSWORD` pro container, mas `config.py` nunca lia essas
+env vars — zero linhas conectavam `svc-rag` ao Neo4j. `GET /v1/community/{id}` lia
+um `communities.json` que **não existia no repo** (fixture de teste ainda era do
+domínio antigo "Finanças", nunca adaptado). `/v1/search` nunca tocava em comunidade.
+
+Implementado de verdade:
+- `rag_svc/community_builder.py` (lógica pura, testável): grafo denso por
+  `(plano, faixa_etária)` + pontes fracas entre faixas do mesmo plano (clique só
+  por plano não se particiona por modularidade — achado ao rodar a 1ª versão: 3
+  comunidades = 3 planos, faixa etária nunca aparecia). `louvain_communities`.
+- `scripts/build_rag_communities.py`: lê o grafo `Conversation`/`MENTIONS_PLAN`/
+  `HAS_OUTCOME` **do Neo4j** (não do parquet direto — usa o grafo que já existe),
+  gera `services/svc-rag/models/communities.json` (9 comunidades: 3 planos × 3
+  faixas presentes no dataset ganho, 712 conversas).
+- `CommunityStore.community_of(doc_id)`: índice reverso membro→comunidade.
+- `/v1/search`: anota cada hit com `community_id`/`community_title`; reordena pra
+  reforçar a comunidade dominante entre os hits (`score` vetorial não é alterado,
+  só a ordem — `_COMMUNITY_BOOST=0.05`). Fail-open: sem artefato/flag ou qualquer
+  erro, devolve os hits como vieram.
+- Geração é **offline** (script lê Neo4j 1x, artefato é versionado e copiado no
+  Dockerfile) — o serviço em runtime não abre conexão Neo4j, evitando round-trip
+  bolt em toda busca. `depends_on: neo4j` e env vars mortas removidas do compose;
+  `GRAPHRAG_ENABLED` default virou `1`.
+- Dockerfile precisou de `!models/communities.json` no `.dockerignore` (mesmo
+  gotcha do `plans.json`/quote-service em sessão anterior — pasta inteira ignorada).
+- Tests: `test_community_builder.py` (6, lógica pura) + `test_search_graphrag.py`
+  (5, anotação/rerank/fail-open) + `test_community_of_membership`. 60/60 no
+  `svc-rag` (era 47/54 antes, excluindo o `test_contract.py` que já falhava por
+  dependência dev ausente no ambiente local, não relacionado).
+
+**Escopo consciente:** não implementei live query Neo4j em `/v1/search` (expansão
+de grafo além do top_k retornado pelo vetor) — exigiria novo método `get_by_ids`
+no `VectorStore` (não existe hoje) e round-trip bolt por request; dado o prazo,
+o artefato offline + re-rank é o corte certo (mesma filosofia de "pré-computar
+caro, servir barato" do `resolver_fechamento`/`fechamento_index` locais).
