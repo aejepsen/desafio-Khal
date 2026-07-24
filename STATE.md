@@ -756,3 +756,34 @@ Python: XML bem formado, 0 elementos fora do viewBox, 0 estouros de texto —
 achou e corrigiu 4 estouros reais antes do commit); validação visual final
 via Artifact (link efêmero, não fica no repo) — QA humana no lugar de captura
 de tela, que não tenho como fazer diretamente.
+
+## SESSÃO 2026-07-24 (final++) — índices do Neo4j pra otimizar consulta
+
+Usuário perguntou "atualizou os índices?" — não era sobre `fechamento_index.py`
+(esse é índice em Python, in-process, já documentado na sessão 2026-07-23).
+Era sobre índice de banco de verdade no Neo4j. Auditei todo `MATCH (...{prop:
+$val})` em `app/neo4j_graph.py` e achei **3 propriedades filtradas sem
+constraint/índice** (as outras já eram cobertas: `GraphNode.id`, `Tatica.id`,
+`Conversation.id`):
+- `Objecao.tipo` — filtrada em toda busca de tática (`taticas_objecao`,
+  a feature nova desta sessão). Sem índice, label scan a cada objeção.
+- `Plano.plano_id` — filtrada em `search_similar_closes` (roda em toda
+  cotação, via `graph_examples`/rerank). Note: `Plano.id` já tinha índice
+  (herdado da constraint `fechamento_id` em `:GraphNode`, já que os nós
+  `Plano` são dual-labeled `GraphNode:Plano`) — mas a query usa `plano_id`,
+  não `id`, então esse índice não ajudava essa busca específica.
+- `CorpusAnchor.label` — também filtrada em `search_similar_closes`
+  (`{label: 'ganho'}`).
+
+Fix: `CREATE CONSTRAINT objecao_tipo` (em `seed_taticas_objecao`),
+`CREATE INDEX plano_plano_id` (em `ingest_conversations`, onde a propriedade
+é populada), `CREATE INDEX corpus_anchor_label` (em `seed_dataset_anchors`).
+Todos `IF NOT EXISTS`, idempotentes, seguem o padrão já usado no arquivo.
+
+**Validado direto no Neo4j** (não só assumido): `SHOW CONSTRAINTS` e
+`SHOW INDEXES` via `cypher-shell` depois do rebuild — os 3 novos aparecem
+`ONLINE`, 100% populados; `objecao_tipo` já com `readCount` > 0 (das
+consultas de teste anteriores). Escala atual (poucas centenas de nós) faz
+esses índices irrelevantes em latência prática hoje — o valor é
+consistência de design (mesmo padrão já aplicado aos outros três) e
+correção, não performance emergencial.

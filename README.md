@@ -122,7 +122,10 @@ materializadas no grafo: `Objecao -[:TEM_TATICA {ordem}]-> Tatica`. Em runtime,
 `proxima_acao()` **lê do Neo4j primeiro** (`GET /graph/neo4j/taticas/{tipo}`
 usa a mesma consulta) — vazio ou Neo4j fora → cai pro dict Python curado
 (fail-open, nunca impede reverter uma objeção). Seed no boot do agente e em
-`scripts/neo4j_seed_dataset.py`.
+`scripts/neo4j_seed_dataset.py`. Toda propriedade usada em `MATCH` tem
+constraint/índice (`objecao_tipo`, `plano_plano_id`, `corpus_anchor_label` —
+além dos já existentes `GraphNode.id`/`Tatica.id`/`Conversation.id`);
+confira com `SHOW INDEXES` no Neo4j Browser.
 
 ```bash
 curl -s http://localhost:8100/graph/neo4j/taticas/preco -H "X-Internal-Key: ${INTERNAL_KEY:-dev-namastex-key}"

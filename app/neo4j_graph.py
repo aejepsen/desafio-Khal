@@ -144,6 +144,12 @@ class Neo4jGraph:
         ]
         n = 0
         with self._driver.session() as s:
+            # search_similar_closes filtra CorpusAnchor por `label` (não `id`) —
+            # sem isso, essa busca (roda em toda cotação) faz label scan.
+            s.run(
+                "CREATE INDEX corpus_anchor_label IF NOT EXISTS "
+                "FOR (x:CorpusAnchor) ON (x.label)"
+            )
             for o in samples:
                 s.run(
                     """
@@ -194,6 +200,13 @@ class Neo4jGraph:
             s.run(
                 "CREATE CONSTRAINT tatica_id IF NOT EXISTS "
                 "FOR (t:Tatica) REQUIRE t.id IS UNIQUE"
+            )
+            # taticas_objecao() filtra Objecao por `tipo` a cada objeção — sem
+            # constraint/índice, faz label scan (barato hoje com 4 nós, mas
+            # errado de deixar sem, dado que tipo já é 1 nó por valor).
+            s.run(
+                "CREATE CONSTRAINT objecao_tipo IF NOT EXISTS "
+                "FOR (o:Objecao) REQUIRE o.tipo IS UNIQUE"
             )
             for tipo, taticas in TATICAS.items():
                 s.run("MERGE (o:Objecao {tipo: $tipo})", tipo=tipo)
@@ -249,6 +262,13 @@ class Neo4jGraph:
             s.run(
                 "CREATE CONSTRAINT conversation_id IF NOT EXISTS "
                 "FOR (c:Conversation) REQUIRE c.id IS UNIQUE"
+            )
+            # search_similar_closes filtra Plano por `plano_id` (não `id`, que já
+            # tem índice via a constraint fechamento_id em :GraphNode) — sem isso,
+            # essa busca (roda em toda cotação) faz label scan.
+            s.run(
+                "CREATE INDEX plano_plano_id IF NOT EXISTS "
+                "FOR (p:Plano) ON (p.plano_id)"
             )
             for c in convs:
                 s.run(
