@@ -8,7 +8,8 @@ um lead de seguro auto de ponta a ponta: **conversa → qualifica → cota → d
 > Log de execução completa (com cotação): [`docs/log-execucao-real.md`](./docs/log-execucao-real.md)  
 > · audit SQLite: `GET /audit/{conversation_id}` (ex.: `docs/audit-audit-7b-1784829171.json`).  
 > · métricas modelo/agente: [`docs/metricas-modelo.md`](./docs/metricas-modelo.md).  
-> · **curadoria E2E (9 cenários, LLM real):** [`docs/curadoria-e2e/relatorio.md`](./docs/curadoria-e2e/relatorio.md).
+> · **curadoria E2E (9 cenários, LLM real):** [`docs/curadoria-e2e/relatorio.md`](./docs/curadoria-e2e/relatorio.md)  
+> · **fluxo granular (lead → RAG/GraphRAG → prompt exato → LLM):** [`docs/fluxo-detalhado-entrevista.md`](./docs/fluxo-detalhado-entrevista.md).
 
 ## Arquitetura
 
