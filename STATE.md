@@ -787,3 +787,47 @@ consultas de teste anteriores). Escala atual (poucas centenas de nós) faz
 esses índices irrelevantes em latência prática hoje — o valor é
 consistência de design (mesmo padrão já aplicado aos outros três) e
 correção, não performance emergencial.
+
+## SESSÃO 2026-07-24 (final+++) — auditoria de qualidade do dataset
+
+Usuário pediu certeza de que `dataset/conversations.parquet` não tem exemplo
+de interação errada que faria o agente errar por causa da base. Não foi
+inspeção manual — script reproduzível: `analysis/audit_dataset_qualidade.py`
+→ `analysis/dataset_qualidade.md`.
+
+**Cobertura:**
+1. **Integridade estrutural** (2500 conversas): `message_index` 100%
+   sequencial em todas — 0 problemas. Único achado: **2495/2500 conversas
+   com `timestamp` fora de ordem cronológica** (investigado a fundo — padrão
+   sistemático nas últimas mensagens do vendedor, artefato conhecido do
+   gerador sintético). Confirmado via `grep` em `scripts/`/`app/`/`orch_svc`/
+   `svc-rag`: **o campo `timestamp` não é lido em lugar nenhum do código** —
+   toda reconstrução usa `message_index`, que está correto. Bug real nos
+   dados brutos, zero efeito prático.
+2. **Subconjunto `ganho`** (o que RAG/Neo4j injetam como few-shot no LLM):
+   0/712 problemas em 7 checagens (conversas curtas demais, falso-positivo
+   de "fechou", idade implausível, veículo vazio, texto quebrado com
+   artefato de geração, duplicatas, vendedor mencionando R$ fora de
+   qualquer faixa real dos planos).
+3. **Dataset inteiro** (`perdido`/`em_negociacao` alimentam
+   `analysis/build_objecao_graph.py`, que ancorou a arquitetura de reversão
+   de objeção): mesma limpeza nos 4 outcomes — 0 curtas, 0 texto quebrado,
+   0 veículo vazio, 0 idade implausível, 0 duplicatas.
+4. **Re-validação do achado central que ancorou o design** ("objeção →
+   ~0% ganho"): a heurística original (`analysis/build_objecao_graph.py`)
+   tinha os MESMOS falsos-positivos que corrigi em `orch_svc/objecoes.py`
+   nesta sessão. Comparei original vs. corrigida — o volume bruto de
+   detecção caiu ~30% (menos falso-positivo), mas **o número central do
+   insight (0 conversas ganho com objeção detectada) se manteve em 0% nas
+   duas versões**. A decisão de arquitetura não está apoiada num artefato
+   da regex antiga.
+
+**Autocorreção registrada:** cheguei a flagar "493/493 `sem_resposta` têm
+mensagem de vendedor" como possível rótulo errado — investiguei um exemplo
+real e a premissa da minha checagem estava errada (`sem_resposta` = lead
+para de responder DEPOIS da proposta do vendedor, não "vendedor nunca
+respondeu"). Corrigido antes de reportar como achado.
+
+**Conclusão:** nenhum problema de qualidade que colocasse em risco o
+comportamento do agente, no subconjunto usado pelo LLM nem no dataset
+inteiro. Script fica versionado — reproduzível se o dataset mudar.

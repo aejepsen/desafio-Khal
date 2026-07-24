@@ -203,6 +203,7 @@ Falha persistente de `/quote` → retry/circuit → `escalar_humano` (sem invent
 | **Mensagem HITL grau A (template)** | Lead ouve “instabilidade / atendente”; jargão `503`/circuito fica só no **audit**. |
 | **PII só mascarada em log** | CEP/CPF precisamos cotar; mask em audit/SQLite/`[CEP]`/`[CPF]`. |
 | **Dataset → RAG + Neo4j + táticas** | Few-shot, closes ganho, padrões de objeção; não treinar modelo do zero. |
+| **Auditoria de qualidade do dataset antes de confiar nele** | Base sintética alimenta few-shot do LLM e ancorou decisão de arquitetura (objeção) — checar antes, não assumir. Ver `analysis/dataset_qualidade.md`. |
 | **GraphRAG offline (artefato), não Neo4j em runtime no svc-rag** | Comunidades geradas 1x a partir do grafo (Louvain); `/v1/search` só lê o arquivo — evita depender de round-trip Neo4j em toda busca. |
 | **Pedido de humano tem handler dedicado, prioridade máxima** | "Falar com atendente" coincidia com o regex de pausa (virava "sem problema, pensa com calma") ou era ignorado — achado ao auditar a camada de objeção. |
 | **Regex de objeção exige contexto** (`azul seguros`, não `azul`; reclamação de preço, não pergunta neutra) | Sem isso, cor de veículo/pergunta de qualificação eram lidas como objeção e desviavam a conversa antes de qualquer cotação existir. |
@@ -226,7 +227,7 @@ Isolamento de dados: [`docs/isolamento-dados.md`](./docs/isolamento-dados.md).
 | Rastreabilidade | `GET /audit/{conversation_id}` · eventos `step`/`status` |
 | Desempenho do modelo | `GET /metrics` · `:8205/v1/overview` · [`docs/metricas-modelo.md`](./docs/metricas-modelo.md) |
 | PII | guardrails + mask no audit · curadoria E2E (`pii_mascarada`) |
-| Dataset | RAG `namastex_conversas` · Neo4j ganho · GraphRAG (comunidades) · evals |
+| Dataset | RAG `namastex_conversas` · Neo4j ganho · GraphRAG (comunidades) · evals · [auditoria de qualidade](./analysis/dataset_qualidade.md) |
 | Qualidade da resposta (não só lógica) | [`docs/curadoria-e2e/relatorio.md`](./docs/curadoria-e2e/relatorio.md) — 9 cenários, revisão manual |
 
 ## Estrutura
@@ -241,6 +242,7 @@ desafio-Khal/
   services/                # svc-* + media-asr/ocr (svc-rag/models/communities.json = GraphRAG)
   domains/seguro_auto/     # porteiro do body /quote
   scripts/                 # e2e ciclo/HITL/OCR/curadoria + build_rag_communities/neo4j_seed
+  analysis/                # objeção→outcome + auditoria de qualidade do dataset (offline)
   docs/                    # logs, evals, fixtures, metricas-modelo.md, curadoria-e2e/
 ```
 
