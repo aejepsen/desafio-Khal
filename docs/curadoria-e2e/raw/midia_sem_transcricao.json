@@ -1,0 +1,171 @@
+{
+  "id": "midia_sem_transcricao",
+  "titulo": "Mídia sem transcrição — escala humano",
+  "descricao": "Documento sem media_url/media_base64 (sem OCR possível).",
+  "conversation_id": "curadoria-midia_sem_transcricao-1784914396",
+  "turnos": [
+    {
+      "lead": "[documento] CNH.pdf",
+      "message_type": "document",
+      "latencia_s": 0.0,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-midia_sem_transcricao-1784914396",
+        "turno": 1,
+        "estagio": "escalado",
+        "persona": "desconhecida",
+        "mensagem": "Recebi sua mídia, mas não consegui ler o conteúdo com segurança por aqui. Vou te conectar com um atendente humano pra seguir.",
+        "slots": {},
+        "decisao": {
+          "acao": "escalar_humano",
+          "escalate": true,
+          "motivos": [
+            "mídia sem transcrição"
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "midia",
+            "status": "document",
+            "detail": {
+              "motivo": "mídia sem transcrição",
+              "status": "skip",
+              "enricher": true,
+              "has_url": false,
+              "has_b64": false
+            }
+          },
+          {
+            "step": "decide",
+            "status": "escalar_humano",
+            "detail": {
+              "escalate": true,
+              "motivo": "mídia sem transcrição"
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "template",
+            "detail": {
+              "lead_mascarado": "[documento] CNH.pdf",
+              "rascunho": "Recebi sua mídia, mas não consegui ler o conteúdo com segurança por aqui. Vou te conectar com um atendente humano pra seguir.",
+              "mensagem": "Recebi sua mídia, mas não consegui ler o conteúdo com segurança por aqui. Vou te conectar com um atendente humano pra seguir.",
+              "fonte": "template",
+              "index_key": "escalar_humano",
+              "cta": "Um atendente humano vai continuar daqui.",
+              "conclusao_id": "conclusao:escalar_humano|desconhecida",
+              "aresta": "conclusao:escalar_humano|desconhecida-[FECHA_COM]->escalar_humano",
+              "model": null,
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 77
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-midia_sem_transcricao-1784914396",
+    "turns": [
+      {
+        "id": 77,
+        "turno": 1,
+        "acao": "escalar_humano",
+        "escalate": true,
+        "premio_mensal": null,
+        "fonte_resposta": "template",
+        "created_at": "2026-07-24T17:33:16.084648+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-midia_sem_transcricao-1784914396",
+          "turno": 1,
+          "estagio": "escalado",
+          "persona": "desconhecida",
+          "lead_mascarado": "[documento] CNH.pdf",
+          "acao": "escalar_humano",
+          "escalate": true,
+          "motivos": [
+            "mídia sem transcrição"
+          ],
+          "slots": {},
+          "premio_mensal": null,
+          "rascunho": "Recebi sua mídia, mas não consegui ler o conteúdo com segurança por aqui. Vou te conectar com um atendente humano pra seguir.",
+          "mensagem_agente": "Recebi sua mídia, mas não consegui ler o conteúdo com segurança por aqui. Vou te conectar com um atendente humano pra seguir.",
+          "fonte_resposta": "template",
+          "index_key": "escalar_humano",
+          "cta": "Um atendente humano vai continuar daqui.",
+          "conclusao_id": "conclusao:escalar_humano|desconhecida",
+          "aresta": "conclusao:escalar_humano|desconhecida-[FECHA_COM]->escalar_humano",
+          "model": null,
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 371,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:33:16.084648+00:00"
+      },
+      {
+        "id": 372,
+        "turno": 1,
+        "step": "midia",
+        "status": "document",
+        "detail": {
+          "motivo": "mídia sem transcrição",
+          "status": "skip",
+          "enricher": true,
+          "has_url": false,
+          "has_b64": false
+        },
+        "created_at": "2026-07-24T17:33:16.084648+00:00"
+      },
+      {
+        "id": 373,
+        "turno": 1,
+        "step": "decide",
+        "status": "escalar_humano",
+        "detail": {
+          "escalate": true,
+          "motivo": "mídia sem transcrição"
+        },
+        "created_at": "2026-07-24T17:33:16.084648+00:00"
+      },
+      {
+        "id": 374,
+        "turno": 1,
+        "step": "resposta",
+        "status": "template",
+        "detail": {
+          "lead_mascarado": "[documento] CNH.pdf",
+          "rascunho": "Recebi sua mídia, mas não consegui ler o conteúdo com segurança por aqui. Vou te conectar com um atendente humano pra seguir.",
+          "mensagem": "Recebi sua mídia, mas não consegui ler o conteúdo com segurança por aqui. Vou te conectar com um atendente humano pra seguir.",
+          "fonte": "template",
+          "index_key": "escalar_humano",
+          "cta": "Um atendente humano vai continuar daqui.",
+          "conclusao_id": "conclusao:escalar_humano|desconhecida",
+          "aresta": "conclusao:escalar_humano|desconhecida-[FECHA_COM]->escalar_humano",
+          "model": null,
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:33:16.084648+00:00"
+      }
+    ]
+  }
+}

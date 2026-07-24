@@ -1,0 +1,251 @@
+{
+  "id": "pii_mascarada",
+  "titulo": "PII no texto — mascarada no audit",
+  "descricao": "CPF explícito na mensagem; slots reais seguem pra cotar, mas o audit/log precisa mascarar.",
+  "conversation_id": "curadoria-pii_mascarada-1784912976",
+  "turnos": [
+    {
+      "lead": "tenho 33 anos, Fiat Argo 2021, plano essencial, cep 01310-100, meu cpf é 123.456.789-09",
+      "message_type": null,
+      "latencia_s": 27.29,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-pii_mascarada-1784912976",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "mensagem": "Pronto — cotação do plano Essencial: R$ 119,9/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+        "slots": {
+          "idade": 33,
+          "veiculo_ano": 2021,
+          "cep": "01310-100",
+          "plano_id": "essencial",
+          "veiculo_texto": "Fiat Argo",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "essencial",
+            "plano_nome": "Essencial",
+            "premio_mensal": 119.9,
+            "franquia": 4500,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.0,
+              "idade_veiculo": 1.0,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 31,
+              "dias_cobrados": 8,
+              "valor_primeiro_pagamento": 30.94
+            }
+          },
+          "exemplos": [
+            "- lead_idade_informada: 55\n- veiculo_texto: Fiat Argo 2021\n\n[lead] Oi, queria fazer um seguro pro meu carro\n[vendedor] Ola Marina, tudo otimo! Claro, vou te ajudar. Qual o modelo e ano do veiculo?\n[lead] Argo, ano 2021\n[vendedor] Perfeito. Pra cotar certinho preciso de alguns dados. Pode me passar seu CPF, idade e o CEP de onde o carro dorme?\n[lead] Cep 13711-365, cpf 172.625.911-00, tenho 55 anos\n[lead] meu email é marinasilva1@bol.com.br e o whats é esse mesmo +55 62 95318-4724\n[lead] to no aguardo\n[vendedor] Show! Pelo perfil consigo o plano Essencial por R$ 159,90/mes. Cobre colisao, roubo e furto. Te interessa?\n[lead] pode emitir entao\n[vendedor] Maravilha! Vou gerar o boleto e te mando a apolice. Bem-vindo!",
+            "outcome=ganho has_close=true plano=essencial conversa=#conv_02470 veiculo=Honda City 2021 idade=53 — fechado boleto apólice",
+            "outcome=ganho has_close=true plano=essencial conversa=#conv_00534 veiculo=Hyundai HB20 2019 idade=61 — fechado boleto apólice"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "tenho 33 anos, Fiat Argo 2021, plano essencial, cep [CEP], meu cpf é [CPF]",
+              "pii_types": [
+                "cpf",
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 33,
+                "veiculo_ano": 2021,
+                "cep": "01310-100",
+                "plano_id": "essencial",
+                "veiculo_texto": "Fiat Argo"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 119.9,
+              "escalate": false,
+              "exemplos_n": 3,
+              "rerank": true
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "tenho 33 anos, Fiat Argo 2021, plano essencial, cep [CEP], meu cpf é [CPF]",
+              "rascunho": "Pronto — cotação do plano Essencial: R$ 119.9/mês (franquia R$ 4500). Cobre: colisao, roubo, furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+              "mensagem": "Pronto — cotação do plano Essencial: R$ 119,9/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+              "fonte": "llm",
+              "index_key": "apresentar_cotacao|meia_30_50",
+              "cta": "Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+              "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|essencial",
+              "aresta": "conclusao:apresentar_cotacao|meia_30_50|essencial-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 68
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-pii_mascarada-1784912976",
+    "turns": [
+      {
+        "id": 68,
+        "turno": 1,
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "premio_mensal": 119.9,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:10:03.324730+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-pii_mascarada-1784912976",
+          "turno": 1,
+          "estagio": "cotado",
+          "persona": "meia_30_50",
+          "lead_mascarado": "tenho 33 anos, Fiat Argo 2021, plano essencial, cep [CEP], meu cpf é [CPF]",
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "slots": {
+            "idade": 33,
+            "veiculo_ano": 2021,
+            "cep": "[CEP]",
+            "plano_id": "essencial",
+            "veiculo_texto": "Fiat Argo",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": 119.9,
+          "rascunho": "Pronto — cotação do plano Essencial: R$ 119.9/mês (franquia R$ 4500). Cobre: colisao, roubo, furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "mensagem_agente": "Pronto — cotação do plano Essencial: R$ 119,9/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "fonte_resposta": "llm",
+          "index_key": "apresentar_cotacao|meia_30_50",
+          "cta": "Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|essencial",
+          "aresta": "conclusao:apresentar_cotacao|meia_30_50|essencial-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 327,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:10:03.324730+00:00"
+      },
+      {
+        "id": 328,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "tenho 33 anos, Fiat Argo 2021, plano essencial, cep [CEP], meu cpf é [CPF]",
+          "pii_types": [
+            "cpf",
+            "cep"
+          ],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:10:03.324730+00:00"
+      },
+      {
+        "id": 329,
+        "turno": 1,
+        "step": "qualifica",
+        "status": "ok",
+        "detail": {
+          "slots_acumulados": {
+            "idade": 33,
+            "veiculo_ano": 2021,
+            "cep": "[CEP]",
+            "plano_id": "essencial",
+            "veiculo_texto": "Fiat Argo"
+          }
+        },
+        "created_at": "2026-07-24T17:10:03.324730+00:00"
+      },
+      {
+        "id": 330,
+        "turno": 1,
+        "step": "decide",
+        "status": "apresentar_cotacao",
+        "detail": {
+          "faltam": [],
+          "premio_mensal": 119.9,
+          "escalate": false,
+          "exemplos_n": 3,
+          "rerank": true
+        },
+        "created_at": "2026-07-24T17:10:03.324730+00:00"
+      },
+      {
+        "id": 331,
+        "turno": 1,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "tenho 33 anos, Fiat Argo 2021, plano essencial, cep [CEP], meu cpf é [CPF]",
+          "rascunho": "Pronto — cotação do plano Essencial: R$ 119.9/mês (franquia R$ 4500). Cobre: colisao, roubo, furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "mensagem": "Pronto — cotação do plano Essencial: R$ 119,9/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "fonte": "llm",
+          "index_key": "apresentar_cotacao|meia_30_50",
+          "cta": "Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|essencial",
+          "aresta": "conclusao:apresentar_cotacao|meia_30_50|essencial-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:10:03.324730+00:00"
+      }
+    ]
+  }
+}

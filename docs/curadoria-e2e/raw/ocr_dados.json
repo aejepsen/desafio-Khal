@@ -1,0 +1,274 @@
+{
+  "id": "ocr_dados",
+  "titulo": "OCR de imagem com dados — extrai e segue fluxo normal",
+  "descricao": "Fixture real (docs/fixtures/ocr_dados_cotacao.png) via Tesseract.",
+  "conversation_id": "curadoria-ocr_dados-1784912914",
+  "turnos": [
+    {
+      "lead": "[imagem] dados.png",
+      "message_type": "image",
+      "latencia_s": 28.03,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-ocr_dados-1784912914",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "mensagem": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e danos aos vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+        "slots": {
+          "idade": 42,
+          "veiculo_ano": 2020,
+          "cep": "01310-100",
+          "plano_id": "completo",
+          "veiculo_texto": "Corolla",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "completo",
+            "plano_nome": "Completo",
+            "premio_mensal": 241.38,
+            "franquia": 3000,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto",
+              "terceiros",
+              "vidros"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.0,
+              "idade_veiculo": 1.15,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 31,
+              "dias_cobrados": 8,
+              "valor_primeiro_pagamento": 62.29
+            }
+          },
+          "exemplos": [
+            "outcome=ganho has_close=true plano=completo conversa=#conv_00644 veiculo=Toyota Corolla Cross 2003 idade=66 — fechado boleto apólice",
+            "outcome=ganho has_close=true plano=completo conversa=#conv_02497 veiculo=Hyundai Creta 2003 idade=23 — fechado boleto apólice",
+            "outcome=ganho has_close=true plano=completo conversa=#conv_02453 veiculo=Jeep Compass 2005 idade=48 — fechado boleto apólice"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "midia",
+            "status": "enriched",
+            "detail": {
+              "tipo": "image",
+              "status": "ok",
+              "preview": "PEDIDO DE COTACAO SEGURO AUTO\nidade: 42 anos\n\nveiculo: Corolla 2020\n\nplano: comp",
+              "via": "ocr"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "PEDIDO DE COTACAO SEGURO AUTO\nidade: 42 anos\n\nveiculo: Corolla 2020\n\nplano: completo\n\nCEP: [CEP]",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 42,
+                "veiculo_ano": 2020,
+                "cep": "01310-100",
+                "plano_id": "completo",
+                "veiculo_texto": "Corolla"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 241.38,
+              "escalate": false,
+              "exemplos_n": 3,
+              "rerank": true
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "[imagem] dados.png",
+              "rascunho": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+              "mensagem": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e danos aos vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+              "fonte": "llm",
+              "index_key": "apresentar_cotacao|meia_30_50",
+              "cta": "Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+              "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+              "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 63
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-ocr_dados-1784912914",
+    "turns": [
+      {
+        "id": 63,
+        "turno": 1,
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "premio_mensal": 241.38,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:09:02.698321+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-ocr_dados-1784912914",
+          "turno": 1,
+          "estagio": "cotado",
+          "persona": "meia_30_50",
+          "lead_mascarado": "[imagem] dados.png",
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "slots": {
+            "idade": 42,
+            "veiculo_ano": 2020,
+            "cep": "[CEP]",
+            "plano_id": "completo",
+            "veiculo_texto": "Corolla",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": 241.38,
+          "rascunho": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "mensagem_agente": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e danos aos vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "fonte_resposta": "llm",
+          "index_key": "apresentar_cotacao|meia_30_50",
+          "cta": "Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+          "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 302,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:09:02.698321+00:00"
+      },
+      {
+        "id": 303,
+        "turno": 1,
+        "step": "midia",
+        "status": "enriched",
+        "detail": {
+          "tipo": "image",
+          "status": "ok",
+          "preview": "PEDIDO DE COTACAO SEGURO AUTO\nidade: 42 anos\n\nveiculo: Corolla 2020\n\nplano: comp",
+          "via": "ocr"
+        },
+        "created_at": "2026-07-24T17:09:02.698321+00:00"
+      },
+      {
+        "id": 304,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "PEDIDO DE COTACAO SEGURO AUTO\nidade: 42 anos\n\nveiculo: Corolla 2020\n\nplano: completo\n\nCEP: [CEP]",
+          "pii_types": [
+            "cep"
+          ],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:09:02.698321+00:00"
+      },
+      {
+        "id": 305,
+        "turno": 1,
+        "step": "qualifica",
+        "status": "ok",
+        "detail": {
+          "slots_acumulados": {
+            "idade": 42,
+            "veiculo_ano": 2020,
+            "cep": "[CEP]",
+            "plano_id": "completo",
+            "veiculo_texto": "Corolla"
+          }
+        },
+        "created_at": "2026-07-24T17:09:02.698321+00:00"
+      },
+      {
+        "id": 306,
+        "turno": 1,
+        "step": "decide",
+        "status": "apresentar_cotacao",
+        "detail": {
+          "faltam": [],
+          "premio_mensal": 241.38,
+          "escalate": false,
+          "exemplos_n": 3,
+          "rerank": true
+        },
+        "created_at": "2026-07-24T17:09:02.698321+00:00"
+      },
+      {
+        "id": 307,
+        "turno": 1,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "[imagem] dados.png",
+          "rascunho": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "mensagem": "Pronto — cotação do plano Completo: R$ 241.38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e danos aos vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "fonte": "llm",
+          "index_key": "apresentar_cotacao|meia_30_50",
+          "cta": "Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+          "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:09:02.698321+00:00"
+      }
+    ]
+  }
+}

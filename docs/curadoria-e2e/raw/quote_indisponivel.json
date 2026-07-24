@@ -1,0 +1,216 @@
+{
+  "id": "quote_indisponivel",
+  "titulo": "Falha do /quote — escala humano (HITL grau A)",
+  "descricao": "QUOTE_FAILURE_RATE forçado a 1.0 no quote-api pra esgotar retry+circuito.",
+  "conversation_id": "curadoria-quote_indisponivel-1784913054",
+  "turnos": [
+    {
+      "lead": "tenho 30 anos, HB20 2021, plano essencial, cep 20000-000",
+      "message_type": null,
+      "latencia_s": 9.52,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-quote_indisponivel-1784913054",
+        "turno": 1,
+        "estagio": "qualificando",
+        "persona": "jovem_18_30",
+        "mensagem": "Tive uma instabilidade no sistema de cotação agora e não consigo te passar um valor com segurança. Vou te conectar com um atendente humano pra continuar. Um atendente humano vai continuar daqui.",
+        "slots": {
+          "idade": 30,
+          "veiculo_ano": 2021,
+          "cep": "20000-000",
+          "plano_id": "essencial",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "escalar_humano",
+          "escalate": true,
+          "motivos": [
+            "esgotou 3 tentativas (última: 502)"
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "tenho 30 anos, HB20 2021, plano essencial, cep [CEP]",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 30,
+                "veiculo_ano": 2021,
+                "cep": "20000-000",
+                "plano_id": "essencial"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "escalar_humano",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": null,
+              "escalate": true,
+              "exemplos_n": 0,
+              "rerank": false
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "template",
+            "detail": {
+              "lead_mascarado": "tenho 30 anos, HB20 2021, plano essencial, cep [CEP]",
+              "rascunho": "Tive uma instabilidade no sistema de cotação agora e não consigo te passar um valor com segurança. Vou te conectar com um atendente humano pra continuar. Um atendente humano vai continuar daqui.",
+              "mensagem": "Tive uma instabilidade no sistema de cotação agora e não consigo te passar um valor com segurança. Vou te conectar com um atendente humano pra continuar. Um atendente humano vai continuar daqui.",
+              "fonte": "template",
+              "index_key": "escalar_humano",
+              "cta": "Um atendente humano vai continuar daqui.",
+              "conclusao_id": "conclusao:escalar_humano|jovem_18_30",
+              "aresta": "conclusao:escalar_humano|jovem_18_30-[FECHA_COM]->escalar_humano",
+              "model": null,
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 69
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-quote_indisponivel-1784913054",
+    "turns": [
+      {
+        "id": 69,
+        "turno": 1,
+        "acao": "escalar_humano",
+        "escalate": true,
+        "premio_mensal": null,
+        "fonte_resposta": "template",
+        "created_at": "2026-07-24T17:11:04.103809+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-quote_indisponivel-1784913054",
+          "turno": 1,
+          "estagio": "qualificando",
+          "persona": "jovem_18_30",
+          "lead_mascarado": "tenho 30 anos, HB20 2021, plano essencial, cep [CEP]",
+          "acao": "escalar_humano",
+          "escalate": true,
+          "motivos": [
+            "esgotou 3 tentativas (última: 502)"
+          ],
+          "slots": {
+            "idade": 30,
+            "veiculo_ano": 2021,
+            "cep": "[CEP]",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": null,
+          "rascunho": "Tive uma instabilidade no sistema de cotação agora e não consigo te passar um valor com segurança. Vou te conectar com um atendente humano pra continuar. Um atendente humano vai continuar daqui.",
+          "mensagem_agente": "Tive uma instabilidade no sistema de cotação agora e não consigo te passar um valor com segurança. Vou te conectar com um atendente humano pra continuar. Um atendente humano vai continuar daqui.",
+          "fonte_resposta": "template",
+          "index_key": "escalar_humano",
+          "cta": "Um atendente humano vai continuar daqui.",
+          "conclusao_id": "conclusao:escalar_humano|jovem_18_30",
+          "aresta": "conclusao:escalar_humano|jovem_18_30-[FECHA_COM]->escalar_humano",
+          "model": null,
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 332,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:11:04.103809+00:00"
+      },
+      {
+        "id": 333,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "tenho 30 anos, HB20 2021, plano essencial, cep [CEP]",
+          "pii_types": [
+            "cep"
+          ],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:11:04.103809+00:00"
+      },
+      {
+        "id": 334,
+        "turno": 1,
+        "step": "qualifica",
+        "status": "ok",
+        "detail": {
+          "slots_acumulados": {
+            "idade": 30,
+            "veiculo_ano": 2021,
+            "cep": "[CEP]",
+            "plano_id": "essencial"
+          }
+        },
+        "created_at": "2026-07-24T17:11:04.103809+00:00"
+      },
+      {
+        "id": 335,
+        "turno": 1,
+        "step": "decide",
+        "status": "escalar_humano",
+        "detail": {
+          "faltam": [],
+          "premio_mensal": null,
+          "escalate": true,
+          "exemplos_n": 0,
+          "rerank": false
+        },
+        "created_at": "2026-07-24T17:11:04.103809+00:00"
+      },
+      {
+        "id": 336,
+        "turno": 1,
+        "step": "resposta",
+        "status": "template",
+        "detail": {
+          "lead_mascarado": "tenho 30 anos, HB20 2021, plano essencial, cep [CEP]",
+          "rascunho": "Tive uma instabilidade no sistema de cotação agora e não consigo te passar um valor com segurança. Vou te conectar com um atendente humano pra continuar. Um atendente humano vai continuar daqui.",
+          "mensagem": "Tive uma instabilidade no sistema de cotação agora e não consigo te passar um valor com segurança. Vou te conectar com um atendente humano pra continuar. Um atendente humano vai continuar daqui.",
+          "fonte": "template",
+          "index_key": "escalar_humano",
+          "cta": "Um atendente humano vai continuar daqui.",
+          "conclusao_id": "conclusao:escalar_humano|jovem_18_30",
+          "aresta": "conclusao:escalar_humano|jovem_18_30-[FECHA_COM]->escalar_humano",
+          "model": null,
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:11:04.103809+00:00"
+      }
+    ]
+  }
+}

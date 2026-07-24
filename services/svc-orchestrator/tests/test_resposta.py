@@ -25,7 +25,7 @@ def test_template_cotacao():
     )
     red = redigir_resposta(d, idade=35)
     assert red.fonte == "template"
-    assert "137.88" in red.texto
+    assert "137,88" in red.texto
     assert "Essencial" in red.texto
     assert "compare" in red.texto.lower() or "compar" in red.texto.lower()
     assert "ajustar o plano agora" not in red.texto.lower()
@@ -57,7 +57,7 @@ def test_llm_polido():
     assert fake.calls == 1
     assert red.fonte == "llm"
     assert "137" in red.texto
-    assert "137.88" in red.rascunho
+    assert "137,88" in red.rascunho
     assert red.index_key.startswith("apresentar_cotacao")
 
 
@@ -71,7 +71,7 @@ def test_llm_excecao_cai_no_fallback():
     red = redigir_resposta(d, idade=40, inference=fake, mensagem_lead="pode cotar")
     assert fake.calls == 1
     assert red.fonte == "llm_fallback"
-    assert "137.88" in red.texto
+    assert "137,88" in red.texto
 
 
 def test_escalar_humano_nunca_chama_llm():

@@ -1,0 +1,438 @@
+{
+  "id": "caminho_feliz",
+  "titulo": "Caminho feliz — qualifica → cota → aceita → apólice",
+  "descricao": "Todos os dados de uma vez; aceite explícito depois da cotação.",
+  "conversation_id": "curadoria-caminho_feliz-1784914274",
+  "turnos": [
+    {
+      "lead": "tenho 35 anos, Gol 2020, plano essencial, cep 01310-100",
+      "message_type": null,
+      "latencia_s": 42.02,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-caminho_feliz-1784914274",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "mensagem": "Pronto — cotação do plano Essencial: R$ 137,88/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+        "slots": {
+          "idade": 35,
+          "veiculo_ano": 2020,
+          "cep": "01310-100",
+          "plano_id": "essencial",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "essencial",
+            "plano_nome": "Essencial",
+            "premio_mensal": 137.88,
+            "franquia": 4500,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.0,
+              "idade_veiculo": 1.15,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 31,
+              "dias_cobrados": 8,
+              "valor_primeiro_pagamento": 35.58
+            }
+          },
+          "exemplos": [
+            "outcome=ganho has_close=true plano=essencial conversa=#conv_02465 veiculo=Honda HR-V 2020 idade=81 — fechado boleto apólice",
+            "outcome=ganho has_close=true plano=essencial conversa=#conv_00534 veiculo=Hyundai HB20 2019 idade=61 — fechado boleto apólice",
+            "outcome=ganho has_close=true plano=essencial conversa=#conv_02482 veiculo=Chevrolet Onix Plus 2022 idade=41 — fechado boleto apólice"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "tenho 35 anos, Gol 2020, plano essencial, cep [CEP]",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 35,
+                "veiculo_ano": 2020,
+                "cep": "01310-100",
+                "plano_id": "essencial"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 137.88,
+              "escalate": false,
+              "exemplos_n": 3,
+              "rerank": true
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "tenho 35 anos, Gol 2020, plano essencial, cep [CEP]",
+              "rascunho": "Pronto — cotação do plano Essencial: R$ 137,88/mês (franquia R$ 4500). Cobre: colisao, roubo, furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+              "mensagem": "Pronto — cotação do plano Essencial: R$ 137,88/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+              "fonte": "llm",
+              "index_key": "apresentar_cotacao|meia_30_50",
+              "cta": "Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+              "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|essencial",
+              "aresta": "conclusao:apresentar_cotacao|meia_30_50|essencial-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 70
+      }
+    },
+    {
+      "lead": "pode contratar",
+      "message_type": null,
+      "latencia_s": 12.9,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-caminho_feliz-1784914274",
+        "turno": 2,
+        "estagio": "contratado",
+        "persona": "meia_30_50",
+        "mensagem": "Bem-vindo! Agora que você confirmou, vou gerar o boleto e enviar a apólice do plano Essencial (R$ 137,88/mês), que oferece cobertura para colisão, roubo e furto. Que sua família esteja protegida!",
+        "slots": {
+          "idade": 35,
+          "veiculo_ano": 2020,
+          "cep": "01310-100",
+          "plano_id": "essencial",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "emitir_apolice",
+          "escalate": false,
+          "motivos": [
+            "lead aprovou a cotação (padrão conversas ganho)"
+          ],
+          "faltam": [],
+          "quote": {
+            "plano_id": "essencial",
+            "plano_nome": "Essencial",
+            "premio_mensal": 137.88,
+            "franquia": 4500,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.0,
+              "idade_veiculo": 1.15,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 31,
+              "dias_cobrados": 8,
+              "valor_primeiro_pagamento": 35.58
+            }
+          },
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "2",
+            "detail": {
+              "estagio": "cotado"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "pode contratar",
+              "pii_types": [],
+              "patterns": []
+            }
+          },
+          {
+            "step": "decide",
+            "status": "emitir_apolice",
+            "detail": {
+              "escalate": false,
+              "premio_mensal": 137.88
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "pode contratar",
+              "rascunho": "Maravilha! Vou gerar o boleto e te mando a apólice do plano Essencial (R$ 137,88/mês). Bem-vindo!",
+              "mensagem": "Bem-vindo! Agora que você confirmou, vou gerar o boleto e enviar a apólice do plano Essencial (R$ 137,88/mês), que oferece cobertura para colisão, roubo e furto. Que sua família esteja protegida!",
+              "fonte": "llm",
+              "index_key": "emitir_apolice",
+              "cta": "Bem-vindo!",
+              "conclusao_id": "conclusao:emitir_apolice|meia_30_50",
+              "aresta": "conclusao:emitir_apolice|meia_30_50-[FECHA_COM]->emitir_apolice",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 71
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-caminho_feliz-1784914274",
+    "turns": [
+      {
+        "id": 70,
+        "turno": 1,
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "premio_mensal": 137.88,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:31:56.588010+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-caminho_feliz-1784914274",
+          "turno": 1,
+          "estagio": "cotado",
+          "persona": "meia_30_50",
+          "lead_mascarado": "tenho 35 anos, Gol 2020, plano essencial, cep [CEP]",
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "slots": {
+            "idade": 35,
+            "veiculo_ano": 2020,
+            "cep": "[CEP]",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": 137.88,
+          "rascunho": "Pronto — cotação do plano Essencial: R$ 137,88/mês (franquia R$ 4500). Cobre: colisao, roubo, furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "mensagem_agente": "Pronto — cotação do plano Essencial: R$ 137,88/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "fonte_resposta": "llm",
+          "index_key": "apresentar_cotacao|meia_30_50",
+          "cta": "Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|essencial",
+          "aresta": "conclusao:apresentar_cotacao|meia_30_50|essencial-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      },
+      {
+        "id": 71,
+        "turno": 2,
+        "acao": "emitir_apolice",
+        "escalate": false,
+        "premio_mensal": 137.88,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:32:09.484393+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-caminho_feliz-1784914274",
+          "turno": 2,
+          "estagio": "contratado",
+          "persona": "meia_30_50",
+          "lead_mascarado": "pode contratar",
+          "acao": "emitir_apolice",
+          "escalate": false,
+          "motivos": [
+            "lead aprovou a cotação (padrão conversas ganho)"
+          ],
+          "slots": {
+            "idade": 35,
+            "veiculo_ano": 2020,
+            "cep": "[CEP]",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": 137.88,
+          "rascunho": "Maravilha! Vou gerar o boleto e te mando a apólice do plano Essencial (R$ 137,88/mês). Bem-vindo!",
+          "mensagem_agente": "Bem-vindo! Agora que você confirmou, vou gerar o boleto e enviar a apólice do plano Essencial (R$ 137,88/mês), que oferece cobertura para colisão, roubo e furto. Que sua família esteja protegida!",
+          "fonte_resposta": "llm",
+          "index_key": "emitir_apolice",
+          "cta": "Bem-vindo!",
+          "conclusao_id": "conclusao:emitir_apolice|meia_30_50",
+          "aresta": "conclusao:emitir_apolice|meia_30_50-[FECHA_COM]->emitir_apolice",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 337,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:31:56.588010+00:00"
+      },
+      {
+        "id": 338,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "tenho 35 anos, Gol 2020, plano essencial, cep [CEP]",
+          "pii_types": [
+            "cep"
+          ],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:31:56.588010+00:00"
+      },
+      {
+        "id": 339,
+        "turno": 1,
+        "step": "qualifica",
+        "status": "ok",
+        "detail": {
+          "slots_acumulados": {
+            "idade": 35,
+            "veiculo_ano": 2020,
+            "cep": "[CEP]",
+            "plano_id": "essencial"
+          }
+        },
+        "created_at": "2026-07-24T17:31:56.588010+00:00"
+      },
+      {
+        "id": 340,
+        "turno": 1,
+        "step": "decide",
+        "status": "apresentar_cotacao",
+        "detail": {
+          "faltam": [],
+          "premio_mensal": 137.88,
+          "escalate": false,
+          "exemplos_n": 3,
+          "rerank": true
+        },
+        "created_at": "2026-07-24T17:31:56.588010+00:00"
+      },
+      {
+        "id": 341,
+        "turno": 1,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "tenho 35 anos, Gol 2020, plano essencial, cep [CEP]",
+          "rascunho": "Pronto — cotação do plano Essencial: R$ 137,88/mês (franquia R$ 4500). Cobre: colisao, roubo, furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "mensagem": "Pronto — cotação do plano Essencial: R$ 137,88/mês (franquia R$ 4500). Cobre colisão, roubo e furto. Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "fonte": "llm",
+          "index_key": "apresentar_cotacao|meia_30_50",
+          "cta": "Quer que eu detalhe as coberturas ou compare com Completo ou Premium?",
+          "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|essencial",
+          "aresta": "conclusao:apresentar_cotacao|meia_30_50|essencial-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:31:56.588010+00:00"
+      },
+      {
+        "id": 342,
+        "turno": 2,
+        "step": "turno",
+        "status": "2",
+        "detail": {
+          "estagio": "cotado"
+        },
+        "created_at": "2026-07-24T17:32:09.484393+00:00"
+      },
+      {
+        "id": 343,
+        "turno": 2,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "pode contratar",
+          "pii_types": [],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:32:09.484393+00:00"
+      },
+      {
+        "id": 344,
+        "turno": 2,
+        "step": "decide",
+        "status": "emitir_apolice",
+        "detail": {
+          "escalate": false,
+          "premio_mensal": 137.88
+        },
+        "created_at": "2026-07-24T17:32:09.484393+00:00"
+      },
+      {
+        "id": 345,
+        "turno": 2,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "pode contratar",
+          "rascunho": "Maravilha! Vou gerar o boleto e te mando a apólice do plano Essencial (R$ 137,88/mês). Bem-vindo!",
+          "mensagem": "Bem-vindo! Agora que você confirmou, vou gerar o boleto e enviar a apólice do plano Essencial (R$ 137,88/mês), que oferece cobertura para colisão, roubo e furto. Que sua família esteja protegida!",
+          "fonte": "llm",
+          "index_key": "emitir_apolice",
+          "cta": "Bem-vindo!",
+          "conclusao_id": "conclusao:emitir_apolice|meia_30_50",
+          "aresta": "conclusao:emitir_apolice|meia_30_50-[FECHA_COM]->emitir_apolice",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:32:09.484393+00:00"
+      }
+    ]
+  }
+}

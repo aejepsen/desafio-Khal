@@ -9,33 +9,33 @@ import re
 from typing import Iterable
 
 # Texto canônico (grau A) por família de motivo.
+# Cada mensagem já diz "vou te conectar com um atendente humano" uma vez só —
+# repetir "um atendente humano vai continuar daqui" logo em seguida soava
+# robótico/redundante (achado na curadoria E2E); a CTA formal (`cta_hitl()`)
+# continua existindo separadamente pra validação/params, sem precisar
+# duplicar a frase dentro do texto que o lead lê.
 _HITL_LEAD: dict[str, str] = {
     "quote_instavel": (
         "Tive uma instabilidade no sistema de cotação agora e não consigo te passar "
-        "um valor com segurança. Vou te conectar com um atendente humano pra continuar. "
-        "Um atendente humano vai continuar daqui."
+        "um valor com segurança. Vou te conectar com um atendente humano pra continuar."
     ),
     "midia": (
         "Recebi sua mídia, mas não consegui ler o conteúdo com segurança por aqui. "
-        "Vou te conectar com um atendente humano pra seguir. "
-        "Um atendente humano vai continuar daqui."
+        "Vou te conectar com um atendente humano pra seguir."
     ),
     "objecao": (
         "Quero te atender bem e já tentei alguns caminhos por aqui. "
-        "Vou te conectar com um atendente humano pra continuar com calma. "
-        "Um atendente humano vai continuar daqui."
+        "Vou te conectar com um atendente humano pra continuar com calma."
     ),
     "guardrails": (
-        "Pra sua segurança, vou te conectar com um atendente humano pra continuar. "
-        "Um atendente humano vai continuar daqui."
+        "Pra sua segurança, vou te conectar com um atendente humano pra continuar."
     ),
     "estagnado": (
         "Pra não te deixar sem resposta, vou te conectar com um atendente humano "
-        "pra continuar a cotação. Um atendente humano vai continuar daqui."
+        "pra continuar a cotação."
     ),
     "generico": (
-        "Vou te conectar com um atendente humano pra continuar com segurança. "
-        "Um atendente humano vai continuar daqui."
+        "Vou te conectar com um atendente humano pra continuar com segurança."
     ),
 }
 

@@ -1,0 +1,216 @@
+{
+  "id": "fora_de_faixa_recusa",
+  "titulo": "Idade fora de faixa — recusa (não escala)",
+  "descricao": "Regra plans.json: idade > 75 = recusar. Critério local, não é falha de infra.",
+  "conversation_id": "curadoria-fora_de_faixa_recusa-1784912957",
+  "turnos": [
+    {
+      "lead": "tenho 80 anos, Civic 2015, plano essencial, cep 30000-000",
+      "message_type": null,
+      "latencia_s": 18.61,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-fora_de_faixa_recusa-1784912957",
+        "turno": 1,
+        "estagio": "qualificando",
+        "persona": "senior_50+",
+        "mensagem": "Neste perfil, a cotação não foi possível devido à idade acima do limite de aceitação. Posso te conectar com um especialista para avaliar o caso?",
+        "slots": {
+          "idade": 80,
+          "veiculo_ano": 2015,
+          "cep": "30000-000",
+          "plano_id": "essencial",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "recusar",
+          "escalate": false,
+          "motivos": [
+            "Idade acima do limite de aceitacao (75 anos)."
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "tenho 80 anos, Civic 2015, plano essencial, cep [CEP]",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 80,
+                "veiculo_ano": 2015,
+                "cep": "30000-000",
+                "plano_id": "essencial"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "recusar",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": null,
+              "escalate": false,
+              "exemplos_n": 0,
+              "rerank": false
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "tenho 80 anos, Civic 2015, plano essencial, cep [CEP]",
+              "rascunho": "Nesse perfil a cotação automática não fecha: Idade acima do limite de aceitacao (75 anos).. Posso te conectar com um especialista pra avaliar o caso?",
+              "mensagem": "Neste perfil, a cotação não foi possível devido à idade acima do limite de aceitação. Posso te conectar com um especialista para avaliar o caso?",
+              "fonte": "llm",
+              "index_key": "recusar",
+              "cta": "Posso te conectar com um especialista pra avaliar o caso?",
+              "conclusao_id": "conclusao:recusar|senior_50+",
+              "aresta": "conclusao:recusar|senior_50+-[FECHA_COM]->recusar",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 67
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-fora_de_faixa_recusa-1784912957",
+    "turns": [
+      {
+        "id": 67,
+        "turno": 1,
+        "acao": "recusar",
+        "escalate": false,
+        "premio_mensal": null,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:09:36.033638+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-fora_de_faixa_recusa-1784912957",
+          "turno": 1,
+          "estagio": "qualificando",
+          "persona": "senior_50+",
+          "lead_mascarado": "tenho 80 anos, Civic 2015, plano essencial, cep [CEP]",
+          "acao": "recusar",
+          "escalate": false,
+          "motivos": [
+            "Idade acima do limite de aceitacao (75 anos)."
+          ],
+          "slots": {
+            "idade": 80,
+            "veiculo_ano": 2015,
+            "cep": "[CEP]",
+            "plano_id": "essencial",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": null,
+          "rascunho": "Nesse perfil a cotação automática não fecha: Idade acima do limite de aceitacao (75 anos).. Posso te conectar com um especialista pra avaliar o caso?",
+          "mensagem_agente": "Neste perfil, a cotação não foi possível devido à idade acima do limite de aceitação. Posso te conectar com um especialista para avaliar o caso?",
+          "fonte_resposta": "llm",
+          "index_key": "recusar",
+          "cta": "Posso te conectar com um especialista pra avaliar o caso?",
+          "conclusao_id": "conclusao:recusar|senior_50+",
+          "aresta": "conclusao:recusar|senior_50+-[FECHA_COM]->recusar",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 322,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:09:36.033638+00:00"
+      },
+      {
+        "id": 323,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "tenho 80 anos, Civic 2015, plano essencial, cep [CEP]",
+          "pii_types": [
+            "cep"
+          ],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:09:36.033638+00:00"
+      },
+      {
+        "id": 324,
+        "turno": 1,
+        "step": "qualifica",
+        "status": "ok",
+        "detail": {
+          "slots_acumulados": {
+            "idade": 80,
+            "veiculo_ano": 2015,
+            "cep": "[CEP]",
+            "plano_id": "essencial"
+          }
+        },
+        "created_at": "2026-07-24T17:09:36.033638+00:00"
+      },
+      {
+        "id": 325,
+        "turno": 1,
+        "step": "decide",
+        "status": "recusar",
+        "detail": {
+          "faltam": [],
+          "premio_mensal": null,
+          "escalate": false,
+          "exemplos_n": 0,
+          "rerank": false
+        },
+        "created_at": "2026-07-24T17:09:36.033638+00:00"
+      },
+      {
+        "id": 326,
+        "turno": 1,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "tenho 80 anos, Civic 2015, plano essencial, cep [CEP]",
+          "rascunho": "Nesse perfil a cotação automática não fecha: Idade acima do limite de aceitacao (75 anos).. Posso te conectar com um especialista pra avaliar o caso?",
+          "mensagem": "Neste perfil, a cotação não foi possível devido à idade acima do limite de aceitação. Posso te conectar com um especialista para avaliar o caso?",
+          "fonte": "llm",
+          "index_key": "recusar",
+          "cta": "Posso te conectar com um especialista pra avaliar o caso?",
+          "conclusao_id": "conclusao:recusar|senior_50+",
+          "aresta": "conclusao:recusar|senior_50+-[FECHA_COM]->recusar",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:09:36.033638+00:00"
+      }
+    ]
+  }
+}

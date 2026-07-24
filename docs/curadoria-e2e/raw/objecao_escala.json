@@ -1,0 +1,987 @@
+{
+  "id": "objecao_escala",
+  "titulo": "Objeção de preço — reverte 3x, escala na 4ª",
+  "descricao": "Mostra as táticas (feel-felt-found/isolamento/ancoragem) e o escalonamento só depois de esgotar tentativas.",
+  "conversation_id": "curadoria-objecao_escala-1784914329",
+  "turnos": [
+    {
+      "lead": "tenho 42 anos, Corolla 2019, plano completo, cep 04567-000",
+      "message_type": null,
+      "latencia_s": 32.55,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-objecao_escala-1784914329",
+        "turno": 1,
+        "estagio": "cotado",
+        "persona": "meia_30_50",
+        "mensagem": "Pronto — cotação do plano Completo: R$ 241,38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e danos aos vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+        "slots": {
+          "idade": 42,
+          "veiculo_ano": 2019,
+          "cep": "04567-000",
+          "plano_id": "completo",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "faltam": [],
+          "quote": {
+            "plano_id": "completo",
+            "plano_nome": "Completo",
+            "premio_mensal": 241.38,
+            "franquia": 3000,
+            "coberturas": [
+              "colisao",
+              "roubo",
+              "furto",
+              "terceiros",
+              "vidros"
+            ],
+            "multiplicadores": {
+              "faixa_etaria": 1.0,
+              "idade_veiculo": 1.15,
+              "regiao": 1.0
+            },
+            "carencia": {
+              "coberturas": [
+                "roubo",
+                "furto"
+              ],
+              "dias": 30,
+              "observacao": "Coberturas de roubo e furto so passam a valer apos a carencia, contada da data de inicio da vigencia."
+            },
+            "moeda": "BRL",
+            "primeiro_pagamento_pro_rata": {
+              "dias_no_mes": 31,
+              "dias_cobrados": 8,
+              "valor_primeiro_pagamento": 62.29
+            }
+          },
+          "exemplos": [
+            "outcome=ganho has_close=true plano=completo conversa=#conv_00644 veiculo=Toyota Corolla Cross 2003 idade=66 — fechado boleto apólice",
+            "outcome=ganho has_close=true plano=completo conversa=#conv_02497 veiculo=Hyundai Creta 2003 idade=23 — fechado boleto apólice",
+            "outcome=ganho has_close=true plano=completo conversa=#conv_02453 veiculo=Jeep Compass 2005 idade=48 — fechado boleto apólice"
+          ]
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "tenho 42 anos, Corolla 2019, plano completo, cep [CEP]",
+              "pii_types": [
+                "cep"
+              ],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 42,
+                "veiculo_ano": 2019,
+                "cep": "04567-000",
+                "plano_id": "completo"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "apresentar_cotacao",
+            "detail": {
+              "faltam": [],
+              "premio_mensal": 241.38,
+              "escalate": false,
+              "exemplos_n": 3,
+              "rerank": true
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "tenho 42 anos, Corolla 2019, plano completo, cep [CEP]",
+              "rascunho": "Pronto — cotação do plano Completo: R$ 241,38/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+              "mensagem": "Pronto — cotação do plano Completo: R$ 241,38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e danos aos vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+              "fonte": "llm",
+              "index_key": "apresentar_cotacao|meia_30_50",
+              "cta": "Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+              "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+              "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 72
+      }
+    },
+    {
+      "lead": "achei muito caro",
+      "message_type": null,
+      "latencia_s": 11.25,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-objecao_escala-1784914329",
+        "turno": 2,
+        "estagio": "objecao",
+        "persona": "meia_30_50",
+        "mensagem": "Entendo — à primeira vista parece caro. Olhando a cobertura por dia, é proteção do seu carro por centavos. Faz sentido olharmos isso juntos?",
+        "slots": {
+          "idade": 42,
+          "veiculo_ano": 2019,
+          "cep": "04567-000",
+          "plano_id": "completo",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "motivos": [
+            "Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.'"
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "2",
+            "detail": {
+              "estagio": "cotado"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "achei muito caro",
+              "pii_types": [],
+              "patterns": []
+            }
+          },
+          {
+            "step": "objecao",
+            "status": "reverter",
+            "detail": {
+              "objecao": "preco",
+              "framework": "feel-felt-found + ancoragem-valor",
+              "tatica": "Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.'",
+              "tentativa": 1
+            }
+          },
+          {
+            "step": "decide",
+            "status": "reverter_objecao",
+            "detail": {
+              "escalate": false
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "achei muito caro",
+              "rascunho": "Entendo o ponto (feel-felt-found + ancoragem-valor). Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.' Faz sentido olharmos isso juntos?",
+              "mensagem": "Entendo — à primeira vista parece caro. Olhando a cobertura por dia, é proteção do seu carro por centavos. Faz sentido olharmos isso juntos?",
+              "fonte": "llm",
+              "index_key": "reverter_objecao",
+              "cta": "Faz sentido olharmos isso juntos?",
+              "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+              "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 73
+      }
+    },
+    {
+      "lead": "ainda tá caro",
+      "message_type": null,
+      "latencia_s": 11.03,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-objecao_escala-1784914329",
+        "turno": 3,
+        "estagio": "objecao",
+        "persona": "meia_30_50",
+        "mensagem": "Entendo o ponto. Isolando a objeção: 'além do valor, tem mais algo que te impede de fechar?' Faz sentido olharmos isso juntos?",
+        "slots": {
+          "idade": 42,
+          "veiculo_ano": 2019,
+          "cep": "04567-000",
+          "plano_id": "completo",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "motivos": [
+            "Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento."
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "3",
+            "detail": {
+              "estagio": "objecao"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "ainda tá caro",
+              "pii_types": [],
+              "patterns": []
+            }
+          },
+          {
+            "step": "objecao",
+            "status": "reverter",
+            "detail": {
+              "objecao": "preco",
+              "framework": "isolamento + alternativa",
+              "tatica": "Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento.",
+              "tentativa": 2
+            }
+          },
+          {
+            "step": "decide",
+            "status": "reverter_objecao",
+            "detail": {
+              "escalate": false
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "ainda tá caro",
+              "rascunho": "Entendo o ponto (isolamento + alternativa). Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento. Faz sentido olharmos isso juntos?",
+              "mensagem": "Entendo o ponto. Isolando a objeção: 'além do valor, tem mais algo que te impede de fechar?' Faz sentido olharmos isso juntos?",
+              "fonte": "llm",
+              "index_key": "reverter_objecao",
+              "cta": "Faz sentido olharmos isso juntos?",
+              "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+              "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 74
+      }
+    },
+    {
+      "lead": "caro demais",
+      "message_type": null,
+      "latencia_s": 11.75,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-objecao_escala-1784914329",
+        "turno": 4,
+        "estagio": "objecao",
+        "persona": "meia_30_50",
+        "mensagem": "Entendo o ponto. Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total). Faz sentido olharmos isso juntos?",
+        "slots": {
+          "idade": 42,
+          "veiculo_ano": 2019,
+          "cep": "04567-000",
+          "plano_id": "completo",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "motivos": [
+            "Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total)."
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "4",
+            "detail": {
+              "estagio": "objecao"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "caro demais",
+              "pii_types": [],
+              "patterns": []
+            }
+          },
+          {
+            "step": "objecao",
+            "status": "reverter",
+            "detail": {
+              "objecao": "preco",
+              "framework": "ancoragem-valor",
+              "tatica": "Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total).",
+              "tentativa": 3
+            }
+          },
+          {
+            "step": "decide",
+            "status": "reverter_objecao",
+            "detail": {
+              "escalate": false
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "caro demais",
+              "rascunho": "Entendo o ponto (ancoragem-valor). Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total). Faz sentido olharmos isso juntos?",
+              "mensagem": "Entendo o ponto. Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total). Faz sentido olharmos isso juntos?",
+              "fonte": "llm",
+              "index_key": "reverter_objecao",
+              "cta": "Faz sentido olharmos isso juntos?",
+              "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+              "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 75
+      }
+    },
+    {
+      "lead": "muito caro mesmo",
+      "message_type": null,
+      "latencia_s": 0.01,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-objecao_escala-1784914329",
+        "turno": 5,
+        "estagio": "escalado",
+        "persona": "meia_30_50",
+        "mensagem": "Quero te atender bem e já tentei alguns caminhos por aqui. Vou te conectar com um atendente humano pra continuar com calma.",
+        "slots": {
+          "idade": 42,
+          "veiculo_ano": 2019,
+          "cep": "04567-000",
+          "plano_id": "completo",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "escalar_humano",
+          "escalate": true,
+          "motivos": [
+            "objeção 'preco' persistiu após 3 tentativa(s)"
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "5",
+            "detail": {
+              "estagio": "objecao"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "muito caro mesmo",
+              "pii_types": [],
+              "patterns": []
+            }
+          },
+          {
+            "step": "objecao",
+            "status": "escalar",
+            "detail": {
+              "objecao": "preco",
+              "framework": null,
+              "tatica": null,
+              "tentativa": 3
+            }
+          },
+          {
+            "step": "decide",
+            "status": "escalar_humano",
+            "detail": {
+              "escalate": true
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "template",
+            "detail": {
+              "lead_mascarado": "muito caro mesmo",
+              "rascunho": "Quero te atender bem e já tentei alguns caminhos por aqui. Vou te conectar com um atendente humano pra continuar com calma.",
+              "mensagem": "Quero te atender bem e já tentei alguns caminhos por aqui. Vou te conectar com um atendente humano pra continuar com calma.",
+              "fonte": "template",
+              "index_key": "escalar_humano",
+              "cta": "Um atendente humano vai continuar daqui.",
+              "conclusao_id": "conclusao:escalar_humano|meia_30_50",
+              "aresta": "conclusao:escalar_humano|meia_30_50-[FECHA_COM]->escalar_humano",
+              "model": null,
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 76
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-objecao_escala-1784914329",
+    "turns": [
+      {
+        "id": 72,
+        "turno": 1,
+        "acao": "apresentar_cotacao",
+        "escalate": false,
+        "premio_mensal": 241.38,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:32:42.035310+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-objecao_escala-1784914329",
+          "turno": 1,
+          "estagio": "cotado",
+          "persona": "meia_30_50",
+          "lead_mascarado": "tenho 42 anos, Corolla 2019, plano completo, cep [CEP]",
+          "acao": "apresentar_cotacao",
+          "escalate": false,
+          "motivos": [],
+          "slots": {
+            "idade": 42,
+            "veiculo_ano": 2019,
+            "cep": "[CEP]",
+            "plano_id": "completo",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": 241.38,
+          "rascunho": "Pronto — cotação do plano Completo: R$ 241,38/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "mensagem_agente": "Pronto — cotação do plano Completo: R$ 241,38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e danos aos vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "fonte_resposta": "llm",
+          "index_key": "apresentar_cotacao|meia_30_50",
+          "cta": "Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+          "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      },
+      {
+        "id": 73,
+        "turno": 2,
+        "acao": "reverter_objecao",
+        "escalate": false,
+        "premio_mensal": null,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:32:53.282113+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-objecao_escala-1784914329",
+          "turno": 2,
+          "estagio": "objecao",
+          "persona": "meia_30_50",
+          "lead_mascarado": "achei muito caro",
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "motivos": [
+            "Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.'"
+          ],
+          "slots": {
+            "idade": 42,
+            "veiculo_ano": 2019,
+            "cep": "[CEP]",
+            "plano_id": "completo",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": null,
+          "rascunho": "Entendo o ponto (feel-felt-found + ancoragem-valor). Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.' Faz sentido olharmos isso juntos?",
+          "mensagem_agente": "Entendo — à primeira vista parece caro. Olhando a cobertura por dia, é proteção do seu carro por centavos. Faz sentido olharmos isso juntos?",
+          "fonte_resposta": "llm",
+          "index_key": "reverter_objecao",
+          "cta": "Faz sentido olharmos isso juntos?",
+          "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+          "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      },
+      {
+        "id": 74,
+        "turno": 3,
+        "acao": "reverter_objecao",
+        "escalate": false,
+        "premio_mensal": null,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:33:04.316734+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-objecao_escala-1784914329",
+          "turno": 3,
+          "estagio": "objecao",
+          "persona": "meia_30_50",
+          "lead_mascarado": "ainda tá caro",
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "motivos": [
+            "Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento."
+          ],
+          "slots": {
+            "idade": 42,
+            "veiculo_ano": 2019,
+            "cep": "[CEP]",
+            "plano_id": "completo",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": null,
+          "rascunho": "Entendo o ponto (isolamento + alternativa). Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento. Faz sentido olharmos isso juntos?",
+          "mensagem_agente": "Entendo o ponto. Isolando a objeção: 'além do valor, tem mais algo que te impede de fechar?' Faz sentido olharmos isso juntos?",
+          "fonte_resposta": "llm",
+          "index_key": "reverter_objecao",
+          "cta": "Faz sentido olharmos isso juntos?",
+          "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+          "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      },
+      {
+        "id": 75,
+        "turno": 4,
+        "acao": "reverter_objecao",
+        "escalate": false,
+        "premio_mensal": null,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:33:16.066137+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-objecao_escala-1784914329",
+          "turno": 4,
+          "estagio": "objecao",
+          "persona": "meia_30_50",
+          "lead_mascarado": "caro demais",
+          "acao": "reverter_objecao",
+          "escalate": false,
+          "motivos": [
+            "Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total)."
+          ],
+          "slots": {
+            "idade": 42,
+            "veiculo_ano": 2019,
+            "cep": "[CEP]",
+            "plano_id": "completo",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": null,
+          "rascunho": "Entendo o ponto (ancoragem-valor). Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total). Faz sentido olharmos isso juntos?",
+          "mensagem_agente": "Entendo o ponto. Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total). Faz sentido olharmos isso juntos?",
+          "fonte_resposta": "llm",
+          "index_key": "reverter_objecao",
+          "cta": "Faz sentido olharmos isso juntos?",
+          "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+          "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      },
+      {
+        "id": 76,
+        "turno": 5,
+        "acao": "escalar_humano",
+        "escalate": true,
+        "premio_mensal": null,
+        "fonte_resposta": "template",
+        "created_at": "2026-07-24T17:33:16.078037+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-objecao_escala-1784914329",
+          "turno": 5,
+          "estagio": "escalado",
+          "persona": "meia_30_50",
+          "lead_mascarado": "muito caro mesmo",
+          "acao": "escalar_humano",
+          "escalate": true,
+          "motivos": [
+            "objeção 'preco' persistiu após 3 tentativa(s)"
+          ],
+          "slots": {
+            "idade": 42,
+            "veiculo_ano": 2019,
+            "cep": "[CEP]",
+            "plano_id": "completo",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": null,
+          "rascunho": "Quero te atender bem e já tentei alguns caminhos por aqui. Vou te conectar com um atendente humano pra continuar com calma.",
+          "mensagem_agente": "Quero te atender bem e já tentei alguns caminhos por aqui. Vou te conectar com um atendente humano pra continuar com calma.",
+          "fonte_resposta": "template",
+          "index_key": "escalar_humano",
+          "cta": "Um atendente humano vai continuar daqui.",
+          "conclusao_id": "conclusao:escalar_humano|meia_30_50",
+          "aresta": "conclusao:escalar_humano|meia_30_50-[FECHA_COM]->escalar_humano",
+          "model": null,
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 346,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:32:42.035310+00:00"
+      },
+      {
+        "id": 347,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "tenho 42 anos, Corolla 2019, plano completo, cep [CEP]",
+          "pii_types": [
+            "cep"
+          ],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:32:42.035310+00:00"
+      },
+      {
+        "id": 348,
+        "turno": 1,
+        "step": "qualifica",
+        "status": "ok",
+        "detail": {
+          "slots_acumulados": {
+            "idade": 42,
+            "veiculo_ano": 2019,
+            "cep": "[CEP]",
+            "plano_id": "completo"
+          }
+        },
+        "created_at": "2026-07-24T17:32:42.035310+00:00"
+      },
+      {
+        "id": 349,
+        "turno": 1,
+        "step": "decide",
+        "status": "apresentar_cotacao",
+        "detail": {
+          "faltam": [],
+          "premio_mensal": 241.38,
+          "escalate": false,
+          "exemplos_n": 3,
+          "rerank": true
+        },
+        "created_at": "2026-07-24T17:32:42.035310+00:00"
+      },
+      {
+        "id": 350,
+        "turno": 1,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "tenho 42 anos, Corolla 2019, plano completo, cep [CEP]",
+          "rascunho": "Pronto — cotação do plano Completo: R$ 241,38/mês (franquia R$ 3000). Cobre: colisao, roubo, furto, terceiros, vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "mensagem": "Pronto — cotação do plano Completo: R$ 241,38/mês (franquia R$ 3000). Cobre colisão, roubo, furto, terceiros e danos aos vidros. Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "fonte": "llm",
+          "index_key": "apresentar_cotacao|meia_30_50",
+          "cta": "Quer que eu detalhe as coberturas ou compare com Essencial ou Premium?",
+          "conclusao_id": "conclusao:apresentar_cotacao|meia_30_50|completo",
+          "aresta": "conclusao:apresentar_cotacao|meia_30_50|completo-[FECHA_COM]->apresentar_cotacao|meia_30_50",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:32:42.035310+00:00"
+      },
+      {
+        "id": 351,
+        "turno": 2,
+        "step": "turno",
+        "status": "2",
+        "detail": {
+          "estagio": "cotado"
+        },
+        "created_at": "2026-07-24T17:32:53.282113+00:00"
+      },
+      {
+        "id": 352,
+        "turno": 2,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "achei muito caro",
+          "pii_types": [],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:32:53.282113+00:00"
+      },
+      {
+        "id": 353,
+        "turno": 2,
+        "step": "objecao",
+        "status": "reverter",
+        "detail": {
+          "objecao": "preco",
+          "framework": "feel-felt-found + ancoragem-valor",
+          "tatica": "Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.'",
+          "tentativa": 1
+        },
+        "created_at": "2026-07-24T17:32:53.282113+00:00"
+      },
+      {
+        "id": 354,
+        "turno": 2,
+        "step": "decide",
+        "status": "reverter_objecao",
+        "detail": {
+          "escalate": false
+        },
+        "created_at": "2026-07-24T17:32:53.282113+00:00"
+      },
+      {
+        "id": 355,
+        "turno": 2,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "achei muito caro",
+          "rascunho": "Entendo o ponto (feel-felt-found + ancoragem-valor). Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.' Faz sentido olharmos isso juntos?",
+          "mensagem": "Entendo — à primeira vista parece caro. Olhando a cobertura por dia, é proteção do seu carro por centavos. Faz sentido olharmos isso juntos?",
+          "fonte": "llm",
+          "index_key": "reverter_objecao",
+          "cta": "Faz sentido olharmos isso juntos?",
+          "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+          "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:32:53.282113+00:00"
+      },
+      {
+        "id": 356,
+        "turno": 3,
+        "step": "turno",
+        "status": "3",
+        "detail": {
+          "estagio": "objecao"
+        },
+        "created_at": "2026-07-24T17:33:04.316734+00:00"
+      },
+      {
+        "id": 357,
+        "turno": 3,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "ainda tá caro",
+          "pii_types": [],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:33:04.316734+00:00"
+      },
+      {
+        "id": 358,
+        "turno": 3,
+        "step": "objecao",
+        "status": "reverter",
+        "detail": {
+          "objecao": "preco",
+          "framework": "isolamento + alternativa",
+          "tatica": "Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento.",
+          "tentativa": 2
+        },
+        "created_at": "2026-07-24T17:33:04.316734+00:00"
+      },
+      {
+        "id": 359,
+        "turno": 3,
+        "step": "decide",
+        "status": "reverter_objecao",
+        "detail": {
+          "escalate": false
+        },
+        "created_at": "2026-07-24T17:33:04.316734+00:00"
+      },
+      {
+        "id": 360,
+        "turno": 3,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "ainda tá caro",
+          "rascunho": "Entendo o ponto (isolamento + alternativa). Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento. Faz sentido olharmos isso juntos?",
+          "mensagem": "Entendo o ponto. Isolando a objeção: 'além do valor, tem mais algo que te impede de fechar?' Faz sentido olharmos isso juntos?",
+          "fonte": "llm",
+          "index_key": "reverter_objecao",
+          "cta": "Faz sentido olharmos isso juntos?",
+          "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+          "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:33:04.316734+00:00"
+      },
+      {
+        "id": 361,
+        "turno": 4,
+        "step": "turno",
+        "status": "4",
+        "detail": {
+          "estagio": "objecao"
+        },
+        "created_at": "2026-07-24T17:33:16.066137+00:00"
+      },
+      {
+        "id": 362,
+        "turno": 4,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "caro demais",
+          "pii_types": [],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:33:16.066137+00:00"
+      },
+      {
+        "id": 363,
+        "turno": 4,
+        "step": "objecao",
+        "status": "reverter",
+        "detail": {
+          "objecao": "preco",
+          "framework": "ancoragem-valor",
+          "tatica": "Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total).",
+          "tentativa": 3
+        },
+        "created_at": "2026-07-24T17:33:16.066137+00:00"
+      },
+      {
+        "id": 364,
+        "turno": 4,
+        "step": "decide",
+        "status": "reverter_objecao",
+        "detail": {
+          "escalate": false
+        },
+        "created_at": "2026-07-24T17:33:16.066137+00:00"
+      },
+      {
+        "id": 365,
+        "turno": 4,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "caro demais",
+          "rascunho": "Entendo o ponto (ancoragem-valor). Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total). Faz sentido olharmos isso juntos?",
+          "mensagem": "Entendo o ponto. Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total). Faz sentido olharmos isso juntos?",
+          "fonte": "llm",
+          "index_key": "reverter_objecao",
+          "cta": "Faz sentido olharmos isso juntos?",
+          "conclusao_id": "conclusao:reverter_objecao|meia_30_50",
+          "aresta": "conclusao:reverter_objecao|meia_30_50-[FECHA_COM]->reverter_objecao",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:33:16.066137+00:00"
+      },
+      {
+        "id": 366,
+        "turno": 5,
+        "step": "turno",
+        "status": "5",
+        "detail": {
+          "estagio": "objecao"
+        },
+        "created_at": "2026-07-24T17:33:16.078037+00:00"
+      },
+      {
+        "id": 367,
+        "turno": 5,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "muito caro mesmo",
+          "pii_types": [],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:33:16.078037+00:00"
+      },
+      {
+        "id": 368,
+        "turno": 5,
+        "step": "objecao",
+        "status": "escalar",
+        "detail": {
+          "objecao": "preco",
+          "framework": null,
+          "tatica": null,
+          "tentativa": 3
+        },
+        "created_at": "2026-07-24T17:33:16.078037+00:00"
+      },
+      {
+        "id": 369,
+        "turno": 5,
+        "step": "decide",
+        "status": "escalar_humano",
+        "detail": {
+          "escalate": true
+        },
+        "created_at": "2026-07-24T17:33:16.078037+00:00"
+      },
+      {
+        "id": 370,
+        "turno": 5,
+        "step": "resposta",
+        "status": "template",
+        "detail": {
+          "lead_mascarado": "muito caro mesmo",
+          "rascunho": "Quero te atender bem e já tentei alguns caminhos por aqui. Vou te conectar com um atendente humano pra continuar com calma.",
+          "mensagem": "Quero te atender bem e já tentei alguns caminhos por aqui. Vou te conectar com um atendente humano pra continuar com calma.",
+          "fonte": "template",
+          "index_key": "escalar_humano",
+          "cta": "Um atendente humano vai continuar daqui.",
+          "conclusao_id": "conclusao:escalar_humano|meia_30_50",
+          "aresta": "conclusao:escalar_humano|meia_30_50-[FECHA_COM]->escalar_humano",
+          "model": null,
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:33:16.078037+00:00"
+      }
+    ]
+  }
+}

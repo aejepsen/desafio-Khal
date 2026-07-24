@@ -81,7 +81,7 @@ def test_emitir_apolice_apos_cotacao():
     red = resolver_fechamento(ex2.decisao, idade=35)
     assert "apólice" in red.texto.lower() or "apolice" in red.texto.lower()
     assert "boleto" in red.texto.lower()
-    assert "137.88" in red.texto
+    assert "137,88" in red.texto
 
 
 def test_emitir_apolice_vou_contratar():

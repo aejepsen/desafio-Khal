@@ -1,0 +1,387 @@
+{
+  "id": "pausa_respeitosa",
+  "titulo": "Pausa (\"vou pensar\") — não inventa dúvida",
+  "descricao": "Depois de pedir_dado (falta CEP), lead pede tempo.",
+  "conversation_id": "curadoria-pausa_respeitosa-1784912942",
+  "turnos": [
+    {
+      "lead": "tenho 50 anos, Onix 2018, plano completo",
+      "message_type": null,
+      "latencia_s": 14.69,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-pausa_respeitosa-1784912942",
+        "turno": 1,
+        "estagio": "qualificando",
+        "persona": "meia_30_50",
+        "mensagem": "Pra poder oferecer a melhor proteção para você e sua família, preciso do seu CEP para finalizar o cadastro. Pode me enviar esses dados pra eu cotar?",
+        "slots": {
+          "idade": 50,
+          "veiculo_ano": 2018,
+          "plano_id": "completo",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "pedir_dado",
+          "escalate": false,
+          "motivos": [
+            "Pra cotar seu seguro eu preciso de: seu CEP."
+          ],
+          "faltam": [
+            "cep"
+          ],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "tenho 50 anos, Onix 2018, plano completo",
+              "pii_types": [],
+              "patterns": []
+            }
+          },
+          {
+            "step": "qualifica",
+            "status": "ok",
+            "detail": {
+              "slots_acumulados": {
+                "idade": 50,
+                "veiculo_ano": 2018,
+                "plano_id": "completo"
+              }
+            }
+          },
+          {
+            "step": "decide",
+            "status": "pedir_dado",
+            "detail": {
+              "faltam": [
+                "cep"
+              ]
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "llm",
+            "detail": {
+              "lead_mascarado": "tenho 50 anos, Onix 2018, plano completo",
+              "rascunho": "Pra cotar seu seguro eu preciso de: seu CEP. Pode me enviar esses dados pra eu cotar?",
+              "mensagem": "Pra poder oferecer a melhor proteção para você e sua família, preciso do seu CEP para finalizar o cadastro. Pode me enviar esses dados pra eu cotar?",
+              "fonte": "llm",
+              "index_key": "pedir_dado",
+              "cta": "Pode me enviar esses dados pra eu cotar?",
+              "conclusao_id": "conclusao:pedir_dado|meia_30_50",
+              "aresta": "conclusao:pedir_dado|meia_30_50-[FECHA_COM]->pedir_dado",
+              "model": "qwen2.5:7b",
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 65
+      }
+    },
+    {
+      "lead": "vou pensar, depois te falo",
+      "message_type": null,
+      "latencia_s": 0.02,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-pausa_respeitosa-1784912942",
+        "turno": 2,
+        "estagio": "pausado",
+        "persona": "meia_30_50",
+        "mensagem": "Sem problema — fica à vontade pra pensar com calma. A cotação fica guardada por aqui. Quando quiser retomar, é só chamar.",
+        "slots": {
+          "idade": 50,
+          "veiculo_ano": 2018,
+          "plano_id": "completo",
+          "data_inicio": "2026-07-24"
+        },
+        "decisao": {
+          "acao": "adiar_conversa",
+          "escalate": false,
+          "motivos": [
+            "lead pediu tempo para avaliar (pausa) — sem tratar como dúvida específica"
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "2",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "vou pensar, depois te falo",
+              "pii_types": [],
+              "patterns": []
+            }
+          },
+          {
+            "step": "objecao",
+            "status": "adiar",
+            "detail": {
+              "objecao": "indeciso",
+              "framework": "pausa-respeitosa",
+              "tentativa": 1
+            }
+          },
+          {
+            "step": "decide",
+            "status": "adiar_conversa",
+            "detail": {
+              "escalate": false
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "template",
+            "detail": {
+              "lead_mascarado": "vou pensar, depois te falo",
+              "rascunho": "Sem problema — fica à vontade pra pensar com calma. A cotação fica guardada por aqui. Quando quiser retomar, é só chamar.",
+              "mensagem": "Sem problema — fica à vontade pra pensar com calma. A cotação fica guardada por aqui. Quando quiser retomar, é só chamar.",
+              "fonte": "template",
+              "index_key": "adiar_conversa",
+              "cta": "Quando quiser retomar, é só chamar.",
+              "conclusao_id": "conclusao:adiar_conversa|meia_30_50",
+              "aresta": "conclusao:adiar_conversa|meia_30_50-[FECHA_COM]->adiar_conversa",
+              "model": null,
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 66
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-pausa_respeitosa-1784912942",
+    "turns": [
+      {
+        "id": 65,
+        "turno": 1,
+        "acao": "pedir_dado",
+        "escalate": false,
+        "premio_mensal": null,
+        "fonte_resposta": "llm",
+        "created_at": "2026-07-24T17:09:17.400968+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-pausa_respeitosa-1784912942",
+          "turno": 1,
+          "estagio": "qualificando",
+          "persona": "meia_30_50",
+          "lead_mascarado": "tenho 50 anos, Onix 2018, plano completo",
+          "acao": "pedir_dado",
+          "escalate": false,
+          "motivos": [
+            "Pra cotar seu seguro eu preciso de: seu CEP."
+          ],
+          "slots": {
+            "idade": 50,
+            "veiculo_ano": 2018,
+            "plano_id": "completo",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": null,
+          "rascunho": "Pra cotar seu seguro eu preciso de: seu CEP. Pode me enviar esses dados pra eu cotar?",
+          "mensagem_agente": "Pra poder oferecer a melhor proteção para você e sua família, preciso do seu CEP para finalizar o cadastro. Pode me enviar esses dados pra eu cotar?",
+          "fonte_resposta": "llm",
+          "index_key": "pedir_dado",
+          "cta": "Pode me enviar esses dados pra eu cotar?",
+          "conclusao_id": "conclusao:pedir_dado|meia_30_50",
+          "aresta": "conclusao:pedir_dado|meia_30_50-[FECHA_COM]->pedir_dado",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        }
+      },
+      {
+        "id": 66,
+        "turno": 2,
+        "acao": "adiar_conversa",
+        "escalate": false,
+        "premio_mensal": null,
+        "fonte_resposta": "template",
+        "created_at": "2026-07-24T17:09:17.420350+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-pausa_respeitosa-1784912942",
+          "turno": 2,
+          "estagio": "pausado",
+          "persona": "meia_30_50",
+          "lead_mascarado": "vou pensar, depois te falo",
+          "acao": "adiar_conversa",
+          "escalate": false,
+          "motivos": [
+            "lead pediu tempo para avaliar (pausa) — sem tratar como dúvida específica"
+          ],
+          "slots": {
+            "idade": 50,
+            "veiculo_ano": 2018,
+            "plano_id": "completo",
+            "data_inicio": "2026-07-24"
+          },
+          "premio_mensal": null,
+          "rascunho": "Sem problema — fica à vontade pra pensar com calma. A cotação fica guardada por aqui. Quando quiser retomar, é só chamar.",
+          "mensagem_agente": "Sem problema — fica à vontade pra pensar com calma. A cotação fica guardada por aqui. Quando quiser retomar, é só chamar.",
+          "fonte_resposta": "template",
+          "index_key": "adiar_conversa",
+          "cta": "Quando quiser retomar, é só chamar.",
+          "conclusao_id": "conclusao:adiar_conversa|meia_30_50",
+          "aresta": "conclusao:adiar_conversa|meia_30_50-[FECHA_COM]->adiar_conversa",
+          "model": null,
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 312,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:09:17.400968+00:00"
+      },
+      {
+        "id": 313,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "tenho 50 anos, Onix 2018, plano completo",
+          "pii_types": [],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:09:17.400968+00:00"
+      },
+      {
+        "id": 314,
+        "turno": 1,
+        "step": "qualifica",
+        "status": "ok",
+        "detail": {
+          "slots_acumulados": {
+            "idade": 50,
+            "veiculo_ano": 2018,
+            "plano_id": "completo"
+          }
+        },
+        "created_at": "2026-07-24T17:09:17.400968+00:00"
+      },
+      {
+        "id": 315,
+        "turno": 1,
+        "step": "decide",
+        "status": "pedir_dado",
+        "detail": {
+          "faltam": [
+            "cep"
+          ]
+        },
+        "created_at": "2026-07-24T17:09:17.400968+00:00"
+      },
+      {
+        "id": 316,
+        "turno": 1,
+        "step": "resposta",
+        "status": "llm",
+        "detail": {
+          "lead_mascarado": "tenho 50 anos, Onix 2018, plano completo",
+          "rascunho": "Pra cotar seu seguro eu preciso de: seu CEP. Pode me enviar esses dados pra eu cotar?",
+          "mensagem": "Pra poder oferecer a melhor proteção para você e sua família, preciso do seu CEP para finalizar o cadastro. Pode me enviar esses dados pra eu cotar?",
+          "fonte": "llm",
+          "index_key": "pedir_dado",
+          "cta": "Pode me enviar esses dados pra eu cotar?",
+          "conclusao_id": "conclusao:pedir_dado|meia_30_50",
+          "aresta": "conclusao:pedir_dado|meia_30_50-[FECHA_COM]->pedir_dado",
+          "model": "qwen2.5:7b",
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:09:17.400968+00:00"
+      },
+      {
+        "id": 317,
+        "turno": 2,
+        "step": "turno",
+        "status": "2",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:09:17.420350+00:00"
+      },
+      {
+        "id": 318,
+        "turno": 2,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "vou pensar, depois te falo",
+          "pii_types": [],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:09:17.420350+00:00"
+      },
+      {
+        "id": 319,
+        "turno": 2,
+        "step": "objecao",
+        "status": "adiar",
+        "detail": {
+          "objecao": "indeciso",
+          "framework": "pausa-respeitosa",
+          "tentativa": 1
+        },
+        "created_at": "2026-07-24T17:09:17.420350+00:00"
+      },
+      {
+        "id": 320,
+        "turno": 2,
+        "step": "decide",
+        "status": "adiar_conversa",
+        "detail": {
+          "escalate": false
+        },
+        "created_at": "2026-07-24T17:09:17.420350+00:00"
+      },
+      {
+        "id": 321,
+        "turno": 2,
+        "step": "resposta",
+        "status": "template",
+        "detail": {
+          "lead_mascarado": "vou pensar, depois te falo",
+          "rascunho": "Sem problema — fica à vontade pra pensar com calma. A cotação fica guardada por aqui. Quando quiser retomar, é só chamar.",
+          "mensagem": "Sem problema — fica à vontade pra pensar com calma. A cotação fica guardada por aqui. Quando quiser retomar, é só chamar.",
+          "fonte": "template",
+          "index_key": "adiar_conversa",
+          "cta": "Quando quiser retomar, é só chamar.",
+          "conclusao_id": "conclusao:adiar_conversa|meia_30_50",
+          "aresta": "conclusao:adiar_conversa|meia_30_50-[FECHA_COM]->adiar_conversa",
+          "model": null,
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:09:17.420350+00:00"
+      }
+    ]
+  }
+}

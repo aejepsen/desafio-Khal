@@ -58,6 +58,9 @@ def _prompt(
         "PROIBIDO: perguntar para 'ajustar o plano agora' ou sugerir que o plano está errado. "
         "PROIBIDO: na comparação, relistar o plano que já foi cotado nos FATOS. "
         "NÃO invente prêmio, plano, franquia nem coberturas. "
+        "NÃO adicione frases, promessas ou garantias que não estejam no RASCUNHO — "
+        "reescreva só o que já está lá, no tom indicado; não acrescente conteúdo novo. "
+        "Mantenha o valor do prêmio no formato R$ 0,00 (vírgula, 2 casas), nunca com ponto. "
         "NÃO mude a decisão (ação). Resposta curta (2-4 frases), só o texto final."
     )
     exemplos_bloco = _bloco_exemplos(list(dec.exemplos or []))

@@ -19,7 +19,7 @@ def test_indice_cotacao_tem_premio_e_cta_comparar():
     )
     spec, texto, params = lookup_fechamento(d, idade=42)
     assert spec.key == "apresentar_cotacao|meia_30_50"
-    assert "209.9" in texto
+    assert "209,90" in texto
     assert "Completo" in texto
     assert "compare" in texto.lower() or "compar" in texto.lower()
     assert "Essencial" in texto and "Premium" in texto
@@ -27,7 +27,7 @@ def test_indice_cotacao_tem_premio_e_cta_comparar():
     assert "compare com Completo" not in texto
     assert "Essencial / Completo / Premium" not in texto
     assert "ajustar o plano agora" not in texto.lower()
-    assert params["premio"] == "209.9"
+    assert params["premio"] == "209,90"
 
 
 def test_cta_omite_plano_cotado_essencial():
@@ -76,7 +76,7 @@ def test_llm_ruim_cai_no_indice():
     )
     red = redigir_resposta(d, idade=42, inference=Fake(), mensagem_lead="quero completo")
     assert red.fonte == "llm_fallback"
-    assert "209.9" in red.texto
+    assert "209,90" in red.texto
     assert "ajustar o plano agora" not in red.texto.lower()
     assert red.index_key.startswith("apresentar_cotacao")
 

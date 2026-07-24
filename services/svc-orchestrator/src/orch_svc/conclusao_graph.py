@@ -39,7 +39,7 @@ class NoConclusao:
     def params(self) -> dict[str, str]:
         cob = ", ".join(self.coberturas)
         return {
-            "premio": "" if self.premio_mensal is None else str(self.premio_mensal),
+            "premio": "" if self.premio_mensal is None else _fmt_brl(self.premio_mensal),
             "plano": str(self.plano_nome or self.plano_id or ""),
             "franquia": "" if self.franquia is None else str(self.franquia),
             "coberturas": cob,
@@ -188,6 +188,11 @@ def export_grafo_catalogo() -> dict[str, Any]:
         "nodes": nodes,
         "edges": edges,
     }
+
+
+def _fmt_brl(v: float) -> str:
+    """R$ pt-BR: vírgula decimal + 2 casas (209.9 -> '209,90', nunca '209.9')."""
+    return f"{v:.2f}".replace(".", ",")
 
 
 def _as_float(v: Any) -> float | None:

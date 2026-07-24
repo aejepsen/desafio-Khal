@@ -1,0 +1,165 @@
+{
+  "id": "pedido_humano_explicito",
+  "titulo": "Pedido explícito de humano — escala direto",
+  "descricao": "Lead pede atendente ANTES de qualquer dado — não deve virar pausa nem ser ignorado (bug corrigido nesta sessão).",
+  "conversation_id": "curadoria-pedido_humano_explicito-1784912942",
+  "turnos": [
+    {
+      "lead": "posso falar com um atendente humano?",
+      "message_type": null,
+      "latencia_s": 0.01,
+      "erro": null,
+      "resposta": {
+        "conversation_id": "curadoria-pedido_humano_explicito-1784912942",
+        "turno": 1,
+        "estagio": "escalado",
+        "persona": "desconhecida",
+        "mensagem": "Vou te conectar com um atendente humano pra continuar com segurança. Um atendente humano vai continuar daqui.",
+        "slots": {},
+        "decisao": {
+          "acao": "escalar_humano",
+          "escalate": true,
+          "motivos": [
+            "lead pediu explicitamente atendimento humano"
+          ],
+          "faltam": [],
+          "quote": null,
+          "exemplos": []
+        },
+        "eventos": [
+          {
+            "step": "turno",
+            "status": "1",
+            "detail": {
+              "estagio": "qualificando"
+            }
+          },
+          {
+            "step": "guardrails",
+            "status": "allow",
+            "detail": {
+              "texto_mascarado": "posso falar com um atendente humano?",
+              "pii_types": [],
+              "patterns": []
+            }
+          },
+          {
+            "step": "decide",
+            "status": "escalar_humano",
+            "detail": {
+              "escalate": true
+            }
+          },
+          {
+            "step": "resposta",
+            "status": "template",
+            "detail": {
+              "lead_mascarado": "posso falar com um atendente humano?",
+              "rascunho": "Vou te conectar com um atendente humano pra continuar com segurança. Um atendente humano vai continuar daqui.",
+              "mensagem": "Vou te conectar com um atendente humano pra continuar com segurança. Um atendente humano vai continuar daqui.",
+              "fonte": "template",
+              "index_key": "escalar_humano",
+              "cta": "Um atendente humano vai continuar daqui.",
+              "conclusao_id": "conclusao:escalar_humano|desconhecida",
+              "aresta": "conclusao:escalar_humano|desconhecida-[FECHA_COM]->escalar_humano",
+              "model": null,
+              "pii": "masked"
+            }
+          }
+        ],
+        "audit_turn_id": 64
+      }
+    }
+  ],
+  "audit": {
+    "conversation_id": "curadoria-pedido_humano_explicito-1784912942",
+    "turns": [
+      {
+        "id": 64,
+        "turno": 1,
+        "acao": "escalar_humano",
+        "escalate": true,
+        "premio_mensal": null,
+        "fonte_resposta": "template",
+        "created_at": "2026-07-24T17:09:02.711752+00:00",
+        "audit": {
+          "type": "audit.chat",
+          "conversation_id": "curadoria-pedido_humano_explicito-1784912942",
+          "turno": 1,
+          "estagio": "escalado",
+          "persona": "desconhecida",
+          "lead_mascarado": "posso falar com um atendente humano?",
+          "acao": "escalar_humano",
+          "escalate": true,
+          "motivos": [
+            "lead pediu explicitamente atendimento humano"
+          ],
+          "slots": {},
+          "premio_mensal": null,
+          "rascunho": "Vou te conectar com um atendente humano pra continuar com segurança. Um atendente humano vai continuar daqui.",
+          "mensagem_agente": "Vou te conectar com um atendente humano pra continuar com segurança. Um atendente humano vai continuar daqui.",
+          "fonte_resposta": "template",
+          "index_key": "escalar_humano",
+          "cta": "Um atendente humano vai continuar daqui.",
+          "conclusao_id": "conclusao:escalar_humano|desconhecida",
+          "aresta": "conclusao:escalar_humano|desconhecida-[FECHA_COM]->escalar_humano",
+          "model": null,
+          "pii": "masked"
+        }
+      }
+    ],
+    "eventos": [
+      {
+        "id": 308,
+        "turno": 1,
+        "step": "turno",
+        "status": "1",
+        "detail": {
+          "estagio": "qualificando"
+        },
+        "created_at": "2026-07-24T17:09:02.711752+00:00"
+      },
+      {
+        "id": 309,
+        "turno": 1,
+        "step": "guardrails",
+        "status": "allow",
+        "detail": {
+          "texto_mascarado": "posso falar com um atendente humano?",
+          "pii_types": [],
+          "patterns": []
+        },
+        "created_at": "2026-07-24T17:09:02.711752+00:00"
+      },
+      {
+        "id": 310,
+        "turno": 1,
+        "step": "decide",
+        "status": "escalar_humano",
+        "detail": {
+          "escalate": true
+        },
+        "created_at": "2026-07-24T17:09:02.711752+00:00"
+      },
+      {
+        "id": 311,
+        "turno": 1,
+        "step": "resposta",
+        "status": "template",
+        "detail": {
+          "lead_mascarado": "posso falar com um atendente humano?",
+          "rascunho": "Vou te conectar com um atendente humano pra continuar com segurança. Um atendente humano vai continuar daqui.",
+          "mensagem": "Vou te conectar com um atendente humano pra continuar com segurança. Um atendente humano vai continuar daqui.",
+          "fonte": "template",
+          "index_key": "escalar_humano",
+          "cta": "Um atendente humano vai continuar daqui.",
+          "conclusao_id": "conclusao:escalar_humano|desconhecida",
+          "aresta": "conclusao:escalar_humano|desconhecida-[FECHA_COM]->escalar_humano",
+          "model": null,
+          "pii": "masked"
+        },
+        "created_at": "2026-07-24T17:09:02.711752+00:00"
+      }
+    ]
+  }
+}

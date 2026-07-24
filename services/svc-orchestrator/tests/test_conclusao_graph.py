@@ -47,7 +47,7 @@ def test_resolver_usa_grafo():
     r = resolver_fechamento(d, idade=42)
     assert r.aresta.rel == "FECHA_COM"
     assert r.no.id.startswith("conclusao:")
-    assert "209.9" in r.texto
+    assert "209,90" in r.texto
     assert "compare" in r.texto.lower() or "compar" in r.texto.lower()
 
 
