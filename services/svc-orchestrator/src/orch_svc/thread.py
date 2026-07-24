@@ -18,7 +18,7 @@ from orch_svc.agente_cotacao import (Evento, Execucao, extrair_slots_heuristica,
 from orch_svc.aceitacao import detectar_aceite_cotacao
 from orch_svc.cotacao_flow import DecisaoCotacao, decidir_cotacao
 from orch_svc.midia import detectar_midia_sem_transcricao, tentar_enriquecer_midia
-from orch_svc.objecoes import AcaoObjecao, detectar_objecao, proxima_acao
+from orch_svc.objecoes import AcaoObjecao, detectar_objecao, pedido_humano, proxima_acao
 
 # campos que o /quote precisa (o agente informa isto quando o lead pergunta)
 LABELS = {
@@ -162,6 +162,20 @@ def run_turno(mensagem: str, state: ThreadState, build_fn: Callable[..., Any],
                 return Execucao(state.conversation_id, ev, dec), state
     else:
         ev.append(Evento("guardrails", "ok", {"texto_mascarado": mascarar_pii(mensagem)[:120]}))
+
+    # Pedido EXPLÍCITO de humano — prioridade sobre objeção/qualificação (critério HITL).
+    # Sem isso, "falar com o atendente" coincidia com o regex de "indeciso" (pausa) ou
+    # não batia em nada e o pedido era simplesmente ignorado.
+    if pedido_humano(mensagem):
+        state.encerrado = True
+        state.estagio = "escalado"
+        dec = DecisaoCotacao(
+            "escalar_humano",
+            escalate=True,
+            motivos=["lead pediu explicitamente atendimento humano"],
+        )
+        ev.append(Evento("decide", dec.acao, {"escalate": True}))
+        return Execucao(state.conversation_id, ev, dec), state
 
     # Pós-cotação (dataset ganho): aceite → emitir apólice/boleto
     if state.estagio == "cotado" and detectar_aceite_cotacao(mensagem):

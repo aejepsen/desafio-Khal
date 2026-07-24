@@ -1,5 +1,5 @@
 """Testes do tratamento de objeção — não desistir no primeiro não."""
-from orch_svc.objecoes import AcaoObjecao, detectar_objecao, proxima_acao
+from orch_svc.objecoes import AcaoObjecao, detectar_objecao, pedido_humano, proxima_acao
 
 
 def test_detecta_preco():
@@ -8,6 +8,33 @@ def test_detecta_preco():
 
 def test_detecta_concorrente():
     assert detectar_objecao("cotei na Porto e tá mais barato") == "concorrente"
+
+
+def test_concorrente_exige_contexto_de_seguradora():
+    # "azul"/"porto" soltos (cor do carro, endereço) não são objeção de concorrente.
+    assert detectar_objecao("carro azul 2020") is None
+    assert detectar_objecao("Fiat Uno azul 2020, cep 01310-100") is None
+    assert detectar_objecao("moro perto do porto, cep 01310-100") is None
+    # mas seguradora nomeada continua detectando.
+    assert detectar_objecao("já cotei na Azul Seguros") == "concorrente"
+    assert detectar_objecao("vi na Porto Seguro mais barato") == "concorrente"
+
+
+def test_cobertura_terceiro_exige_termo_de_seguro():
+    # "terceiro" incidental (fila, ordem) não é objeção de cobertura.
+    assert detectar_objecao("sou o terceiro da fila, pode me atender?") is None
+    # mas o termo de seguro ("a/contra terceiros") continua detectando.
+    assert detectar_objecao("só cobre a terceiros?") == "cobertura"
+
+
+def test_pedido_humano():
+    assert pedido_humano("posso falar com o atendente humano?")
+    assert pedido_humano("quero falar com um humano agora")
+    assert pedido_humano("quero falar com uma pessoa de verdade")
+    assert pedido_humano("me transfere pra um atendente")
+    # consulta a terceiro (família) não é pedido de atendimento humano.
+    assert not pedido_humano("vou falar com minha esposa e te aviso")
+    assert not pedido_humano("quero seguro pro meu corolla 2020")
 
 
 def test_detecta_indeciso_pausa():

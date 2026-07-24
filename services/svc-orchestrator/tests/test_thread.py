@@ -98,3 +98,24 @@ def test_limite_turnos_escala():
     st = ThreadState("c3", turnos=8, slots={"idade": 30})
     ex, st = run_turno("oi", st, _build, FakeQuote())
     assert ex.decisao.acao == "escalar_humano" and st.encerrado
+
+
+def test_pedido_humano_escala_direto():
+    # Pedido explícito de humano tem prioridade sobre objeção/qualificação.
+    st = ThreadState("ph1")
+    ex, st = run_turno("posso falar com o atendente humano?", st, _build, FakeQuote())
+    assert ex.decisao.acao == "escalar_humano"
+    assert ex.decisao.escalate is True
+    assert st.encerrado is True and st.estagio == "escalado"
+
+
+def test_azul_veiculo_nao_e_confundido_com_concorrente():
+    # Cor do carro ("azul") não deve sequestrar a 1ª mensagem de qualificação
+    # pro fluxo de objeção de concorrente (bug: regex "azul" sem contexto).
+    st = ThreadState("qual1")
+    ex, st = run_turno(
+        "tenho 35 anos, Fiat Uno azul 2020, cep 01310-100, plano completo",
+        st, _build, FakeQuote(),
+    )
+    assert ex.decisao.acao != "reverter_objecao"
+    assert st.slots.get("idade") == 35 and st.slots.get("veiculo_ano") == 2020

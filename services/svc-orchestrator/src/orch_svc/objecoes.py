@@ -20,8 +20,16 @@ from enum import StrEnum
 
 _OBJ = {
     "preco": r"\bcar[oa]\b|pre[çc]o|desconto|valor.*alto|muito alto|parcel|caro demais",
-    "concorrente": r"outra|concorr|porto|azul|cotei|mais barato (em|na|no)|j[áa] tenho",
-    "cobertura": r"cobertura|cobre|cobrir|franquia|o que inclui|s[óo] isso|terceiro",
+    # "azul"/"porto" soltos batiam em cor de veículo / endereço — exigir contexto de seguradora.
+    "concorrente": (
+        r"concorr|cotei|mais barato (em|na|no)|j[áa] tenho (seguro|outra|cota[çc][ãa]o)|"
+        r"outra (seguradora|empresa|cota[çc][ãa]o)|porto seguro|azul seguros"
+    ),
+    # "terceiro" solto batia em usos incidentais ("sou o terceiro da fila") — exigir termo de seguro.
+    "cobertura": (
+        r"cobertura|cobre\b|cobrir|franquia|o que inclui|s[óo] isso|"
+        r"(a|contra|pra|para) terceiros"
+    ),
     # Pausa / adiamento — NÃO é dúvida específica (evita "entendo sua dúvida").
     "indeciso": (
         r"vou pensar|preciso (pensar|avaliar|ver com calma)|"
@@ -31,6 +39,23 @@ _OBJ = {
         r"deixa eu (pensar|ver|avaliar)|vou analisar"
     ),
 }
+
+# Pedido EXPLÍCITO de atendimento humano — prioridade sobre objeção/qualificação.
+# Roteado em thread.py ANTES de detectar_objecao (senão cai no regex de "indeciso"
+# por coincidência de "falar com o ..." e vira pausa em vez de escalar).
+_PEDIDO_HUMANO = re.compile(
+    r"falar com (um |uma |o |a )?(atendente|humano|pessoa (real|de verdade)|pessoa)|"
+    r"quero (um |uma )?(atendente|humano|pessoa (real|de verdade))|"
+    r"(atendimento|suporte) humano|"
+    r"transfer\w* (pra|para) (um )?(atendente|humano)|"
+    r"(chama|chamar) (um |o )?(atendente|humano)",
+    re.I,
+)
+
+
+def pedido_humano(texto: str) -> bool:
+    """True se o lead pediu explicitamente falar com um atendente/humano."""
+    return bool(_PEDIDO_HUMANO.search(texto or ""))
 
 
 @dataclass
