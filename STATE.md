@@ -78,6 +78,12 @@ fora de faixa cotável · objeção complexa · pedido fora de escopo.
   (agente + inference + rag + guardrails). Overview: `POST :8205/v1/refresh` →
   `GET :8205/v1/overview`. Doc: `docs/metricas-modelo.md`. Validado 4/4 upstreams OK
   e KPIs = SQLite audit.
+- **UI mínima de teste:** `GET /ui` → `app/static/chat.html` (caixa mensagem + resposta;
+  mesma origem, chama `POST /chat`).
+- **Aceite pós-cotação ampliado:** `vou contratar` / `aprovo` / `manda o boleto` etc.
+  (antes só `quero contratar` → reapresentava cotação).
+- **Pausa ≠ dúvida:** `vou pensar` / `depois te falo` → ação `adiar_conversa`
+  (template, estágio `pausado`) — sem “Entendo sua dúvida”.
 - **PRÓXIMO:** tornar repo público na entrega formal.
 
 ## Handoff / troca de LLM
@@ -508,3 +514,15 @@ Agora:
   contadores cruzados com SQL do audit (0 divergências). Caveat: p95 < p50 no
   inference com N≈2 amostras (quirk do percentil, não do agregador).
 Commit: `55b9110`.
+
+## SESSÃO 2026-07-23 — UI /ui + aceite + pausa respeitosa
+- **UI:** `GET /ui` serve `app/static/chat.html` (input + resposta + conversation_id;
+  sem visual WhatsApp). README aponta o link.
+- **Bug aceite:** lead disse `vou contratar` → detector só tinha `quero contratar` →
+  reapresentava cotação. Regex ampliada (`contratar`, `aprovo`, boleto/apólice…).
+  Regressão: `test_emitir_apolice_vou_contratar`.
+- **Bug pausa:** `vou pensar. depois te falo` caía em `indeciso` + molde
+  “Entendo sua dúvida” (inventar dúvida). Agora `adiar_conversa` (template, sem LLM),
+  estágio `pausado`, porta aberta. Pattern `depois` solto removido.
+  Tests: `test_vou_pensar_adia_sem_inventar_duvida`, `test_detecta_indeciso_pausa`.
+Commit: `b12800e`.
