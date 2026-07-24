@@ -61,9 +61,24 @@ def test_llm_polido():
     assert red.index_key.startswith("apresentar_cotacao")
 
 
-def test_llm_falha_cai_no_template():
+def test_llm_excecao_cai_no_fallback():
+    """Ação normal (não-HITL): exceção no client de inference -> llm_fallback."""
     fake = _FakeLlm(fail=True)
+    d = DecisaoCotacao(
+        "apresentar_cotacao",
+        quote={"plano_nome": "Essencial", "premio_mensal": 137.88, "franquia": 4500},
+    )
+    red = redigir_resposta(d, idade=40, inference=fake, mensagem_lead="pode cotar")
+    assert fake.calls == 1
+    assert red.fonte == "llm_fallback"
+    assert "137.88" in red.texto
+
+
+def test_escalar_humano_nunca_chama_llm():
+    """HITL grau A: resposta é sempre template, LLM nem é acionado (mesmo se disponível)."""
+    fake = _FakeLlm("Mensagem que não deveria ser usada.")
     d = DecisaoCotacao("escalar_humano", motivos=["quote indisponível"], escalate=True)
     red = redigir_resposta(d, idade=40, inference=fake)
-    assert red.fonte == "llm_fallback"
+    assert fake.calls == 0
+    assert red.fonte == "template"
     assert "humano" in red.texto.lower()

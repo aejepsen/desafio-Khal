@@ -15,11 +15,22 @@ class _JsonInference:
 
 
 def test_extracao_com_inference_enriquece():
-    s = extrair_slots("quero o premium pro meu carro", _JsonInference())
+    """Campos do LLM só entram se ancorados literalmente no texto do lead."""
+    texto = "tenho 41 anos, quero o premium pro meu carro 2019, cep 01310-100"
+    s = extrair_slots(texto, _JsonInference())
     assert s["plano_id"] == "premium"
     assert s["idade"] == 41
     assert s["veiculo_ano"] == 2019
     assert "01310" in s["cep"]
+
+
+def test_extracao_llm_nao_ancorado_e_descartado():
+    """Anti-alucinação: LLM traz idade/veículo/cep sem evidência no texto -> descartado."""
+    s = extrair_slots("quero o premium pro meu carro", _JsonInference())
+    assert s["plano_id"] == "premium"  # "premium" está literalmente no texto
+    assert "idade" not in s  # 41 anos não aparece no texto -> não confia
+    assert "veiculo_ano" not in s  # 2019 não aparece no texto -> não confia
+    assert "cep" not in s  # cep não aparece no texto -> não confia
 
 
 def test_extracao_inference_falha_degrada():
