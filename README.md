@@ -112,11 +112,17 @@ Neo4j Browser: http://localhost:7474 (`neo4j` / senha no `.env`).
 O `svc-rag` serve um artefato de **comunidades** (`GET /v1/community/{id}`) detectadas
 via Louvain sobre o grafo Neo4j de conversas `ganho` (agrupadas por plano cotado +
 faixa etária — grafo denso dentro do grupo, esparso entre grupos, pra dar estrutura
-real ao algoritmo de comunidade). O `/v1/search` anota cada hit com sua comunidade e
-reordena pra reforçar a comunidade dominante entre os resultados (`score` vetorial
-não é alterado, só a ordem). Geração é **offline** — o serviço só lê o artefato em
-runtime, não abre conexão Neo4j (latência/resiliência, mesmo espírito do
-`resolver_fechamento` local):
+real ao algoritmo de comunidade). O `/v1/search`:
+1. anota cada hit com sua comunidade e reordena pra reforçar a comunidade dominante
+   entre os resultados (`score` vetorial não é alterado, só a ordem);
+2. **expande** com até 2 membros da comunidade dominante que o vetor não trouxe
+   (busca por id via `VectorStore.get_by_ids`, sem depender de query) — entram com
+   score abaixo do menor hit vetorial real, nunca competindo de igual pra igual com
+   similaridade genuína (`metadata.graphrag_expansion=true` sinaliza a origem).
+
+Geração das comunidades é **offline** — o serviço só lê o artefato em runtime, não
+abre conexão Neo4j (latência/resiliência, mesmo espírito do `resolver_fechamento`
+local); a expansão usa só o vector store (Qdrant/InMemory), sem round-trip ao Neo4j:
 
 ```bash
 docker compose up -d neo4j

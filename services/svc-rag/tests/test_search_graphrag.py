@@ -85,7 +85,7 @@ def test_rerank_favorece_comunidade_dominante(tmp_path: Path) -> None:
         StoreHit(chunk_id="ch2", doc_id="a", text="senior premium 1", score=0.88, metadata={}),
         StoreHit(chunk_id="ch3", doc_id="b", text="senior premium 2", score=0.87, metadata={}),
     ]
-    out = _annotate_and_rerank_by_community(raw_hits, st)
+    out = _annotate_and_rerank_by_community(raw_hits, st, collection="conv")
 
     # comunidade "0" (a, b) é dominante (2 de 3) -> a sobe na frente de c mesmo
     # com score vetorial menor (0.88 + 0.05 = 0.93 > 0.90).
@@ -104,6 +104,46 @@ def test_rerank_sem_artefato_preserva_ordem_vetorial(tmp_path: Path) -> None:
         StoreHit(chunk_id="ch1", doc_id="x", text="t", score=0.9, metadata={}),
         StoreHit(chunk_id="ch2", doc_id="y", text="t", score=0.5, metadata={}),
     ]
-    out = _annotate_and_rerank_by_community(raw_hits, st)
+    out = _annotate_and_rerank_by_community(raw_hits, st, collection="conv")
     assert [h.doc_id for h in out] == ["x", "y"]
     assert all(h.community_id is None for h in out)
+
+
+def test_expande_com_membros_da_comunidade_fora_do_top_k(tmp_path: Path) -> None:
+    """Comunidade '0' tem 2 membros (a, b); só 'a' veio no vetor -> 'b' é
+    trazido por get_by_ids, com score abaixo do menor hit vetorial real."""
+    (tmp_path / "communities.json").write_text(json.dumps(ARTIFACT))
+    settings = Settings(
+        internal_key="k", vector_store="memory", rate_limit_per_min=100000,
+        models_dir=str(tmp_path), graphrag_enabled=True,
+    )
+    st = State(settings, FakeEmbedder(), InMemoryStore())
+    c = TestClient(create_app(settings=settings, state=st))
+    c.post("/v1/ingest", json=DOCS, headers={"X-Internal-Key": "k"})
+
+    raw_hits = [StoreHit(chunk_id="ch1", doc_id="a", text="t", score=0.60, metadata={})]
+    out = _annotate_and_rerank_by_community(raw_hits, st, collection="conv")
+
+    assert [h.doc_id for h in out] == ["a", "b"]
+    assert out[1].community_id == "0"
+    assert out[1].metadata.get("graphrag_expansion") is True
+    # nunca compete de igual pra igual com o hit vetorial real.
+    assert out[1].score < out[0].score
+
+
+def test_expansao_nao_duplica_membro_ja_presente(tmp_path: Path) -> None:
+    (tmp_path / "communities.json").write_text(json.dumps(ARTIFACT))
+    settings = Settings(
+        internal_key="k", vector_store="memory", rate_limit_per_min=100000,
+        models_dir=str(tmp_path), graphrag_enabled=True,
+    )
+    st = State(settings, FakeEmbedder(), InMemoryStore())
+    c = TestClient(create_app(settings=settings, state=st))
+    c.post("/v1/ingest", json=DOCS, headers={"X-Internal-Key": "k"})
+
+    raw_hits = [
+        StoreHit(chunk_id="ch1", doc_id="a", text="t", score=0.60, metadata={}),
+        StoreHit(chunk_id="ch2", doc_id="b", text="t", score=0.55, metadata={}),
+    ]
+    out = _annotate_and_rerank_by_community(raw_hits, st, collection="conv")
+    assert [h.doc_id for h in out] == ["a", "b"]  # nada novo a expandir

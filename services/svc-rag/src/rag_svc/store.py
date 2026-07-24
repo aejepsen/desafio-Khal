@@ -40,6 +40,7 @@ def chunk_id(doc_id: str, index: int, content: str) -> str:
 class VectorStore(Protocol):
     def upsert(self, collection: str, chunks: list[StoredChunk], vectors: np.ndarray) -> int: ...
     def search(self, collection: str, qvec: np.ndarray, top_k: int) -> list[Hit]: ...
+    def get_by_ids(self, collection: str, doc_ids: list[str]) -> list[Hit]: ...
     def count(self, collection: str) -> int: ...
     def collections(self) -> list[str]: ...
 
@@ -68,6 +69,22 @@ class InMemoryStore:
         ]
         scored.sort(key=lambda h: h.score, reverse=True)
         return scored[:top_k]
+
+    def get_by_ids(self, collection: str, doc_ids: list[str]) -> list[Hit]:
+        """Busca direta por doc_id (sem query) — 1 hit por doc_id (1º chunk achado).
+
+        score=0.0: não veio de similaridade, é o chamador quem decide como
+        posicionar esses hits (ver GraphRAG expansion em app.py).
+        """
+        col = self._data.get(collection, {})
+        wanted = set(doc_ids)
+        seen: set[str] = set()
+        out: list[Hit] = []
+        for ch, _vec in col.values():
+            if ch.doc_id in wanted and ch.doc_id not in seen:
+                seen.add(ch.doc_id)
+                out.append(Hit(ch.chunk_id, ch.doc_id, ch.text, 0.0, ch.metadata))
+        return out
 
     def count(self, collection: str) -> int:
         return len(self._data.get(collection, {}))
@@ -139,6 +156,42 @@ class QdrantStore:
             hits.append(Hit(p.get("chunk_id", str(item["id"])), p.get("doc_id", ""),
                             p.get("text", ""), float(item["score"]), p.get("metadata", {})))
         return hits
+
+    def get_by_ids(self, collection: str, doc_ids: list[str]) -> list[Hit]:
+        """Busca por doc_id via filtro de payload (scroll) — 1 hit por doc_id.
+
+        O id do ponto no Qdrant é uuid5(chunk_id), não doc_id — não dá pra usar
+        retrieve-by-point-id direto; filtra pelo campo doc_id no payload.
+        score=0.0 (não é similaridade — ver get_by_ids do InMemoryStore).
+        """
+        if not doc_ids:
+            return []
+        with self._client() as c:
+            r = c.post(
+                f"/collections/{collection}/points/scroll",
+                json={
+                    "filter": {
+                        "should": [
+                            {"key": "doc_id", "match": {"value": d}} for d in doc_ids
+                        ]
+                    },
+                    "with_payload": True,
+                    "limit": max(len(doc_ids) * 3, 10),
+                },
+            )
+            r.raise_for_status()
+        wanted = set(doc_ids)
+        seen: set[str] = set()
+        out: list[Hit] = []
+        for item in r.json().get("result", {}).get("points", []):
+            p = item.get("payload", {})
+            doc_id = p.get("doc_id", "")
+            if doc_id not in wanted or doc_id in seen:
+                continue
+            seen.add(doc_id)
+            out.append(Hit(p.get("chunk_id", str(item["id"])), doc_id,
+                           p.get("text", ""), 0.0, p.get("metadata", {})))
+        return out
 
     def count(self, collection: str) -> int:
         with self._client() as c:

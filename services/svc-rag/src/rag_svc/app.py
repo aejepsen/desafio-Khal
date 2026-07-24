@@ -39,17 +39,28 @@ from rag_svc.store import InMemoryStore, QdrantStore, VectorStore
 logger = logging.getLogger("rag")
 
 _COMMUNITY_BOOST = 0.05  # empurrão leve p/ hits que reforçam a comunidade dominante
+_COMMUNITY_EXPANSION_N = 2  # máx. de membros extras trazidos além do top_k vetorial
 
 
-def _annotate_and_rerank_by_community(hits: list[Any], st: "State") -> list[Hit]:
-    """GraphRAG leve sobre o resultado vetorial.
+def _annotate_and_rerank_by_community(
+    hits: list[Any], st: "State", *, collection: str
+) -> list[Hit]:
+    """GraphRAG sobre o resultado vetorial: anota, reordena e EXPANDE.
 
-    Anota cada hit com a comunidade (Louvain, artefato offline — ver
-    community_builder.py) e reordena pra priorizar hits que reforçam a
-    comunidade dominante entre os resultados. `score` continua sendo a
-    similaridade vetorial real (não é sobrescrito) — só a ORDEM leva em
-    conta coerência de comunidade. Sem artefato/flag ou em qualquer erro,
-    devolve os hits como vieram (fail-open — GraphRAG nunca derruba a busca).
+    1. Anota cada hit com a comunidade (Louvain, artefato offline — ver
+       community_builder.py).
+    2. Reordena pra priorizar hits que reforçam a comunidade dominante entre
+       os resultados. `score` continua sendo a similaridade vetorial real
+       (não é sobrescrito) — só a ORDEM leva em conta coerência de comunidade.
+    3. Expansão: busca por id (`store.get_by_ids`, sem query) até
+       `_COMMUNITY_EXPANSION_N` membros da comunidade dominante que o vetor
+       NÃO trouxe — casos que são bons exemplos pelo grafo mas não bateram
+       léxico/semanticamente o suficiente pra entrar no top_k. Entram com
+       score abaixo do menor hit vetorial real (nunca competem de igual pra
+       igual com similaridade genuína).
+
+    Sem artefato/flag ou em qualquer erro, devolve os hits do vetor como
+    vieram, sem expandir (fail-open — GraphRAG nunca derruba a busca).
     """
     out = [
         Hit(chunk_id=h.chunk_id, doc_id=h.doc_id, text=h.text,
@@ -76,10 +87,37 @@ def _annotate_and_rerank_by_community(hits: list[Any], st: "State") -> list[Hit]
             return h.score + (_COMMUNITY_BOOST if h.community_id == dominant else 0.0)
 
         out.sort(key=_sort_key, reverse=True)
+        out.extend(_expand_dominant_community(out, st, collection, dominant))
         return out
     except Exception:  # noqa: BLE001 — GraphRAG é enriquecimento, nunca bloqueia
         logger.warning("graphrag rerank falhou — devolvendo hits sem boost", exc_info=True)
         return out
+
+
+def _expand_dominant_community(
+    out: list[Hit], st: "State", collection: str, dominant: str
+) -> list[Hit]:
+    community = st.communities.get(dominant) or {}
+    members: list[str] = community.get("members", [])
+    present = {h.doc_id for h in out}
+    candidates = [m for m in members if m not in present]
+    if not candidates:
+        return []
+    # margem: candidato aleatório evitaria viés de ordenação do artefato;
+    # aqui pega os primeiros N — determinístico e suficiente pro tamanho do desafio.
+    fetched = st.store.get_by_ids(collection, candidates[: _COMMUNITY_EXPANSION_N * 4])
+    if not fetched:
+        return []
+    floor = min((h.score for h in out), default=0.0)
+    expansion_score = round(max(floor - 0.01, 0.0), 4)
+    extra: list[Hit] = []
+    for e in fetched[:_COMMUNITY_EXPANSION_N]:
+        extra.append(Hit(
+            chunk_id=e.chunk_id, doc_id=e.doc_id, text=e.text, score=expansion_score,
+            metadata={**e.metadata, "graphrag_expansion": True},
+            community_id=dominant, community_title=community.get("title"),
+        ))
+    return extra
 
 
 class State:
@@ -186,7 +224,7 @@ def create_app(settings: Settings | None = None, state: State | None = None) -> 
         )
         return SearchResponse(
             query=req.query, collection=req.collection,
-            hits=_annotate_and_rerank_by_community(hits, st),
+            hits=_annotate_and_rerank_by_community(hits, st, collection=req.collection),
         )
 
     @app.get("/v1/collections", response_model=list[CollectionInfo])

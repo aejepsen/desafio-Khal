@@ -574,8 +574,25 @@ Implementado de verdade:
   `svc-rag` (era 47/54 antes, excluindo o `test_contract.py` que já falhava por
   dependência dev ausente no ambiente local, não relacionado).
 
-**Escopo consciente:** não implementei live query Neo4j em `/v1/search` (expansão
-de grafo além do top_k retornado pelo vetor) — exigiria novo método `get_by_ids`
-no `VectorStore` (não existe hoje) e round-trip bolt por request; dado o prazo,
-o artefato offline + re-rank é o corte certo (mesma filosofia de "pré-computar
-caro, servir barato" do `resolver_fechamento`/`fechamento_index` locais).
+**Escopo consciente (revisado — expansão implementada):** a decisão original foi
+não fazer live query Neo4j em `/v1/search`. Ao explicar melhor o porquê, separei
+duas coisas que a frase original juntava indevidamente: (1) expansão de grafo
+(buscar membros da comunidade fora do top_k vetorial) e (2) conexão Neo4j ao
+vivo. (1) NÃO precisa de Neo4j — a lista de membros já está em memória, vinda
+do artefato; só faltava buscar o TEXTO desses membros por id. Implementado:
+- `VectorStore.get_by_ids(collection, doc_ids)` — novo método no Protocol.
+  `InMemoryStore`: filtro direto. `QdrantStore`: `points/scroll` com filtro de
+  payload em `doc_id` (o id do ponto no Qdrant é uuid5(chunk_id), não doc_id —
+  não dá pra usar retrieve-by-point-id direto).
+- `_expand_dominant_community` em `app.py`: até 2 membros da comunidade
+  dominante que não vieram no vetor, score = `min(scores) - 0.01` (nunca
+  outranka similaridade real), `metadata.graphrag_expansion=true`.
+- Validado ao vivo contra Qdrant real (não só InMemoryStore dos testes):
+  `top_k=3` pedido → 5 hits voltaram (3 vetoriais + 2 expansão), score de
+  expansão exatamente `floor - 0.01` como esperado.
+(2) Conexão Neo4j ao vivo em `/v1/search` **continua fora de escopo, por
+decisão** — o grafo só muda quando o dataset muda, não por requisição; abrir
+bolt por busca contradiria o padrão fail-open do resto do projeto (RAG/quote/
+guardrails todos degradam sem travar).
+Tests: `test_get_by_ids_*` (store), `test_expande_com_membros_*` /
+`test_expansao_nao_duplica_*` (app). 65/65 no pacote svc-rag.
