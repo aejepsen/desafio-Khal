@@ -16,11 +16,14 @@
 1. POST /chat chega                         10. Decisão (DecisaoCotacao)
 2. Guardrails (sanitize/PII/injection)       11. Grafo de fechamento (rascunho)
 3. Pedido de humano? / objeção? / pausa?     12. Persona (estilo por idade)
-4. Extração de slots (heurística + LLM)      13. Prompt final (system+user)
-5. Porteiro do domínio (valida/normaliza)    14. Chamada ao LLM (Ollama)
-6. Coleta ativa (falta dado? pergunta)       15. Validação anti-alucinação
-7. Busca RAG (Qdrant, vetorial)              16. Auditoria (mask PII, SQLite)
-8. Busca Neo4j (closes por plano)            17. Resposta final ao lead
+   3b. Se objeção: tática vem do Neo4j       13. Prompt final (system+user)
+       (Objecao-[:TEM_TATICA]->Tatica),      14. Chamada ao LLM (Ollama)
+       fallback pro dict se grafo cair       15. Validação anti-alucinação
+4. Extração de slots (heurística + LLM)      16. Auditoria (mask PII, SQLite)
+5. Porteiro do domínio (valida/normaliza)    17. Resposta final ao lead
+6. Coleta ativa (falta dado? pergunta)
+7. Busca RAG (Qdrant, vetorial)
+8. Busca Neo4j (closes por plano — GraphRAG)
 9. Re-rank (RAG+Neo4j → top 3 exemplos)
    → cliente resiliente do /quote (retry+circuit)
 ```
@@ -91,6 +94,51 @@ de objeção sem contexto sequestrava mensagens de qualificação (ex.: "carro
 azul" virava objeção de concorrente "Azul Seguros"); pedido de humano caía por
 acidente no regex de pausa. Rodar essa checagem **antes** da extração de slots
 é o que garante que essas prioridades vencem qualquer outra interpretação.
+
+---
+
+## 3b. Se fosse objeção: de onde vem a tática (grafo Neo4j primeiro)
+
+Não é o caso desta mensagem de exemplo, mas é uma peça importante do pipeline
+que merece o mesmo nível de detalhe. Quando `detectar_objecao` dispara (ex.:
+"achei muito caro"), `orch_svc/objecoes.py:proxima_acao()` decide **qual
+tática usar nesta tentativa** — e a fonte dessa tática não é mais só um dict
+Python: é o grafo Neo4j primeiro, com o dict como rede de segurança.
+
+```
+(:Objecao {tipo:"preco"}) -[:TEM_TATICA {ordem:0}]-> (:Tatica {texto, framework})
+                          -[:TEM_TATICA {ordem:1}]-> (:Tatica {...})
+                          -[:TEM_TATICA {ordem:2}]-> (:Tatica {...})
+```
+
+**Dado real capturado** (`GET /graph/neo4j/taticas/preco`):
+```json
+[
+  {"texto": "Reconhecer e reancorar: 'entendo — à primeira vista parece; olhando a cobertura por dia, é proteção do seu carro por centavos.'", "framework": "feel-felt-found + ancoragem-valor", "ordem": 0},
+  {"texto": "Isolar a objeção: 'além do valor, tem mais algo que te impede de fechar?' Se for só preço, oferecer plano essencial (entrada menor) ou parcelamento.", "framework": "isolamento + alternativa", "ordem": 1},
+  {"texto": "Ancorar no risco: comparar a mensalidade com o custo de um sinistro sem seguro (guincho, terceiros, perda total).", "framework": "ancoragem-valor", "ordem": 2}
+]
+```
+
+`proxima_acao(objecao, tentativas_feitas, taticas_provider=...)` pega a tática
+no índice `tentativas_feitas` dessa lista — 1ª objeção usa `ordem=0`
+(feel-felt-found), persiste → `ordem=1` (isolamento), persiste de novo →
+`ordem=2` (ancoragem no risco), persiste uma 4ª vez → esgotou, `escalar_humano`.
+
+**`taticas_provider` é injeção de dependência** (`app/main.py:_taticas_provider`),
+mesmo padrão usado pra `rag`/`quote_client`/`graph_examples` no resto do
+pipeline — o `orch_svc` (camada de decisão) nunca importa `Neo4j` diretamente,
+só recebe uma função. Se o provider vier vazio ou lançar exceção,
+`proxima_acao` cai pro dict `TATICAS` hardcoded no próprio módulo — **mesmo
+conteúdo, mas o Neo4j fora do ar nunca impede reverter uma objeção**.
+
+**Por quê materializar no grafo em vez de deixar só no dict:** deixa a
+extensão natural pronta — trocar ou adicionar tática vira uma escrita no
+grafo, sem precisar de deploy. Testado ao vivo: uma objeção de preço real via
+`/chat` devolveu o texto exatamente igual ao lido pelo endpoint acima — prova
+de que o runtime lê do grafo de verdade (não é um catálogo espelhado e nunca
+consultado, como cheguei a identificar e criticar em outra parte do grafo
+antes de implementar este).
 
 ---
 
@@ -480,6 +528,7 @@ O `estagio` vira `"cotado"` — no próximo turno, se o lead aceitar
 | LLM (redação) indisponível | `redigir_resposta` usa `rascunho` direto | Resposta sem polimento, mas correta |
 | LLM responde mas viola regra | `validar_fechamento_llm` rejeita → fallback | Idem |
 | Mídia sem ASR/OCR configurado | `escalar_humano` (mídia sem transcrição) | Handoff educado |
+| Neo4j (táticas de objeção) | `taticas_objecao` retorna `[]` | `proxima_acao` cai pro dict `TATICAS` — mesma tática, sem grafo |
 
 ---
 
@@ -504,3 +553,12 @@ O `estagio` vira `"cotado"` — no próximo turno, se o lead aceitar
   servidas como artefato offline pelo `svc-rag`, que anota/reordena/expande os
   resultados do `/v1/search` por coerência de comunidade — ver
   `docs/curadoria-e2e/` e a seção GraphRAG do README pra detalhe.
+- **"Vocês usam o Neo4j só pra guardar dado, ou o runtime lê de verdade?"** →
+  Os dois — mas com cuidado: o catálogo de fechamento é escrito no boot só pra
+  inspeção/Browser (o runtime usa o grafo leve in-process, mais rápido). Já as
+  **táticas de objeção** e os **closes por plano** (passo 8) são lidos de
+  verdade em toda requisição relevante — validado ao vivo comparando o texto
+  devolvido numa conversa real com o que o endpoint de leitura do grafo
+  devolve (bateram exato). É uma distinção que vale fazer numa entrevista:
+  nem todo nó no grafo tem um consumidor real, e isso foi avaliado caso a
+  caso, não assumido.

@@ -13,7 +13,10 @@ um lead de seguro auto de ponta a ponta: **conversa → qualifica → cota → d
 
 ## Arquitetura
 
-Diagrama: [`arquitetura.html`](./arquitetura.html).
+Diagrama: [`arquitetura.html`](./arquitetura.html) — todos os serviços reais
+(Neo4j, Ollama, Qdrant, ASR/OCR, GraphRAG, grafo de táticas de objeção),
+reconstruído em 2026-07-24 (a versão anterior era do primeiro commit e ainda
+mostrava o `svc-router`, já removido).
 
 Um **agente de cotação** (`app/main.py` + `orch_svc`) integra microsserviços
 (`svc-guardrails`, `svc-rag`, `svc-inference`, `svc-observability`) + **ASR/OCR**

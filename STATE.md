@@ -729,3 +729,30 @@ claro — táticas de objeção — foi implementado:
   código: trocar tática = escrever no grafo), mas o "recuperar de fonte
   externa de verdade" continua em aberto, sem inventar conteúdo que não pedi
   pra buscar.
+
+## SESSÃO 2026-07-24 (final+) — docs de arquitetura atualizados
+
+**`docs/fluxo-detalhado-entrevista.md`:** nova seção 3b ("Se fosse objeção: de
+onde vem a tática") com dado real capturado (`GET /graph/neo4j/taticas/preco`)
+mostrando a leitura do grafo; visão geral dos 17 estágios ganhou a nota 3b;
+tabela de degradação ganhou linha do fallback de táticas; talking point novo
+sobre "nem todo nó do Neo4j tem consumidor real — foi avaliado caso a caso".
+
+**`arquitetura.html` recriado do zero.** Achado ao investigar: o arquivo era
+do **primeiro commit** do projeto (`e2347a4`), nunca atualizado — só 10 nós
+(Lead, quote-service, guardrails, inference, observability, orchestrator,
+**svc-router** [já removido há muito], rag, Dataset, HITL). Faltava Neo4j,
+Ollama, Qdrant, ASR/OCR, GraphRAG, grafo de táticas — ~20% do sistema atual
+representado. Original era gerado por ferramenta externa (Archify, SVG de
+11785 linhas, sem arquivo-fonte/spec versionado pra regenerar com segurança)
+— hand-editar teria risco real de quebrar layout. Decisão (com o usuário):
+recriar do zero, mais simples, controlado diretamente (sem motor externo).
+Novo diagrama: SVG único auto-contido (sem fontes externas, funciona offline),
+5 lanes (canal/núcleo/microsserviços/infra/observabilidade+escalada), legenda
+explícita de resiliência (fail-open por componente) e de quem lê cada parte
+do Neo4j (catálogo espelhado vs. closes/táticas lidos em runtime vs.
+comunidades GraphRAG geradas offline). Validado estruturalmente (script
+Python: XML bem formado, 0 elementos fora do viewBox, 0 estouros de texto —
+achou e corrigiu 4 estouros reais antes do commit); validação visual final
+via Artifact (link efêmero, não fica no repo) — QA humana no lugar de captura
+de tela, que não tenho como fazer diretamente.
