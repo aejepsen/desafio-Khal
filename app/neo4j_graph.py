@@ -176,6 +176,70 @@ class Neo4jGraph:
             )
         return n
 
+    def seed_taticas_objecao(self) -> dict[str, int]:
+        """Materializa objecoes.TATICAS no grafo: Objecao -[:TEM_TATICA {ordem}]-> Tatica.
+
+        Fonte de conteúdo continua sendo o dict Python (curado, ancorado em
+        frameworks reais de vendas) — o grafo é a camada CONSULTÁVEL/persistente
+        em cima dele, não uma duplicata cega: `orch_svc.objecoes.proxima_acao`
+        lê de volta via `taticas_objecao()` em runtime (fallback pro dict se o
+        Neo4j estiver fora — ver app/main.py `_taticas_provider`).
+        """
+        from orch_svc.objecoes import TATICAS
+
+        if self._driver is None and not self.connect():
+            raise RuntimeError("Neo4j offline — seed abortado")
+        n_obj = n_tat = 0
+        with self._driver.session() as s:
+            s.run(
+                "CREATE CONSTRAINT tatica_id IF NOT EXISTS "
+                "FOR (t:Tatica) REQUIRE t.id IS UNIQUE"
+            )
+            for tipo, taticas in TATICAS.items():
+                s.run("MERGE (o:Objecao {tipo: $tipo})", tipo=tipo)
+                n_obj += 1
+                for ordem, t in enumerate(taticas):
+                    s.run(
+                        """
+                        MATCH (o:Objecao {tipo: $tipo})
+                        MERGE (t:Tatica {id: $tid})
+                        SET t.texto = $texto, t.framework = $framework, t.ordem = $ordem
+                        MERGE (o)-[r:TEM_TATICA]->(t)
+                        SET r.ordem = $ordem
+                        """,
+                        tipo=tipo,
+                        tid=f"{tipo}:{ordem}",
+                        texto=t.texto,
+                        framework=t.framework,
+                        ordem=ordem,
+                    )
+                    n_tat += 1
+        log.info("Neo4j seed táticas: %s objeções, %s táticas", n_obj, n_tat)
+        return {"objecoes": n_obj, "taticas": n_tat}
+
+    def taticas_objecao(self, tipo: str) -> list[dict[str, Any]]:
+        """Lê táticas do grafo pra uma objeção, ordenadas — usado em runtime.
+
+        Retorna [] (não lança) se o Neo4j estiver fora/sem dado — o chamador
+        (`orch_svc.objecoes.proxima_acao`) cai pro dict TATICAS hardcoded.
+        """
+        if self._driver is None and not self.connect():
+            return []
+        try:
+            with self._driver.session() as s:
+                rows = s.run(
+                    """
+                    MATCH (:Objecao {tipo: $tipo})-[r:TEM_TATICA]->(t:Tatica)
+                    RETURN t.texto AS texto, t.framework AS framework, r.ordem AS ordem
+                    ORDER BY r.ordem
+                    """,
+                    tipo=tipo,
+                )
+                return [dict(row) for row in rows]
+        except Exception as exc:
+            log.warning("taticas_objecao(%s) falhou: %s", tipo, exc)
+            return []
+
     def ingest_conversations(self, convs: list[dict[str, Any]]) -> int:
         """Upsert nós Conversation + arestas OUTCOME / MENTIONS_PLAN / HAS_CLOSE."""
         if self._driver is None and not self.connect():
@@ -307,6 +371,7 @@ def boot_neo4j() -> dict[str, Any]:
         try:
             out["seed"] = g.seed_fechamento_catalog()
             out["anchors"] = g.seed_dataset_anchors()
+            out["taticas"] = g.seed_taticas_objecao()
         except Exception as exc:
             out["seed_error"] = str(exc)
     # Ingest conversas ganho do parquet (idempotente MERGE) — mesmo corpus do RAG.

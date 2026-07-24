@@ -78,6 +78,7 @@ def run_turno(mensagem: str, state: ThreadState, build_fn: Callable[..., Any],
               media_filename: str | None = None,
               media_enricher: Any = None,
               graph_examples: Callable[[str | None], list[str]] | None = None,
+              taticas_provider: Callable[[str], list] | None = None,
               max_turnos: int = MAX_TURNOS) -> tuple[Execucao, ThreadState]:
     state.turnos += 1
     ev: list[Evento] = [
@@ -214,7 +215,7 @@ def run_turno(mensagem: str, state: ThreadState, build_fn: Callable[..., Any],
             ev.append(Evento("decide", dec.acao, {"escalate": False}))
             return Execucao(state.conversation_id, ev, dec), state
 
-        resp = proxima_acao(obj, feitas)
+        resp = proxima_acao(obj, feitas, taticas_provider=taticas_provider)
         ev.append(Evento("objecao", resp.acao, {"objecao": obj, "framework": resp.framework,
                                                 "tatica": resp.tatica, "tentativa": resp.tentativa}))
         if resp.acao is AcaoObjecao.REVERTER:

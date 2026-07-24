@@ -61,6 +61,23 @@ def test_objecao_persistida_entre_turnos():
     assert ex.decisao.acao == "escalar_humano" and st.encerrado
 
 
+def test_taticas_provider_propagado_ate_proxima_acao():
+    """run_turno repassa taticas_provider pro proxima_acao (ex.: grafo Neo4j)."""
+    from orch_svc.objecoes import Tatica
+
+    chamadas = []
+
+    def provider(objecao):
+        chamadas.append(objecao)
+        return [Tatica("tática injetada via thread", "framework-x")]
+
+    st = ThreadState("c-tat", slots={"idade": 40, "veiculo_ano": 2019})
+    ex, st = run_turno("achei caro", st, _build, FakeQuote(), taticas_provider=provider)
+    assert chamadas == ["preco"]
+    assert ex.decisao.acao == "reverter_objecao"
+    assert ex.decisao.motivos == ["tática injetada via thread"]
+
+
 def test_vou_pensar_adia_sem_inventar_duvida():
     st = ThreadState(
         "pausa",

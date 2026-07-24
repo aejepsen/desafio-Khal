@@ -1,5 +1,5 @@
 """Testes do tratamento de objeção — não desistir no primeiro não."""
-from orch_svc.objecoes import AcaoObjecao, detectar_objecao, pedido_humano, proxima_acao
+from orch_svc.objecoes import AcaoObjecao, Tatica, detectar_objecao, pedido_humano, proxima_acao
 
 
 def test_detecta_preco():
@@ -77,3 +77,26 @@ def test_escala_apos_esgotar():
 def test_escala_quando_sem_taticas():
     r = proxima_acao("desconhecida", 0)
     assert r.acao is AcaoObjecao.ESCALAR
+
+
+def test_taticas_provider_usado_quando_disponivel():
+    """Injeção (ex.: grafo Neo4j) tem prioridade sobre o dict hardcoded."""
+    def provider(objecao: str) -> list[Tatica]:
+        assert objecao == "preco"
+        return [Tatica("tática do grafo", "framework-grafo")]
+
+    r = proxima_acao("preco", 0, taticas_provider=provider)
+    assert r.tatica == "tática do grafo" and r.framework == "framework-grafo"
+
+
+def test_taticas_provider_vazio_cai_no_hardcoded():
+    r = proxima_acao("preco", 0, taticas_provider=lambda _: [])
+    assert r.tatica is not None  # veio do dict TATICAS, não ficou vazio
+
+
+def test_taticas_provider_excecao_cai_no_hardcoded():
+    def provider_com_erro(objecao: str) -> list[Tatica]:
+        raise RuntimeError("neo4j indisponível")
+
+    r = proxima_acao("preco", 0, taticas_provider=provider_com_erro)
+    assert r.acao is AcaoObjecao.REVERTER and r.tatica is not None

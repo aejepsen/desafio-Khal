@@ -39,8 +39,10 @@ def main() -> None:
         raise SystemExit("Neo4j offline")
     g.seed_fechamento_catalog()
     g.seed_dataset_anchors()
+    tat = g.seed_taticas_objecao()
     n = g.ingest_conversations(convs)
     print(f"OK ingest {n} conversas (filtro={outcomes or 'all'}) → {args.uri}")
+    print(f"OK táticas: {tat['objecoes']} objeções, {tat['taticas']} táticas")
 
 
 if __name__ == "__main__":

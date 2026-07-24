@@ -17,6 +17,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Callable
 
 _OBJ = {
     # "preço"/"parcel" soltos batiam em pergunta neutra ("qual o preço?", "dá pra
@@ -122,10 +123,26 @@ def detectar_objecao(texto: str) -> str | None:
     return None
 
 
-def proxima_acao(objecao: str, tentativas_feitas: int,
-                 max_tentativas: int = MAX_TENTATIVAS) -> RespostaObjecao:
-    """Dada a objeção e quantas reversões já foram tentadas, decide reverter ou escalar."""
-    taticas = TATICAS.get(objecao, [])
+def proxima_acao(
+    objecao: str, tentativas_feitas: int,
+    max_tentativas: int = MAX_TENTATIVAS,
+    *, taticas_provider: Callable[[str], list[Tatica]] | None = None,
+) -> RespostaObjecao:
+    """Dada a objeção e quantas reversões já foram tentadas, decide reverter ou escalar.
+
+    `taticas_provider` é injeção opcional (ex.: leitura do grafo Neo4j
+    `Objecao -[:TEM_TATICA]-> Tatica` — ver app/neo4j_graph.py). Se ausente,
+    retornar vazio/None, ou lançar exceção, cai pro dict `TATICAS` hardcoded
+    (fail-open — grafo indisponível nunca impede reverter objeção).
+    """
+    taticas: list[Tatica] = []
+    if taticas_provider is not None:
+        try:
+            taticas = list(taticas_provider(objecao) or [])
+        except Exception:
+            taticas = []
+    if not taticas:
+        taticas = TATICAS.get(objecao, [])
     if tentativas_feitas < len(taticas) and tentativas_feitas < max_tentativas:
         t = taticas[tentativas_feitas]
         return RespostaObjecao(AcaoObjecao.REVERTER, objecao, tatica=t.texto,

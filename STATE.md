@@ -7,7 +7,7 @@
 Solução do **Desafio Técnico FDE / AI Engineer (Namastex)**: um agente que atende
 um lead de seguro auto de ponta a ponta — **conversa → qualifica → cota → decide**
 (resolve ou escala pro humano, com critério explícito). Repo:
-`github.com/aejepsen/desafio-Khal` (PRIVADO durante dev; público na entrega).
+`github.com/aejepsen/desafio-Khal` (**público** desde 2026-07-24 — entrega concluída).
 
 ## O que o desafio avalia (régua)
 1. Funciona ponta a ponta (cota certo no caminho feliz).
@@ -101,9 +101,18 @@ fora de faixa cotável · objeção complexa · pedido fora de escopo.
   `docs/curadoria-e2e/relatorio.md` + raw por cenário. Achados corrigidos:
   moeda com ponto (`209.9`) em vez de vírgula pt-BR (`209,90`), LLM inventando
   frase sem nexo fora do rascunho, cópia HITL repetindo "atendente humano" 2x.
+- **Táticas de objeção no grafo:** `Objecao -[:TEM_TATICA {ordem}]-> Tatica`
+  materializado no Neo4j a partir do dict `objecoes.TATICAS`; `proxima_acao()`
+  lê do grafo primeiro (fallback pro dict se vazio/Neo4j fora). Endpoint
+  `GET /graph/neo4j/taticas/{tipo}`. Validado ao vivo: texto da tática numa
+  conversa real bate exatamente com o que o endpoint devolve.
+- **Repo público** desde 2026-07-24 (checado histórico completo antes: sem
+  `.env`/chave real commitada em nenhum momento).
 - **PRÓXIMO:** cenário de ASR (áudio) real na curadoria (precisa servir o
-  arquivo via HTTP pro Whisper alcançar — não incluído ainda); tornar repo
-  público na entrega formal.
+  arquivo via HTTP pro Whisper alcançar — não incluído ainda); extensão natural
+  das táticas no grafo é permitir trocar/injetar conteúdo real de material de
+  vendas sem alterar código (hoje o grafo só espelha o dict Python — próximo
+  passo seria uma fonte externa de conteúdo, não implementado).
 
 ## Handoff / troca de LLM
 Este STATE + README + docs/isolamento-dados.md + docs/metricas-modelo.md
@@ -666,3 +675,57 @@ HITL, sem a frase inventada nas novas respostas.
 Tests: 7 arquivos de teste atualizados pro formato vírgula/2-casas
 (`209.9`→`209,90`, `137.88`→`137,88`). 130/130 no orch_svc+domínio+app.
 Commits: `6dc22fd`, `65680ac`, `cb1799d`, `1937793`, `c8bdf9b`.
+
+## SESSÃO 2026-07-24 (final) — repo público + verificação de boot limpo + táticas no Neo4j
+
+**Repo tornado público** (`gh repo edit --visibility public`). Antes: busca no
+histórico completo (`git log --all -p`) por `.env` commitado ou padrão de
+chave/senha real (`sk-...`, `AKIA...`, private key) — zero resultados. Único
+"segredo" no repo são defaults de dev explicitamente documentados
+(`dev-namastex-key`, `namastex-graph`), não credenciais reais.
+
+**Verificação de boot limpo (não assumido — testado):** dúvida levantada
+("o compose sobe liso? o Neo4j popula certo?") foi respondida derrubando tudo
+e **apagando os volumes de dados** (`namastex_neo4j`, `namastex_qdrant`,
+`namastex_audit` — mantido só `namastex_ollama`, o cache do modelo, pra não
+re-baixar 4.7GB à toa) e subindo com o comando exato do README
+(`docker compose up --build`). Resultado: 11/11 containers `healthy`/`running`,
+os 2 one-shot (`rag-ingest`, `ollama-pull`) saíram com exit 0. Neo4j populado
+**sozinho pelo boot do agente** (sem rodar nenhum script manual desta vez):
+752 nós. RAG: 712 docs/771 chunks, igual ao documentado. Smoke `/chat` real
+funcionando no stack recém-subido.
+
+**Táticas de objeção → grafo de verdade (extensão do GraphRAG):**
+anteriormente eu tinha avaliado como "não recomendado" adicionar mais conteúdo
+ao Neo4j sem um consumidor real (mesma crítica que fiz ao catálogo de
+fechamento espelhado, nunca lido de volta). O item identificado com consumidor
+claro — táticas de objeção — foi implementado:
+- `app/neo4j_graph.py`: `seed_taticas_objecao()` materializa
+  `orch_svc.objecoes.TATICAS` como `(:Objecao {tipo})-[:TEM_TATICA {ordem}]->
+  (:Tatica {texto, framework, ordem})`; `taticas_objecao(tipo)` lê de volta,
+  ordenado, `try/except` → `[]` se Neo4j fora (nunca lança).
+- `orch_svc/objecoes.py`: `proxima_acao(..., taticas_provider=None)` —
+  injeção opcional (mesmo padrão de `graph_examples`/`rag`/`quote_client` no
+  resto do projeto). Provider vazio/exceção → cai pro dict `TATICAS`
+  hardcoded (fail-open).
+- `orch_svc/thread.py`: `run_turno(..., taticas_provider=None)` repassa até
+  `proxima_acao`.
+- `app/main.py`: `_taticas_provider(tipo)` (lê `get_neo4j().taticas_objecao`,
+  converte pra `Tatica`) wired no `/chat`; endpoint `GET
+  /graph/neo4j/taticas/{tipo}` pra inspeção; seed adicionado no `boot_neo4j()`
+  e em `scripts/neo4j_seed_dataset.py`.
+- **Validado ao vivo, não decorativo:** nós do Neo4j foram de 752 → 764
+  (+12 = 4 Objecao + 8 Tatica) após o boot; `GET
+  /graph/neo4j/taticas/preco` bate com o dict fonte; e — o teste que prova
+  que o runtime GENUINAMENTE lê do grafo, não só escreve — rodei uma objeção
+  de preço real via `/chat` e o texto da tática devolvida é idêntico ao
+  consultado no grafo.
+- Tests: `test_taticas_provider_*` (3, objecoes.py) +
+  `test_taticas_provider_propagado_ate_proxima_acao` (thread.py). 134/134 no
+  orch_svc+domínio+app (era 130).
+- **Escopo consciente:** o grafo hoje só espelha o dict Python curado (mesmo
+  conteúdo, camada consultável em cima) — não ingere material de vendas
+  externo real. Isso deixa a infraestrutura pronta (extensível sem mudar
+  código: trocar tática = escrever no grafo), mas o "recuperar de fonte
+  externa de verdade" continua em aberto, sem inventar conteúdo que não pedi
+  pra buscar.

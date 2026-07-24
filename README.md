@@ -111,6 +111,23 @@ Detalhe das taxas (HITL, redação LLM, fechamento) e eval offline:
 
 Neo4j Browser: http://localhost:7474 (`neo4j` / senha no `.env`).
 
+### Táticas de objeção como grafo (Neo4j)
+
+As táticas de reversão de objeção (preço/concorrente/cobertura/indeciso, cada
+uma com framework de vendas — LAER, feel-felt-found, ancoragem-valor) ficam
+materializadas no grafo: `Objecao -[:TEM_TATICA {ordem}]-> Tatica`. Em runtime,
+`proxima_acao()` **lê do Neo4j primeiro** (`GET /graph/neo4j/taticas/{tipo}`
+usa a mesma consulta) — vazio ou Neo4j fora → cai pro dict Python curado
+(fail-open, nunca impede reverter uma objeção). Seed no boot do agente e em
+`scripts/neo4j_seed_dataset.py`.
+
+```bash
+curl -s http://localhost:8100/graph/neo4j/taticas/preco -H "X-Internal-Key: ${INTERNAL_KEY:-dev-namastex-key}"
+```
+
+Isso deixa pronta a extensão natural (ainda não feita): trocar/injetar novas
+táticas direto no grafo (ex.: de material de vendas real) sem alterar código.
+
 ### GraphRAG (svc-rag)
 
 O `svc-rag` serve um artefato de **comunidades** (`GET /v1/community/{id}`) detectadas
@@ -184,6 +201,7 @@ Falha persistente de `/quote` → retry/circuit → `escalar_humano` (sem invent
 | **Pedido de humano tem handler dedicado, prioridade máxima** | "Falar com atendente" coincidia com o regex de pausa (virava "sem problema, pensa com calma") ou era ignorado — achado ao auditar a camada de objeção. |
 | **Regex de objeção exige contexto** (`azul seguros`, não `azul`; reclamação de preço, não pergunta neutra) | Sem isso, cor de veículo/pergunta de qualificação eram lidas como objeção e desviavam a conversa antes de qualquer cotação existir. |
 | **Curadoria manual além do teste automatizado** | Assert de pass/fail não pega tom robótico, moeda mal formatada ou LLM inventando frase — só leitura humana da transcrição real pega isso. |
+| **Táticas de objeção materializadas no Neo4j (não só dict Python)** | Deixa a régua "dataset → entender padrões" mais forte e abre caminho pra trocar tática sem deploy; fallback pro dict garante que Neo4j fora nunca trava a reversão. |
 | **Ollama `qwen2.5:7b` Q4** | Cabe na 3060 12 GB com Whisper small; redação mais estável que 3B. |
 | **OCR `media_base64`** | Lê dados enviados sem depender de URL pública. |
 | **Audit SQLite por `conversation_id`** | Rastreabilidade exigida: cada passo com id + status. |

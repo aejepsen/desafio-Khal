@@ -196,7 +196,19 @@ def graph_neo4j_seed():
         "status": "ok",
         "seed": g.seed_fechamento_catalog(),
         "anchors": g.seed_dataset_anchors(),
+        "taticas": g.seed_taticas_objecao(),
     }
+
+
+@app.get("/graph/neo4j/taticas/{tipo}")
+def graph_neo4j_taticas(tipo: str):
+    """Táticas de reversão de objeção lidas do grafo (Objecao -[:TEM_TATICA]-> Tatica).
+
+    Mesma fonte que o agente consulta em runtime pra decidir a próxima tática
+    (com fallback pro dict hardcoded se o Neo4j estiver fora — ver
+    orch_svc.objecoes.proxima_acao).
+    """
+    return {"tipo": tipo, "taticas": get_neo4j().taticas_objecao(tipo)}
 
 
 @app.post("/graph/neo4j/seed-dataset")
@@ -259,6 +271,18 @@ def _graph_examples(plano_id: str | None) -> list[str]:
     return out
 
 
+def _taticas_provider(tipo: str) -> list:
+    """Lê táticas de reversão de objeção do grafo Neo4j (Objecao -[:TEM_TATICA]-> Tatica).
+
+    Vazio/exceção → orch_svc.objecoes.proxima_acao cai pro dict TATICAS
+    hardcoded (fail-open — Neo4j fora nunca impede reverter uma objeção).
+    """
+    from orch_svc.objecoes import Tatica
+
+    rows = get_neo4j().taticas_objecao(tipo)
+    return [Tatica(texto=r["texto"], framework=r.get("framework") or "") for r in rows]
+
+
 @app.post("/chat")
 def chat(inp: ChatIn):
     from orch_svc.agente_cotacao import mascarar_pii
@@ -281,6 +305,7 @@ def chat(inp: ChatIn):
         media_filename=inp.media_filename,
         media_enricher=_media_enricher(),
         graph_examples=_graph_examples,
+        taticas_provider=_taticas_provider,
     )
     STORE.save(state)
     d = ex.decisao
